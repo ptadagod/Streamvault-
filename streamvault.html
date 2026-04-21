@@ -213,20 +213,41 @@
     box-shadow: 0 0 30px rgba(232,184,75,0.5);
   }
   .card:hover .card-play-btn { transform: scale(1); }
+  .card.touch-active .card-overlay { opacity: 1; }
+  .card.touch-active .card-play-btn { transform: scale(1); }
+  .card.touch-active { transform: translateY(-4px) scale(1.01); border-color: rgba(232,184,75,0.3); }
   .card-play-btn svg { width: 20px; height: 20px; fill: #000; margin-left: 2px; }
 
   /* PLAYER MODAL */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.95);
+    background: #000;
     display: none; flex-direction: column;
     opacity: 0; transition: opacity 0.3s;
   }
   .modal-overlay.open { display: flex; opacity: 1; }
+  .modal-overlay:-webkit-full-screen { display: flex; width: 100%; height: 100%; }
+  .modal-overlay:-moz-full-screen { display: flex; width: 100%; height: 100%; }
+  .modal-overlay:-ms-fullscreen { display: flex; width: 100%; height: 100%; }
+  .modal-overlay:fullscreen { display: flex; width: 100%; height: 100%; background: #000; }
   .modal-header {
     display: flex; align-items: center; gap: 1rem;
     padding: 1rem 2rem; flex-shrink: 0;
     border-bottom: 1px solid var(--border);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .modal-header.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-100%);
+  }
+  .episode-bar {
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .episode-bar.hidden-bar {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(100%);
   }
   .modal-close {
     width: 36px; height: 36px; border-radius: 8px;
@@ -248,16 +269,18 @@
   .modal-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   .player-container {
     width: 100%; flex: 1; position: relative;
-    background: #000;
+    background: #000; overflow: hidden;
   }
   .player-container iframe {
     width: 100%; height: 100%; border: none; display: block;
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   }
 
   /* TV EPISODE SELECTOR */
   .episode-bar {
     background: var(--surface); border-top: 1px solid var(--border);
     padding: 1rem 2rem; display: none; align-items: center; gap: 1rem; flex-wrap: wrap;
+    transition: opacity 0.4s, transform 0.4s;
   }
   .episode-bar.visible { display: flex; }
   .ep-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; }
@@ -323,89 +346,121 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* RESPONSIVE - MOBILE */
-  @media (max-width: 768px) {
-    nav { 
-      padding: 0 1rem; 
-      gap: 0.75rem; 
-      height: 56px;
-      flex-wrap: nowrap;
-    }
-    .logo { font-size: 1.35rem; letter-spacing: 2px; }
-    .nav-tabs { gap: 0; }
-    .nav-tab { padding: 5px 10px; font-size: 0.75rem; }
-    .nav-search { padding: 0 10px; }
-    .nav-search input { width: 100px; font-size: 0.8rem; }
-    
-    .hero { 
-      padding: 0 1.25rem 3rem; 
-      height: 75vh;
-      min-height: 480px;
-      margin-top: 56px;
-    }
-    .hero-title { font-size: clamp(2rem, 9vw, 3.5rem); }
-    .hero-overview { font-size: 0.85rem; -webkit-line-clamp: 2; }
-    .hero-actions { gap: 0.75rem; flex-wrap: wrap; }
-    .btn-play { padding: 10px 20px; font-size: 0.85rem; }
-    .btn-info { padding: 10px 16px; font-size: 0.82rem; }
-    
-    main { padding: 0 1rem 3rem; }
-    
-    .grid { 
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 10px;
-    }
-    .card-title { font-size: 0.75rem; }
-    .card-year, .card-rating { font-size: 0.65rem; }
-    
-    .type-tabs { flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
-    .type-tab { padding: 5px 14px; font-size: 0.78rem; }
-    
-    .section-title { font-size: 1.2rem; }
-    
-    .modal-header { 
-      padding: 0.75rem 1rem; 
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .modal-title { font-size: 1.1rem; }
-    .modal-meta-info { margin-left: 0; }
-    
-    .episode-bar { padding: 0.75rem 1rem; gap: 0.75rem; }
-    .ep-select { padding: 5px 8px; font-size: 0.78rem; }
-    
-    .search-overlay { padding: 70px 1rem 2rem; }
-    .search-heading { font-size: 1rem; }
-    
-    /* Welcome popup */
-    #welcomeOverlay > div { 
-      padding: 2rem 1.75rem !important; 
-      margin: 1rem !important;
-    }
+  /* ─── DESKTOP (1200px+) ─── */
+  @media (min-width: 1200px) {
+    nav { padding: 0 4rem; gap: 2rem; height: 68px; }
+    .hero { padding: 0 4rem 6rem; height: 90vh; margin-top: 68px; }
+    main { padding: 0 4rem 5rem; }
+    .search-overlay { padding: 110px 4rem 4rem; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+    .nav-search input { width: 260px; }
   }
 
-  @media (max-width: 480px) {
-    nav { padding: 0 0.75rem; gap: 0.5rem; }
+  /* ─── TABLET (768px – 1199px) ─── */
+  @media (min-width: 768px) and (max-width: 1199px) {
+    nav { padding: 0 2rem; gap: 1.25rem; height: 60px; }
+    .logo { font-size: 1.5rem; }
+    .nav-tab { padding: 5px 12px; font-size: 0.82rem; }
+    .nav-search input { width: 160px; }
+
+    .hero {
+      padding: 0 2rem 4rem;
+      height: 80vh; min-height: 520px;
+      margin-top: 60px;
+    }
+    .hero-title { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+    .hero-overview { -webkit-line-clamp: 2; font-size: 0.9rem; }
+    .btn-play { padding: 11px 24px; }
+
+    main { padding: 0 2rem 4rem; }
+    .search-overlay { padding: 80px 2rem 2rem; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 12px; }
+
+    .modal-header { padding: 0.85rem 1.5rem; }
+    .episode-bar { padding: 0.85rem 1.5rem; }
+  }
+
+  /* ─── MOBILE (up to 767px) ─── */
+  @media (max-width: 767px) {
+    nav {
+      padding: 0 1rem;
+      gap: 0.5rem;
+      height: 54px;
+    }
+    .logo { font-size: 1.3rem; letter-spacing: 2px; }
     .nav-tabs { display: none; }
-    .nav-search input { width: 140px; }
-    .nav-search { flex: 1; }
-    
-    .hero { padding: 0 1rem 2.5rem; height: 80vh; }
-    .hero-badge { font-size: 0.62rem; }
-    .hero-title { font-size: clamp(1.8rem, 10vw, 3rem); }
-    .hero-meta { gap: 0.6rem; }
-    .hero-overview { display: none; }
-    .btn-info { display: none; }
-    
-    main { padding: 0 0.75rem 2rem; }
-    .grid { 
+    .nav-search { flex: 1; padding: 0 10px; }
+    .nav-search input { width: 100%; font-size: 0.85rem; }
+
+    .hero {
+      padding: 0 1rem 3.5rem;
+      height: 78vh; min-height: 420px;
+      margin-top: 54px;
+    }
+    .hero-bg::after {
+      background: linear-gradient(to top, #090909 0%, rgba(9,9,9,0.6) 55%, rgba(9,9,9,0.15) 100%),
+                  linear-gradient(to right, #090909 0%, transparent 80%);
+    }
+    .hero-content { max-width: 100%; }
+    .hero-badge { font-size: 0.62rem; letter-spacing: 1.5px; }
+    .hero-title { font-size: clamp(2rem, 9vw, 3.2rem); margin-bottom: 0.75rem; }
+    .hero-meta { gap: 0.6rem; margin-bottom: 0.85rem; }
+    .hero-overview { font-size: 0.83rem; -webkit-line-clamp: 2; margin-bottom: 1.5rem; }
+    .hero-actions { gap: 0.75rem; }
+    .btn-play { padding: 10px 22px; font-size: 0.88rem; }
+    .btn-info { padding: 10px 16px; font-size: 0.82rem; }
+
+    main { padding: 0 1rem 5rem; }
+
+    .type-tabs { gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .type-tab { padding: 6px 14px; font-size: 0.78rem; }
+
+    .section-title { font-size: 1.15rem; letter-spacing: 1.5px; }
+
+    .grid {
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
-    
-    .modal-header { padding: 0.6rem 0.75rem; }
+    .card-info { padding: 7px 8px 9px; }
+    .card-title { font-size: 0.72rem; }
+    .card-year, .card-rating { font-size: 0.62rem; }
+    .card-play-btn { width: 40px; height: 40px; }
+    .card-play-btn svg { width: 16px; height: 16px; }
+
+    .modal-header {
+      padding: 0.65rem 0.9rem;
+      flex-wrap: wrap; gap: 0.4rem;
+    }
+    .modal-close { width: 32px; height: 32px; font-size: 1rem; }
     .modal-title { font-size: 1rem; letter-spacing: 1px; }
-    .modal-badge { font-size: 0.65rem; padding: 2px 7px; }
+    .modal-meta-info { margin-left: 0; gap: 0.5rem; }
+    .modal-badge { font-size: 0.62rem; padding: 2px 7px; }
+
+    .episode-bar { padding: 0.65rem 0.9rem; gap: 0.5rem; }
+    .ep-label { font-size: 0.72rem; }
+    .ep-select { padding: 5px 8px; font-size: 0.75rem; }
+
+    .search-overlay { padding: 66px 1rem 5rem; }
+    .search-heading { font-size: 0.95rem; margin-bottom: 1rem; }
+
+    .toast { bottom: 5rem; right: 1rem; left: 1rem; max-width: 100%; font-size: 0.8rem; }
+
+    #welcomeOverlay > div {
+      padding: 2rem 1.5rem !important;
+      margin: 1rem !important;
+      border-radius: 12px !important;
+    }
+  }
+
+  /* ─── SMALL MOBILE (up to 390px) ─── */
+  @media (max-width: 390px) {
+    .hero-overview { display: none; }
+    .btn-info { display: none; }
+    .hero-title { font-size: clamp(1.8rem, 10vw, 2.8rem); }
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .card-info { padding: 5px 6px 7px; }
+    .hero { padding: 0 0.75rem 3rem; }
+    main { padding: 0 0.75rem 5rem; }
   }
 </style>
 </head>
@@ -475,13 +530,16 @@
     <button class="modal-close" onclick="closePlayer()">✕</button>
     <div class="modal-title" id="modalTitle">Title</div>
     <div class="modal-meta-info">
+      <button onclick="goFullscreen()" title="Fullscreen" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:7px;color:#f0f0f0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.background='rgba(232,184,75,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </button>
       <span class="modal-badge" id="modalYear"></span>
       <span class="modal-badge" id="modalRating"></span>
     </div>
   </div>
   <div class="modal-body">
     <div class="player-container" id="playerContainer">
-      <iframe id="playerFrame" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer"></iframe>
+      <iframe id="playerFrame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="no-referrer" frameborder="0" scrolling="no"></iframe>
     </div>
     <div class="episode-bar" id="episodeBar">
       <span class="ep-label">SEASON</span>
@@ -496,6 +554,22 @@
 
 <script>
 const TMDB_KEY = 'e7e658fd82cc0dd5ffd5cb4949f45b2c';
+
+// Touch: tap card to reveal overlay, second tap plays
+document.addEventListener('touchstart', function(e) {
+  const card = e.target.closest('.card');
+  if (!card) {
+    // tapped outside - close any open overlays
+    document.querySelectorAll('.card.touch-active').forEach(c => c.classList.remove('touch-active'));
+    return;
+  }
+  const alreadyActive = card.classList.contains('touch-active');
+  document.querySelectorAll('.card.touch-active').forEach(c => c.classList.remove('touch-active'));
+  if (!alreadyActive) {
+    card.classList.add('touch-active');
+    e.preventDefault();
+  }
+}, { passive: false });
 const TMDB = 'https://api.themoviedb.org/3';
 const IMG = 'https://image.tmdb.org/t/p/';
 const VIDSRC = 'https://vidsrc.xyz/embed';
@@ -665,6 +739,14 @@ async function playItem(id, mediaType, title, year, rating) {
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
+  // Go fullscreen on the modal so URL bar disappears
+  try {
+    if (modal.requestFullscreen) modal.requestFullscreen();
+    else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+    else if (modal.mozRequestFullScreen) modal.mozRequestFullScreen();
+    else if (modal.msRequestFullscreen) modal.msRequestFullscreen();
+  } catch(e) {}
+
   if (mediaType === 'tv') {
     currentTVItem = { id, season: 1, episode: 1 };
     epBar.classList.add('visible');
@@ -712,7 +794,64 @@ function closePlayer() {
   $('playerFrame').src = '';
   document.body.style.overflow = '';
   currentTVItem = null;
+  // Exit fullscreen if active
+  try {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+    else if (document.msExitFullscreen) document.msExitFullscreen();
+  } catch(e) {}
 }
+
+// Auto-hide header/bar when fullscreen - show on mouse move
+let hideTimer;
+document.getElementById('playerModal').addEventListener('mousemove', () => {
+  const header = document.querySelector('.modal-header');
+  const bar = document.getElementById('episodeBar');
+  header.classList.remove('hidden');
+  bar.classList.remove('hidden-bar');
+  clearTimeout(hideTimer);
+  // Only auto-hide if we're in fullscreen
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    hideTimer = setTimeout(() => {
+      header.classList.add('hidden');
+      bar.classList.add('hidden-bar');
+    }, 3000);
+  }
+});
+
+// When entering fullscreen, hide controls after 3s
+document.addEventListener('fullscreenchange', () => {
+  const header = document.querySelector('.modal-header');
+  const bar = document.getElementById('episodeBar');
+  if (document.fullscreenElement) {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      header.classList.add('hidden');
+      bar.classList.add('hidden-bar');
+    }, 3000);
+  } else {
+    // Exiting fullscreen — always show controls
+    header.classList.remove('hidden');
+    bar.classList.remove('hidden-bar');
+    clearTimeout(hideTimer);
+  }
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  const header = document.querySelector('.modal-header');
+  const bar = document.getElementById('episodeBar');
+  if (document.webkitFullscreenElement) {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      header.classList.add('hidden');
+      bar.classList.add('hidden-bar');
+    }, 3000);
+  } else {
+    header.classList.remove('hidden');
+    bar.classList.remove('hidden-bar');
+    clearTimeout(hideTimer);
+  }
+});
 
 // ESC to close
 document.addEventListener('keydown', e => {
@@ -761,6 +900,16 @@ function skeletons(n) {
   </div>`).join('');
 }
 
+function goFullscreen() {
+  const modal = $('playerModal');
+  try {
+    if (modal.requestFullscreen) modal.requestFullscreen();
+    else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+    else if (modal.mozRequestFullScreen) modal.mozRequestFullScreen();
+    else if (modal.msRequestFullscreen) modal.msRequestFullscreen();
+  } catch(e) { console.warn('Fullscreen error:', e); }
+}
+
 function showToast(msg) {
   const t = $('toast'); t.textContent = msg;
   t.classList.add('show');
@@ -792,9 +941,8 @@ loadMain();
 
 <style>
   .mob-tab.active-mob { color: #e8b84b !important; }
-  @media (max-width: 480px) {
+  @media (max-width: 767px) {
     #mobileBottomNav { display: block !important; }
-    main { padding-bottom: 5rem !important; }
   }
 </style>
 
