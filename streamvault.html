@@ -710,17 +710,11 @@ async function renderHero() {
   try {
     const r = await fetch(`${TMDB}/${currentMediaType}/popular?api_key=${TMDB_KEY}&page=1`);
     const d = await r.json();
-    heroData = d.results.filter(m => m.backdrop_path).slice(0, 8);
-    heroIndex = 0;
+    heroData = d.results.filter(m => m.backdrop_path).slice(0, 20);
+    // Pick a random movie — changes each page refresh, stays fixed after
+    heroIndex = Math.floor(Math.random() * heroData.length);
+    clearInterval(heroTimer); // no rotation
     showHeroItem(heroIndex);
-    clearInterval(heroTimer);
-    heroTimer = setInterval(() => {
-      const existingFrame = document.getElementById('heroTrailerFrame');
-      if (existingFrame) existingFrame.remove();
-      $('heroBg').style.opacity = '1';
-      heroIndex = (heroIndex + 1) % heroData.length;
-      showHeroItem(heroIndex);
-    }, 12000);
   } catch(e) { console.error(e); }
 }
 
@@ -784,7 +778,7 @@ async function showHeroItem(i) {
       iframe.style.cssText = `
         position:absolute;top:50%;left:50%;
         width:100vw;height:56.25vw;
-        min-height:100%;min-width:177.78vh;
+        min-height:177.78vw;min-width:100%;
         transform:translate(-50%,-50%);
         z-index:1;pointer-events:none;
         opacity:0;transition:opacity 1s ease;
