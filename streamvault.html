@@ -467,16 +467,44 @@
 <body>
 
 <!-- WELCOME POPUP -->
-<div id="welcomeOverlay" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
-  <div style="background:#111;border:1px solid rgba(232,184,75,0.3);border-radius:16px;padding:3rem 3.5rem;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 0 80px rgba(232,184,75,0.1);">
+<div id="welcomeOverlay" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+  <div style="background:#111;border:1px solid rgba(232,184,75,0.3);border-radius:16px;padding:3rem 3.5rem;max-width:460px;width:90%;text-align:center;box-shadow:0 0 80px rgba(232,184,75,0.1);">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:4px;color:#e8b84b;margin-bottom:0.5rem;">STREAM<span style="color:#f0f0f0">VAULT</span></div>
     <div style="width:48px;height:2px;background:linear-gradient(to right,transparent,#e8b84b,transparent);margin:0 auto 1.75rem;"></div>
-    <p style="font-size:1.05rem;color:#f0f0f0;line-height:1.75;margin-bottom:0.5rem;">Welcome to StreamVault!</p>
-    <p style="font-size:0.95rem;color:rgba(240,240,240,0.7);line-height:1.75;margin-bottom:2rem;">Enjoy the movies and TV shows.</p>
+    <p style="font-size:1.05rem;color:#f0f0f0;line-height:1.75;margin-bottom:0.4rem;">Welcome to StreamVault!</p>
+    <p style="font-size:0.9rem;color:rgba(240,240,240,0.6);line-height:1.75;margin-bottom:1.5rem;">Enjoy the movies and TV shows.</p>
     <p style="font-size:0.85rem;color:#e8b84b;font-style:italic;letter-spacing:1px;margin-bottom:2rem;">— Sincerely, Pita</p>
-    <button onclick="document.getElementById('welcomeOverlay').style.display='none'" style="background:#e8b84b;color:#000;border:none;border-radius:8px;padding:12px 40px;font-size:0.95rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.5px;transition:background 0.2s;" onmouseover="this.style.background='#f5d080'" onmouseout="this.style.background='#e8b84b'">Let's Watch ▶</button>
+    <div style="margin-bottom:0.5rem;">
+      <label style="display:block;font-size:0.7rem;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Invite Code Required</label>
+      <input id="inviteInput" type="password" placeholder="Enter code" maxlength="10"
+        style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 16px;color:#f0f0f0;font-family:'DM Sans',sans-serif;font-size:1.1rem;text-align:center;letter-spacing:6px;outline:none;box-sizing:border-box;"
+        onkeydown="if(event.key==='Enter')checkInvite()">
+    </div>
+    <p id="inviteError" style="color:#e5383b;font-size:0.78rem;margin-bottom:1rem;min-height:20px;"></p>
+    <button onclick="checkInvite()" style="background:#e8b84b;color:#000;border:none;border-radius:8px;padding:13px 0;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:1px;width:100%;">ENTER ▶</button>
   </div>
 </div>
+<script>
+function checkInvite() {
+  var val = document.getElementById('inviteInput').value.trim();
+  var err = document.getElementById('inviteError');
+  var inp = document.getElementById('inviteInput');
+  if (val.toLowerCase() === 'str34m') {
+    var overlay = document.getElementById('welcomeOverlay');
+    overlay.style.transition = 'opacity 0.4s';
+    overlay.style.opacity = '0';
+    setTimeout(function(){ overlay.style.display = 'none'; }, 400);
+  } else {
+    err.textContent = 'Invalid invite code. Try again.';
+    inp.style.borderColor = 'rgba(229,56,59,0.7)';
+    inp.value = '';
+    setTimeout(function(){
+      err.textContent = '';
+      inp.style.borderColor = 'rgba(255,255,255,0.12)';
+    }, 2500);
+  }
+}
+</script>
 
 <!-- NAV -->
 <nav>
