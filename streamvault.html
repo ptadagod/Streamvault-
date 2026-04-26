@@ -71,7 +71,7 @@
   .hero {
     position: relative; height: 92vh; min-height: 600px;
     display: flex; align-items: flex-end; padding: 0 3rem 5rem;
-    overflow: hidden; margin-top: 64px;
+    overflow: hidden; margin-top: 64px; background: #000;
   }
   .hero-bg {
     position: absolute; inset: 0;
@@ -346,6 +346,8 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  
+
   /* ─── DESKTOP (1200px+) ─── */
   @media (min-width: 1200px) {
     nav { padding: 0 4rem; gap: 2rem; height: 68px; }
@@ -485,11 +487,20 @@
   </div>
 </div>
 <script>
+// Check if already authenticated
+(function() {
+  if (localStorage.getItem('sv_auth') === 't0ng4') {
+    var overlay = document.getElementById('welcomeOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+})();
+
 function checkInvite() {
   var val = document.getElementById('inviteInput').value.trim();
   var err = document.getElementById('inviteError');
   var inp = document.getElementById('inviteInput');
   if (val.toLowerCase() === 't0ng4') {
+    localStorage.setItem('sv_auth', 't0ng4');
     var overlay = document.getElementById('welcomeOverlay');
     overlay.style.transition = 'opacity 0.4s';
     overlay.style.opacity = '0';
@@ -530,20 +541,96 @@ function checkInvite() {
 
 <!-- MAIN -->
 <main>
-  <div class="type-tabs">
-    <button class="type-tab active" id="tab-popular" onclick="switchType('popular')">Popular</button>
-    <button class="type-tab" id="tab-top" onclick="switchType('top_rated')">Top Rated</button>
-    <button class="type-tab" id="tab-upcoming" onclick="switchType('upcoming')">Upcoming</button>
+  <!-- MOVIE CATEGORIES (shown only for movies tab) -->
+  <div id="movieCategories">
+    </div>
+
+    <!-- Popular -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">🔥 POPULAR <span>NOW</span></div>
+      </div>
+      <div class="grid" id="grid-popular"><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div><div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div></div>
+    </div>
+
+    <!-- Action -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">💥 <span>ACTION</span></div>
+      </div>
+      <div class="grid" id="grid-action"></div>
+    </div>
+
+    <!-- Drama -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">🎭 <span>DRAMA</span></div>
+      </div>
+      <div class="grid" id="grid-drama"></div>
+    </div>
+
+    <!-- Comedy -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">😂 <span>COMEDY</span></div>
+      </div>
+      <div class="grid" id="grid-comedy"></div>
+    </div>
+
+    <!-- Horror -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">👻 <span>HORROR</span></div>
+      </div>
+      <div class="grid" id="grid-horror"></div>
+    </div>
+
+    <!-- Sci-Fi -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">🚀 SCI-FI & <span>FANTASY</span></div>
+      </div>
+      <div class="grid" id="grid-scifi"></div>
+    </div>
+
+    <!-- Thriller -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">🔪 <span>THRILLER</span></div>
+      </div>
+      <div class="grid" id="grid-thriller"></div>
+    </div>
+
+    <!-- Animation -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">🎨 <span>ANIMATION</span></div>
+      </div>
+      <div class="grid" id="grid-animation"></div>
+    </div>
+
+    <!-- Romance -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">❤️ <span>ROMANCE</span></div>
+      </div>
+      <div class="grid" id="grid-romance"></div>
+    </div>
+
   </div>
 
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title" id="mainSectionTitle">POPULAR <span>MOVIES</span></div>
-    </div>
-    <div class="grid" id="mainGrid">
-      ${Array(12).fill('<div class="card"><div class="card-poster skeleton" style="aspect-ratio:2/3"></div><div class="card-info"><div class="skeleton" style="height:12px;margin-bottom:6px;border-radius:4px"></div><div class="skeleton" style="height:10px;width:60%;border-radius:4px"></div></div></div>').join('')}
+  <!-- TV / TRENDING fallback grid (shown when not on movies tab) -->
+  <div id="genericSection" style="display:none;">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title" id="mainSectionTitle">POPULAR <span>SHOWS</span></div>
+      </div>
+      <div class="grid" id="mainGrid"></div>
     </div>
   </div>
+
+
+
 </main>
 
 <!-- SEARCH OVERLAY -->
@@ -627,11 +714,17 @@ async function renderHero() {
     heroIndex = 0;
     showHeroItem(heroIndex);
     clearInterval(heroTimer);
-    heroTimer = setInterval(() => { heroIndex = (heroIndex + 1) % heroData.length; showHeroItem(heroIndex); }, 8000);
+    heroTimer = setInterval(() => {
+      const existingFrame = document.getElementById('heroTrailerFrame');
+      if (existingFrame) existingFrame.remove();
+      $('heroBg').style.opacity = '1';
+      heroIndex = (heroIndex + 1) % heroData.length;
+      showHeroItem(heroIndex);
+    }, 12000);
   } catch(e) { console.error(e); }
 }
 
-function showHeroItem(i) {
+async function showHeroItem(i) {
   const m = heroData[i];
   if (!m) return;
   const bg = $('heroBg');
@@ -639,8 +732,16 @@ function showHeroItem(i) {
   const title = m.title || m.name;
   const year = (m.release_date || m.first_air_date || '').slice(0, 4);
   const rating = m.vote_average?.toFixed(1);
+  const mt = currentMediaType === 'all' ? (m.media_type || 'movie') : currentMediaType;
 
+  // Set backdrop while trailer loads
   bg.style.backgroundImage = `url(${IMG}original${m.backdrop_path})`;
+  bg.style.opacity = '1';
+
+  // Remove any existing trailer iframe
+  const existingFrame = document.getElementById('heroTrailerFrame');
+  if (existingFrame) existingFrame.remove();
+
   content.innerHTML = `
     <div class="hero-badge">▶ Now Streaming</div>
     <h1 class="hero-title">${title}</h1>
@@ -655,16 +756,44 @@ function showHeroItem(i) {
     </div>
     <p class="hero-overview">${m.overview || 'No overview available.'}</p>
     <div class="hero-actions">
-      <button class="btn-play" onclick="playItem(${m.id}, '${currentMediaType}', '${escStr(title)}', '${year}', '${rating}')">
+      <button class="btn-play" onclick="playItem(${m.id}, '${mt}', '${escStr(title)}', '${year}', '${rating}')">
         <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
         Watch Now
       </button>
-      <button class="btn-info" onclick="playItem(${m.id}, '${currentMediaType}', '${escStr(title)}', '${year}', '${rating}')">
+      <button class="btn-info" onclick="playItem(${m.id}, '${mt}', '${escStr(title)}', '${year}', '${rating}')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2"/><line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2"/></svg>
         More Info
       </button>
     </div>
   `;
+
+  // Fetch trailer key from TMDB
+  try {
+    const vr = await fetch(`${TMDB}/${mt}/${m.id}/videos?api_key=${TMDB_KEY}`);
+    const vd = await vr.json();
+    const trailer = vd.results?.find(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser') && v.official);
+    const fallback = vd.results?.find(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
+    const video = trailer || fallback;
+    if (video) {
+      // Inject YouTube iframe behind the hero content
+      const iframe = document.createElement('iframe');
+      iframe.id = 'heroTrailerFrame';
+      iframe.src = `https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video.key}&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1`;
+      iframe.allow = 'autoplay; fullscreen';
+      iframe.frameBorder = '0';
+      iframe.style.cssText = `
+        position:absolute;top:50%;left:50%;
+        width:100vw;height:56.25vw;
+        min-height:100%;min-width:177.78vh;
+        transform:translate(-50%,-50%);
+        z-index:1;pointer-events:none;
+        opacity:0;transition:opacity 1s ease;
+      `;
+      $('heroSection').insertBefore(iframe, bg.nextSibling);
+      // Fade in after load
+      iframe.onload = () => { setTimeout(() => { iframe.style.opacity = '1'; bg.style.opacity = '0.15'; }, 1000); };
+    }
+  } catch(e) { /* no trailer, backdrop stays */ }
 }
 
 // ── GENRES ─────────────────────────────────────────────
@@ -682,49 +811,114 @@ function getGenreName(id) { return GENRES[id] || ''; }
 // ── TAB SWITCHING ──────────────────────────────────────
 function switchTab(type, el) {
   currentMediaType = type === 'trending' ? 'all' : type;
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
   currentListType = type === 'trending' ? 'trending' : 'popular';
-  renderHero();
-  loadMain();
-  // reset type tabs
+
+  // Update desktop nav tabs
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (el && el.classList && el.classList.contains('nav-tab')) el.classList.add('active');
+
+  // Update mobile bottom nav tabs
+  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active-mob'));
+  const mobMap = { movie: 0, tv: 1, all: 2, trending: 2 };
+  const mobTabs = document.querySelectorAll('.mob-tab');
+  if (mobTabs[mobMap[type] ?? 0]) mobTabs[mobMap[type] ?? 0].classList.add('active-mob');
+
+  // Reset type tabs
   document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
   $('tab-popular').classList.add('active');
+
+  // Clear trailer iframe
+  const existingFrame = document.getElementById('heroTrailerFrame');
+  if (existingFrame) existingFrame.remove();
+  $('heroBg').style.opacity = '1';
+
+  renderHero();
+  loadMain();
 }
 
 function switchType(type) {
   currentListType = type;
-  document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
-  $('tab-' + (type === 'top_rated' ? 'top' : type === 'upcoming' ? 'upcoming' : 'popular')).classList.add('active');
   loadMain();
 }
 
 // ── MAIN GRID ──────────────────────────────────────────
+const MOVIE_GENRES = [
+  { id: 28,    key: 'action',    label: 'action' },
+  { id: 18,    key: 'drama',     label: 'drama' },
+  { id: 35,    key: 'comedy',    label: 'comedy' },
+  { id: 27,    key: 'horror',    label: 'horror' },
+  { id: 878,   key: 'scifi',     label: 'science fiction' },
+  { id: 53,    key: 'thriller',  label: 'thriller' },
+  { id: 16,    key: 'animation', label: 'animation' },
+  { id: 10749, key: 'romance',   label: 'romance' },
+];
+
 async function loadMain() {
+  if (currentMediaType === 'movie') {
+    // Show movie categories, hide generic
+    $('movieCategories').style.display = 'block';
+    $('genericSection').style.display = 'none';
+    loadMovieCategories();
+  } else {
+    // Show generic grid for TV / Trending
+    $('movieCategories').style.display = 'none';
+    $('genericSection').style.display = 'block';
+    loadGenericGrid();
+  }
+}
+
+async function loadMovieCategories() {
+  // Load popular
+  const popEl = $('grid-popular');
+  if (popEl) {
+    popEl.innerHTML = skeletons(12);
+    try {
+      const r = await fetch(`${TMDB}/movie/popular?api_key=${TMDB_KEY}&page=1`);
+      const d = await r.json();
+      renderGrid(popEl, d.results, 'movie');
+    } catch(e) { popEl.innerHTML = ''; }
+  }
+
+  // Load each genre
+  MOVIE_GENRES.forEach(async (genre) => {
+    const el = $('grid-' + genre.key);
+    if (!el) return;
+    el.innerHTML = skeletons(8);
+    try {
+      const r = await fetch(`${TMDB}/discover/movie?api_key=${TMDB_KEY}&with_genres=${genre.id}&sort_by=popularity.desc&page=1`);
+      const d = await r.json();
+      renderGrid(el, d.results.slice(0, 12), 'movie');
+    } catch(e) {
+      el.innerHTML = '<p style="color:var(--muted);padding:1rem">Failed to load.</p>';
+    }
+  });
+}
+
+async function loadGenericGrid() {
   const grid = $('mainGrid');
   const titleEl = $('mainSectionTitle');
+  if (!grid) return;
   grid.innerHTML = skeletons(12);
 
   let url;
   const mt = currentMediaType === 'all' ? 'movie' : currentMediaType;
-  if (currentListType === 'trending') {
-    url = `${TMDB}/trending/${currentMediaType}/week?api_key=${TMDB_KEY}`;
+  if (currentMediaType === 'all') {
+    url = `${TMDB}/trending/movie/week?api_key=${TMDB_KEY}`;
+    titleEl.innerHTML = 'TRENDING <span>NOW</span>';
   } else {
-    url = `${TMDB}/${mt}/${currentListType}?api_key=${TMDB_KEY}&page=1`;
+    url = `${TMDB}/tv/popular?api_key=${TMDB_KEY}&page=1`;
+    titleEl.innerHTML = 'POPULAR <span>SHOWS</span>';
   }
-
-  const label = currentListType === 'popular' ? 'POPULAR' : currentListType === 'top_rated' ? 'TOP RATED' : currentListType === 'upcoming' ? 'UPCOMING' : 'TRENDING';
-  const typeLabel = currentMediaType === 'tv' ? 'SHOWS' : currentMediaType === 'all' ? 'NOW' : 'MOVIES';
-  titleEl.innerHTML = `${label} <span>${typeLabel}</span>`;
-
   try {
     const r = await fetch(url);
     const d = await r.json();
-    renderGrid(grid, d.results, mt);
+    renderGrid(grid, d.results, mt === 'all' ? 'movie' : 'tv');
   } catch(e) {
-    grid.innerHTML = '<p style="color:var(--muted);padding:2rem">Failed to load. Check your connection.</p>';
+    grid.innerHTML = '<p style="color:var(--muted);padding:2rem">Failed to load.</p>';
   }
 }
+
+
 
 function renderGrid(container, items, mediaType) {
   if (!items?.length) { container.innerHTML = '<p style="color:var(--muted);padding:2rem">No results found.</p>'; return; }
@@ -736,7 +930,7 @@ function renderGrid(container, items, mediaType) {
     const safe = escStr(title);
     return `<div class="card" onclick="playItem(${m.id},'${mt}','${safe}','${year}','${rating}')">
       ${m.poster_path ? `<img class="card-poster" src="${IMG}w342${m.poster_path}" alt="${safe}" loading="lazy">` : '<div class="card-poster skeleton"></div>'}
-      ${mt === 'tv' ? '<span class="card-badge">TV</span>' : ''}
+      ${mt === 'tv' ? '<span class="card-badge" style="top:8px;left:auto;right:8px;">TV</span>' : ''}
       <div class="card-overlay">
         <button class="card-play-btn">
           <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
@@ -944,6 +1138,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+
+
 // ── INIT ───────────────────────────────────────────────
 renderHero();
 loadMain();
@@ -952,15 +1148,15 @@ loadMain();
 <!-- MOBILE BOTTOM NAV -->
 <div id="mobileBottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:rgba(9,9,9,0.97);border-top:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(12px);padding:8px 0 env(safe-area-inset-bottom,8px);">
   <div style="display:flex;justify-content:space-around;align-items:center;">
-    <button onclick="switchTab('movie',this)" class="mob-tab active-mob" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#888;font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.5px;padding:4px 12px;cursor:pointer;transition:color 0.2s;">
+    <button onclick="switchTab('movie')" class="mob-tab active-mob" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#888;font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.5px;padding:4px 12px;cursor:pointer;transition:color 0.2s;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 4v16M16 4v16M2 10h20M2 14h20"/></svg>
       Movies
     </button>
-    <button onclick="switchTab('tv',this)" class="mob-tab" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#888;font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.5px;padding:4px 12px;cursor:pointer;transition:color 0.2s;">
+    <button onclick="switchTab('tv')" class="mob-tab" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#888;font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.5px;padding:4px 12px;cursor:pointer;transition:color 0.2s;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
       TV Shows
     </button>
-    <button onclick="switchTab('trending',this)" class="mob-tab" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#888;font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.5px;padding:4px 12px;cursor:pointer;transition:color 0.2s;">
+    <button onclick="switchTab('trending')" class="mob-tab" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#888;font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.5px;padding:4px 12px;cursor:pointer;transition:color 0.2s;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       Trending
     </button>
@@ -975,17 +1171,7 @@ loadMain();
 </style>
 
 <script>
-// Override switchTab to also update mobile bottom nav
-const _origSwitchTab = switchTab;
-function switchTab(type, el) {
-  _origSwitchTab(type, el);
-  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active-mob'));
-  // find matching mob-tab
-  const tabs = document.querySelectorAll('.mob-tab');
-  const map = { movie: 0, tv: 1, trending: 2, all: 2 };
-  const idx = map[type] ?? 0;
-  if (tabs[idx]) tabs[idx].classList.add('active-mob');
-}
+// Mobile nav handled inside switchTab
 </script>
 
 </body>
