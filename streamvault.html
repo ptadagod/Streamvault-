@@ -337,10 +337,18 @@
     color: var(--muted); font-family: 'DM Sans', sans-serif;
     font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;
     transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+    position: relative;
   }
-  .provider-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-  .provider-btn.active { color: #fff; border-color: transparent; }
-  .provider-btn img { width: 20px; height: 20px; border-radius: 4px; object-fit: cover; }
+  .provider-btn:hover { border-color: rgba(255,255,255,0.25); color: var(--text); background: var(--surface2); }
+  .provider-btn.active { 
+    background: #fff; color: #000 !important; 
+    border-color: #fff;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.15);
+  }
+  .provider-btn.active img { filter: none; }
+  .provider-btn img { width: 36px; height: 18px; object-fit: contain; filter: brightness(0) invert(0.5); transition: filter 0.2s; }
+  .provider-btn:hover img { filter: brightness(0) invert(0.85); }
+  .provider-btn.active img { filter: none; }
 
   /* TOAST */
   .toast {
@@ -570,7 +578,7 @@ function checkInvite() {
 <main>
   <!-- PROVIDER FILTER -->
   <div id="providerBar" class="provider-bar">
-    <button class="provider-btn active" style="background:var(--gold);color:#000;" onclick="filterByProvider(null, this)">🎬 All</button>
+    <button class="provider-btn active" onclick="filterByProvider(null, this)">🎬 All</button>
     <button class="provider-btn" onclick="filterByProvider('netflix', this)">
       <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" style="width:40px;height:16px;object-fit:contain;" onerror="this.style.display='none'"> Netflix
     </button>
@@ -602,7 +610,7 @@ function checkInvite() {
   </div>
 
   <!-- MOVIE CATEGORIES (shown only for movies tab) -->
-  <div id="movieCategories">
+  <div id="movieCategories" style="display:none;">
     </div>
 
     <!-- Popular -->
@@ -679,11 +687,47 @@ function checkInvite() {
 
   </div>
 
-  <!-- TV / TRENDING fallback grid (shown when not on movies tab) -->
+  <!-- TV CATEGORIES -->
+  <div id="tvCategories" style="display:none;">
+    <div class="section">
+      <div class="section-header"><div class="section-title">🔥 POPULAR <span>SHOWS</span></div></div>
+      <div class="grid" id="grid-tv-popular"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">💥 <span>ACTION & ADVENTURE</span></div></div>
+      <div class="grid" id="grid-tv-action"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">😂 <span>COMEDY</span></div></div>
+      <div class="grid" id="grid-tv-comedy"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">🎭 <span>DRAMA</span></div></div>
+      <div class="grid" id="grid-tv-drama"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">👻 <span>CRIME & MYSTERY</span></div></div>
+      <div class="grid" id="grid-tv-crime"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">🚀 <span>SCI-FI & FANTASY</span></div></div>
+      <div class="grid" id="grid-tv-scifi"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">🎨 <span>ANIMATION</span></div></div>
+      <div class="grid" id="grid-tv-animation"></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><div class="section-title">📺 <span>REALITY</span></div></div>
+      <div class="grid" id="grid-tv-reality"></div>
+    </div>
+  </div>
+
+  <!-- TRENDING fallback grid -->
   <div id="genericSection" style="display:none;">
     <div class="section">
       <div class="section-header">
-        <div class="section-title" id="mainSectionTitle">POPULAR <span>SHOWS</span></div>
+        <div class="section-title" id="mainSectionTitle">TRENDING <span>NOW</span></div>
       </div>
       <div class="grid" id="mainGrid"></div>
     </div>
@@ -935,9 +979,10 @@ function switchTab(type, el) {
   const mobTabs = document.querySelectorAll('.mob-tab');
   if (mobTabs[mobMap[type] ?? 0]) mobTabs[mobMap[type] ?? 0].classList.add('active-mob');
 
-  // Reset type tabs
+  // Reset type tabs if they exist
   document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
-  $('tab-popular').classList.add('active');
+  const tabPop = $('tab-popular');
+  if (tabPop) tabPop.classList.add('active');
 
   // Clear trailer iframe
   const existingFrame = document.getElementById('heroTrailerFrame');
@@ -980,12 +1025,11 @@ async function filterByProvider(providerId, btn) {
     $('providerView').style.display = 'none';
     $('movieCategories').style.display = currentMediaType === 'movie' ? 'block' : 'none';
     $('genericSection').style.display = currentMediaType !== 'movie' ? 'block' : 'none';
-    btn.style.background = 'var(--gold)'; btn.style.color = '#000';
     return;
   }
 
   const provider = PROVIDERS[providerId];
-  btn.style.background = provider.color; btn.style.color = '#fff'; btn.style.borderColor = provider.color;
+  // active state handled by CSS
 
   $('movieCategories').style.display = 'none';
   $('genericSection').style.display = 'none';
@@ -1019,6 +1063,40 @@ async function filterByProvider(providerId, btn) {
 }
 
 // ── MAIN GRID ──────────────────────────────────────────
+const TV_GENRES = [
+  { id: 10759, key: 'action',    label: 'action & adventure' },
+  { id: 35,    key: 'comedy',    label: 'comedy' },
+  { id: 18,    key: 'drama',     label: 'drama' },
+  { id: 80,    key: 'crime',     label: 'crime' },
+  { id: 10765, key: 'scifi',     label: 'sci-fi & fantasy' },
+  { id: 16,    key: 'animation', label: 'animation' },
+  { id: 10764, key: 'reality',   label: 'reality' },
+];
+
+async function loadTVCategories() {
+  // Popular first
+  const popEl = $('grid-tv-popular');
+  if (popEl) {
+    popEl.innerHTML = skeletons(12);
+    try {
+      const r = await fetch(`${TMDB}/tv/popular?api_key=${TMDB_KEY}&page=1`);
+      const d = await r.json();
+      renderGrid(popEl, d.results, 'tv');
+    } catch(e) { popEl.innerHTML = ''; }
+  }
+  // Genres in parallel
+  TV_GENRES.forEach(async (genre) => {
+    const el = $('grid-tv-' + genre.key);
+    if (!el) return;
+    el.innerHTML = skeletons(8);
+    try {
+      const r = await fetch(`${TMDB}/discover/tv?api_key=${TMDB_KEY}&with_genres=${genre.id}&sort_by=popularity.desc&page=1`);
+      const d = await r.json();
+      renderGrid(el, d.results.slice(0, 12), 'tv');
+    } catch(e) { el.innerHTML = ''; }
+  });
+}
+
 const MOVIE_GENRES = [
   { id: 28,    key: 'action',    label: 'action' },
   { id: 18,    key: 'drama',     label: 'drama' },
@@ -1075,23 +1153,26 @@ async function loadGenericGrid() {
   const grid = $('mainGrid');
   const titleEl = $('mainSectionTitle');
   if (!grid) return;
-  grid.innerHTML = skeletons(12);
 
-  let url;
-  const mt = currentMediaType === 'all' ? 'movie' : currentMediaType;
   if (currentMediaType === 'all') {
-    url = `${TMDB}/trending/movie/week?api_key=${TMDB_KEY}`;
+    // Trending
     titleEl.innerHTML = 'TRENDING <span>NOW</span>';
+    grid.innerHTML = skeletons(12);
+    try {
+      const r = await fetch(`${TMDB}/trending/all/week?api_key=${TMDB_KEY}`);
+      const d = await r.json();
+      renderGrid(grid, d.results, 'movie');
+    } catch(e) { grid.innerHTML = '<p style="color:var(--muted);padding:2rem">Failed to load.</p>'; }
+
   } else {
-    url = `${TMDB}/tv/popular?api_key=${TMDB_KEY}&page=1`;
+    // TV Shows - load multiple genre rows like movies
     titleEl.innerHTML = 'POPULAR <span>SHOWS</span>';
-  }
-  try {
-    const r = await fetch(url);
-    const d = await r.json();
-    renderGrid(grid, d.results, mt === 'all' ? 'movie' : 'tv');
-  } catch(e) {
-    grid.innerHTML = '<p style="color:var(--muted);padding:2rem">Failed to load.</p>';
+    grid.innerHTML = skeletons(12);
+    try {
+      const r = await fetch(`${TMDB}/tv/popular?api_key=${TMDB_KEY}&page=1`);
+      const d = await r.json();
+      renderGrid(grid, d.results, 'tv');
+    } catch(e) { grid.innerHTML = '<p style="color:var(--muted);padding:2rem">Failed to load.</p>'; }
   }
 }
 
