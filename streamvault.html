@@ -343,50 +343,146 @@ img{display:block}
   background:rgba(255,60,92,0.1);
 }
 
-/* ── DETAIL MODAL ── */
-#detail-modal{
+/* ── FULL-SCREEN DETAIL PAGE ── */
+#detail-page{
   position:fixed;inset:0;z-index:800;
-  background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);
+  background:var(--bg);
+  display:none;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+}
+#detail-page.open{display:flex}
+@keyframes dpIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+#detail-page.open > *{animation:dpIn .4s ease both}
+
+/* Hero area */
+.dp-hero{
+  position:relative;width:100%;
+  min-height:56vh;display:flex;align-items:flex-end;
+  flex-shrink:0;overflow:hidden;
+}
+.dp-backdrop{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center 15%;
+  transition:opacity .6s;
+}
+.dp-trailer-wrap{
+  position:absolute;inset:-10%;width:120%;height:120%;
+  pointer-events:none;opacity:0;transition:opacity 1.5s;
+}
+.dp-trailer-wrap.show{opacity:1}
+.dp-trailer-wrap iframe{width:100%;height:100%;border:none}
+.dp-vignette{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to right,rgba(7,7,13,0.92) 0%,rgba(7,7,13,0.4) 60%,rgba(7,7,13,0.1) 100%),
+    linear-gradient(to top,rgba(7,7,13,1) 0%,rgba(7,7,13,0.5) 40%,rgba(7,7,13,0) 70%);
+}
+.dp-hero-content{
+  position:relative;z-index:5;
+  padding:0 52px 48px;max-width:640px;
+}
+.dp-logo{max-height:100px;max-width:360px;object-fit:contain;margin-bottom:16px;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.8))}
+.dp-title{font-family:var(--font-display);font-size:62px;line-height:.95;letter-spacing:2px;margin-bottom:16px;text-shadow:0 4px 24px rgba(0,0,0,0.7)}
+.dp-meta{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.dp-score{background:var(--gold);color:#000;padding:3px 9px;border-radius:5px;font-size:13px;font-weight:700}
+.dp-pill{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(238,238,245,0.85);font-size:12px;padding:3px 10px;border-radius:20px}
+.dp-muted{color:var(--muted);font-size:13px}
+.dp-desc{font-size:15px;line-height:1.65;color:rgba(238,238,245,0.82);margin-bottom:24px;max-width:520px}
+.dp-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* back btn */
+.dp-back{
+  position:fixed;top:18px;left:18px;z-index:820;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(7,7,13,0.75);border:1px solid rgba(255,255,255,0.15);
+  color:#fff;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;backdrop-filter:blur(6px);
+}
+.dp-back:hover{background:var(--accent);border-color:var(--accent)}
+
+/* trailer toggle btn */
+.btn-trailer{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.1);color:#fff;
+  border:1px solid rgba(255,255,255,0.2);
+  padding:13px 24px;border-radius:10px;
+  font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;
+}
+.btn-trailer:hover{background:rgba(255,255,255,0.2)}
+.btn-trailer svg{width:15px;height:15px;fill:currentColor}
+
+/* body sections */
+.dp-body{padding:0 52px 80px;flex:1}
+.dp-section{margin-top:44px}
+.dp-section-title{
+  font-family:var(--font-display);font-size:18px;letter-spacing:1.5px;
+  color:var(--text);margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.dp-section-title::before{content:'';display:inline-block;width:3px;height:18px;background:var(--accent);border-radius:2px}
+
+/* cast row */
+.cast-row{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.cast-row::-webkit-scrollbar{display:none}
+.cast-card{flex-shrink:0;width:100px;text-align:center}
+.cast-avatar{
+  width:80px;height:80px;border-radius:50%;
+  object-fit:cover;background:var(--surface3);
+  margin:0 auto 8px;border:2px solid var(--border2);
+  display:block;
+}
+.cast-name{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:2px}
+.cast-char{font-size:11px;color:var(--muted);line-height:1.3}
+
+/* similar row — reuse h-row */
+.dp-similar-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.dp-similar-row::-webkit-scrollbar{display:none}
+
+/* details table */
+.dp-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;max-width:600px}
+.dp-info-row{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--border)}
+.dp-info-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);font-weight:600}
+.dp-info-value{font-size:14px;color:var(--text)}
+
+/* trailer modal */
+#trailer-modal{
+  position:fixed;inset:0;z-index:1200;
+  background:rgba(0,0,0,0.95);
   display:none;align-items:center;justify-content:center;
-  padding:24px;
 }
-#detail-modal.open{display:flex}
-.detail-card{
-  background:var(--surface);border-radius:16px;
-  width:100%;max-width:820px;max-height:90vh;
-  overflow:hidden;position:relative;
-  display:flex;flex-direction:column;
-  animation:slideUp .3s ease;
+#trailer-modal.open{display:flex}
+.trailer-wrap{position:relative;width:90%;max-width:1000px;aspect-ratio:16/9}
+.trailer-wrap iframe{width:100%;height:100%;border:none;border-radius:10px}
+.trailer-close{
+  position:absolute;top:-44px;right:0;
+  background:none;border:none;color:rgba(255,255,255,0.6);
+  font-size:28px;cursor:pointer;transition:color .2s;
 }
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.detail-backdrop{
-  width:100%;aspect-ratio:16/9;object-fit:cover;
-  flex-shrink:0;background:var(--surface3);
+.trailer-close:hover{color:#fff}
+
+.card-quality-badge{
+  position:absolute;bottom:8px;left:8px;
+  font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 7px;border-radius:4px;line-height:1;
 }
-.detail-backdrop-grad{
-  position:absolute;top:0;left:0;right:0;
-  aspect-ratio:16/9;
-  background:linear-gradient(to top,var(--surface) 0%,transparent 60%);
+.q-hd  { background:#1a8a4a; color:#fff; box-shadow:0 2px 8px rgba(26,138,74,0.5); }
+.q-cam { background:#b34a00; color:#fff; box-shadow:0 2px 8px rgba(179,74,0,0.5); }
+.q-soon{ background:rgba(20,20,35,0.85); color:var(--muted); border:1px solid var(--border2); font-size:9px; }
+
+/* quality in detail hero */
+.dp-quality-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:5px;
+  font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
 }
-.detail-body{padding:24px 28px 28px;overflow-y:auto;flex:1}
-#detail-logo-img{max-height:64px;max-width:280px;object-fit:contain;margin-bottom:12px;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.6))}
-#detail-title-h{font-family:var(--font-display);font-size:38px;letter-spacing:1px;margin-bottom:10px;line-height:1}
-.detail-meta-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.dp-quality-badge.q-hd  { background:#1a8a4a; color:#fff; }
+.dp-quality-badge.q-cam { background:#b34a00; color:#fff; }
+.dp-quality-badge.q-soon{ background:var(--surface3); color:var(--muted); border:1px solid var(--border2); }
 .d-badge{padding:3px 10px;border-radius:5px;font-size:12px;font-weight:600}
 .d-badge-gold{background:var(--gold);color:#000}
 .d-badge-genre{background:var(--surface3);color:var(--text);font-weight:400;border:1px solid var(--border2)}
 .d-badge-year{background:transparent;color:var(--muted);font-weight:400;padding-left:0}
-.detail-desc{font-size:14px;line-height:1.72;color:rgba(238,238,245,0.78);margin-bottom:22px}
-.detail-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.detail-close{
-  position:absolute;top:14px;right:14px;
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(7,7,13,0.75);border:1px solid rgba(255,255,255,0.12);
-  color:#fff;font-size:16px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .2s;z-index:10;line-height:1;
-}
-.detail-close:hover{background:var(--accent)}
 
 /* ── SKELETON ── */
 .skel{
@@ -495,21 +591,51 @@ img{display:block}
   </div>
 </div>
 
-<!-- DETAIL MODAL -->
-<div id="detail-modal" onclick="detailBgClick(event)">
-  <div class="detail-card" id="detail-card">
-    <button class="detail-close" onclick="closeDetail()">✕</button>
-    <div style="position:relative;flex-shrink:0">
-      <img id="detail-backdrop" class="detail-backdrop" src="" alt="">
-      <div class="detail-backdrop-grad"></div>
+<!-- FULL-SCREEN DETAIL PAGE -->
+<div id="detail-page">
+  <button class="dp-back" onclick="closeDetail()" title="Back">&#8592;</button>
+
+  <!-- Hero -->
+  <div class="dp-hero" id="dp-hero">
+    <div class="dp-backdrop" id="dp-backdrop"></div>
+    <div class="dp-trailer-wrap" id="dp-trailer-wrap">
+      <iframe id="dp-trailer-yt" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen referrerpolicy="no-referrer"></iframe>
     </div>
-    <div class="detail-body">
-      <img id="detail-logo-img" src="" alt="" style="display:none">
-      <div id="detail-title-h"></div>
-      <div class="detail-meta-row" id="detail-meta"></div>
-      <div class="detail-desc" id="detail-desc"></div>
-      <div class="detail-actions" id="detail-actions"></div>
+    <div class="dp-vignette"></div>
+    <div class="dp-hero-content">
+      <img class="dp-logo" id="dp-logo" src="" alt="" style="display:none">
+      <div class="dp-title" id="dp-title" style="display:none"></div>
+      <div class="dp-meta" id="dp-meta"></div>
+      <div class="dp-desc" id="dp-desc"></div>
+      <div class="dp-actions" id="dp-actions"></div>
     </div>
+  </div>
+
+  <!-- Body -->
+  <div class="dp-body">
+    <!-- Cast -->
+    <div class="dp-section" id="dp-cast-section" style="display:none">
+      <div class="dp-section-title">Cast</div>
+      <div class="cast-row" id="dp-cast-row"></div>
+    </div>
+    <!-- Details -->
+    <div class="dp-section" id="dp-info-section">
+      <div class="dp-section-title">Details</div>
+      <div class="dp-info-grid" id="dp-info-grid"></div>
+    </div>
+    <!-- Similar -->
+    <div class="dp-section" id="dp-similar-section" style="display:none">
+      <div class="dp-section-title">More Like This</div>
+      <div class="dp-similar-row" id="dp-similar-row"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAILER MODAL (popup player for trailer only) -->
+<div id="trailer-modal" onclick="closeTrailerModal(event)">
+  <div class="trailer-wrap">
+    <button class="trailer-close" onclick="closeTrailerModal()">✕</button>
+    <iframe id="trailer-iframe" frameborder="0" allow="autoplay; fullscreen; encrypted-media" allowfullscreen referrerpolicy="no-referrer"></iframe>
   </div>
 </div>
 
@@ -522,13 +648,13 @@ img{display:block}
     <div id="hero-bg">
       <div id="hero-poster"></div>
       <div id="hero-video-wrap">
-        <iframe id="hero-yt" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        <div id="yt-player-div"></div>
       </div>
     </div>
     <div class="hero-vignette"></div>
     <div class="hero-content">
       <img id="hero-logo-img" src="" alt="" style="display:none">
-      <div id="hero-title-text"></div>
+      <div id="hero-title-text" style="display:none"></div>
       <div class="hero-meta">
         <span class="hero-score" id="hero-score"></span>
         <span class="hero-year" id="hero-year"></span>
@@ -751,7 +877,67 @@ function showToast(msg) {
   window._toast = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ YEAR FILTER INIT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ YOUTUBE PLAYER (fixes error 153)
+let ytPlayer = null;
+let ytReady  = false;
+let ytPendingKey = null;
+
+// Load YouTube IFrame API once
+(function loadYTAPI(){
+  if (window.YT) { ytReady = true; return; }
+  const s = document.createElement('script');
+  s.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(s);
+})();
+
+window.onYouTubeIframeAPIReady = function() {
+  ytReady = true;
+  if (ytPendingKey) { playHeroYT(ytPendingKey); ytPendingKey = null; }
+};
+
+function playHeroYT(key) {
+  if (!ytReady) { ytPendingKey = key; return; }
+  const wrap = document.getElementById('hero-video-wrap');
+
+  if (ytPlayer) {
+    try { ytPlayer.loadVideoById({videoId: key, startSeconds: 0}); }
+    catch(e) { ytPlayer.destroy(); ytPlayer = null; createYTPlayer(key); }
+  } else {
+    createYTPlayer(key);
+  }
+}
+
+function createYTPlayer(key) {
+  // Replace iframe with a div target
+  const wrap = document.getElementById('hero-video-wrap');
+  wrap.innerHTML = '<div id="yt-player-div"></div>';
+  ytPlayer = new YT.Player('yt-player-div', {
+    videoId: key,
+    playerVars: {
+      autoplay: 1, mute: 1, controls: 0, loop: 1,
+      playlist: key, rel: 0, showinfo: 0,
+      modestbranding: 1, iv_load_policy: 3,
+      playsinline: 1, disablekb: 1,
+    },
+    events: {
+      onReady: e => { e.target.mute(); e.target.playVideo(); },
+      onStateChange: e => {
+        if (e.data === YT.PlayerState.PLAYING) {
+          setTimeout(() => document.getElementById('hero-video-wrap').classList.add('show'), 600);
+        }
+      },
+      onError: () => {
+        // Error 153 / 150 = embedding disabled by uploader → silently hide
+        document.getElementById('hero-video-wrap').classList.remove('show');
+      }
+    }
+  });
+  // Style the generated iframe
+  setTimeout(() => {
+    const fi = wrap.querySelector('iframe');
+    if (fi) { fi.style.cssText = 'width:100%;height:100%;border:none;pointer-events:none'; }
+  }, 500);
+}
 function initYears() {
   const y = new Date().getFullYear();
   ['m-year','t-year'].forEach(id => {
@@ -804,25 +990,174 @@ async function runSearch(q) {
   document.getElementById('search-results').innerHTML = items.slice(0,20).map(x => makeCard(x, x.media_type, 'sm')).join('');
 }
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ QUALITY BADGE
+// TMDB release type codes:
+//  1=Premiere 2=Theatrical(limited) 3=Theatrical 4=Digital 5=Physical 6=TV
+// Streaming provider IDs that guarantee HD availability
+const STREAMING_PROVIDERS = new Set([
+  8,    // Netflix
+  337,  // Disney+
+  350,  // Apple TV+
+  9,    // Amazon Prime Video
+  384,  // Max (HBO)
+  15,   // Hulu
+  386,  // Peacock
+  531,  // Paramount+
+  257,  // fuboTV
+  43,   // Starz
+  37,   // Showtime
+  207,  // Shudder
+  387,  // Peacock Premium
+  300,  // Acorn TV
+  444,  // Plex
+  2,    // Apple iTunes (digital purchase = HD)
+  3,    // Google Play Movies
+  10,   // Amazon Video
+  7,    // Vudu
+  192,  // YouTube
+]);
+
+const qualityCache  = {};  // id → { label, cls }
+const providerCache = {};  // id → true/false (is on streaming)
+
+// Hardcoded overrides for titles where TMDB data lags reality
+// (streaming exclusives, direct-to-streaming releases, etc.)
+const QUALITY_OVERRIDES = {
+  980431: { label: 'HD', cls: 'q-hd' }, // Avatar Aang: The Last Airbender (Paramount+)
+};
+
+// Fetch watch/providers and check if any are streaming
+async function fetchIsStreaming(movieId) {
+  if (providerCache[movieId] !== undefined) return providerCache[movieId];
+  try {
+    const d = await tmdb(`/movie/${movieId}/watch/providers`);
+    const regions = Object.values(d?.results || {});
+    for (const region of regions) {
+      const all = [
+        ...(region.flatrate || []),
+        ...(region.rent    || []),
+        ...(region.buy     || []),
+        ...(region.free    || []),
+      ];
+      if (all.some(p => STREAMING_PROVIDERS.has(p.provider_id))) {
+        providerCache[movieId] = true;
+        return true;
+      }
+    }
+    providerCache[movieId] = false;
+    return false;
+  } catch { return false; }
+}
+
+async function fetchDigitalDate(movieId) {
+  try {
+    const d = await tmdb(`/movie/${movieId}/release_dates`);
+    let earliest = null;
+    for (const r of (d?.results || [])) {
+      for (const rel of (r.release_dates || [])) {
+        if (rel.type === 4 || rel.type === 5) {
+          const dt = new Date(rel.release_date);
+          if (!earliest || dt < earliest) earliest = dt;
+        }
+      }
+    }
+    return earliest;
+  } catch { return null; }
+}
+
+function getQualityFromDates(theatricalStr, digitalDate, type) {
+  if (type === 'tv') return { label: 'HD', cls: 'q-hd' };
+  if (!theatricalStr) return null;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const theatrical = new Date(theatricalStr);
+
+  if (theatrical > today) return { label: 'Coming Soon', cls: 'q-soon' };
+
+  if (digitalDate && today >= digitalDate) return { label: 'HD', cls: 'q-hd' };
+  if (digitalDate && today < digitalDate)  return { label: 'CAM', cls: 'q-cam' };
+
+  // No confirmed digital date — use 45-day fallback
+  const daysSince = Math.floor((today - theatrical) / 86400000);
+  return daysSince >= 45
+    ? { label: 'HD',  cls: 'q-hd'  }
+    : { label: 'CAM', cls: 'q-cam' };
+}
+
+// Synchronous best-guess for initial card render
+function getQualitySync(item, type) {
+  if (type === 'tv') return { label: 'HD', cls: 'q-hd' };
+  if (QUALITY_OVERRIDES[item.id]) return QUALITY_OVERRIDES[item.id];
+  if (!item.release_date) return null;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const theatrical = new Date(item.release_date);
+  if (theatrical > today) return { label: 'Coming Soon', cls: 'q-soon' };
+
+  // Already resolved in cache
+  if (qualityCache[item.id]) return qualityCache[item.id];
+
+  // Kick off async enrichment (checks providers first, then dates)
+  enrichQualityAsync(item.id, item.release_date, type);
+
+  // Optimistic default while loading: only show CAM if < 20 days old
+  const daysSince = Math.floor((today - theatrical) / 86400000);
+  return daysSince < 20
+    ? { label: 'CAM', cls: 'q-cam' }
+    : { label: 'HD',  cls: 'q-hd'  };
+}
+
+// Full async enrichment: streaming providers take priority, then real dates
+async function enrichQualityAsync(id, theatricalStr, type) {
+  if (qualityCache[id]) return;
+  if (QUALITY_OVERRIDES[id]) { qualityCache[id] = QUALITY_OVERRIDES[id]; updateQualityBadges(id, QUALITY_OVERRIDES[id]); return; }
+
+  // 1. Check if it's on any streaming platform → immediately HD
+  const isStreaming = await fetchIsStreaming(id);
+  if (isStreaming) {
+    const q = { label: 'HD', cls: 'q-hd' };
+    qualityCache[id] = q;
+    updateQualityBadges(id, q);
+    return;
+  }
+
+  // 2. Not on streaming — check actual digital release date
+  const digitalDate = await fetchDigitalDate(id);
+  const q = getQualityFromDates(theatricalStr, digitalDate, type);
+  if (!q) return;
+  qualityCache[id] = q;
+  updateQualityBadges(id, q);
+}
+
+function updateQualityBadges(id, q) {
+  document.querySelectorAll(`.card-quality-badge[data-id="${id}"]`).forEach(el => {
+    el.className = `card-quality-badge ${q.cls}`;
+    el.textContent = q.label;
+  });
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ CARD FACTORY
 function makeCard(item, type, size='md') {
   const title   = item.title || item.name || '';
   const poster  = I(item.poster_path,'w300');
   const year    = yr(item.release_date || item.first_air_date);
-  const rating  = star(item.vote_average);
   const id      = item.id;
   const inList  = myList.some(x => x.id === id);
-  const safeTitle = title.replace(/\\/g,'\\\\').replace(/`/g,"'").replace(/'/g,"\\'");
+  const safeTitle  = title.replace(/\\/g,'\\\\').replace(/`/g,"'").replace(/'/g,"\\'");
   const safePoster = (poster||'').replace(/'/g,"\\'");
+  const quality    = getQualitySync(item, type);
+  const qualityBadge = quality
+    ? `<div class="card-quality-badge ${quality.cls}" data-id="${id}">${quality.label}</div>` : '';
   return `<div class="card card-w-poster card-${size}" onclick="openDetail(${id},'${type}')">
     ${poster
       ? `<img class="card-poster-img" src="${poster}" alt="${title.replace(/"/g,'&quot;')}" loading="lazy">`
       : `<div class="card-poster-img" style="aspect-ratio:2/3;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);padding:8px;text-align:center">${title}</div>`}
     <div class="card-badge">★ ${item.vote_average ? item.vote_average.toFixed(1) : '?'}</div>
+    ${qualityBadge}
     <button class="card-plus ${inList?'in-list':''}" onclick="event.stopPropagation();cardToggleList(${id},'${type}','${safeTitle}','${safePoster}','${year}',this)">${inList?'✓':'+'}</button>
     <div class="card-overlay">
       <div class="card-ov-title">${title}</div>
-      <div class="card-ov-meta"><span>${year}</span><span>·</span><span>★ ${item.vote_average ? item.vote_average.toFixed(1) : '?'}</span></div>
+      <div class="card-ov-meta"><span>${year}</span><span>·</span><span>★ ${item.vote_average ? item.vote_average.toFixed(1) : '?'}</span>${quality?`<span>·</span><span>${quality.label}</span>`:''}</div>
     </div>
   </div>`;
 }
@@ -884,10 +1219,10 @@ async function setHero(idx, instant) {
     // fade out
     poster.classList.add('fading');
     content.classList.add('fading');
-    // stop video
+    // stop YT player
     const yw = document.getElementById('hero-video-wrap');
     yw.classList.remove('show');
-    document.getElementById('hero-yt').src = '';
+    try { if (ytPlayer) ytPlayer.stopVideo(); } catch {};
     await new Promise(r => setTimeout(r, 500));
   }
 
@@ -907,7 +1242,7 @@ function applyHeroDOM(h) {
   const title = h.title || h.name || '';
   document.getElementById('hero-poster').style.backgroundImage = `url(${I(h.backdrop_path,'original')})`;
   document.getElementById('hero-title-text').textContent = title;
-  document.getElementById('hero-title-text').style.display = 'block';
+  document.getElementById('hero-title-text').style.display = 'none';
   document.getElementById('hero-logo-img').style.display = 'none';
   document.getElementById('hero-score').textContent = '★ ' + (h.vote_average ? h.vote_average.toFixed(1) : 'N/A');
   document.getElementById('hero-year').textContent = yr(h.release_date || h.first_air_date);
@@ -922,17 +1257,24 @@ function applyHeroDOM(h) {
 
 async function loadHeroExtras(h) {
   const thisId = h.id;
-  // logo
+  // logo — wait for it before showing anything
   try {
     const imgs = await tmdb(`/${h._type||'movie'}/${h.id}/images`, {include_image_language:'en,null'});
-    if (heroData.id !== thisId) return; // stale
+    if (heroData.id !== thisId) return;
     const logo = (imgs?.logos||[]).find(x => x.file_path && x.aspect_ratio > 1.3);
     const li = document.getElementById('hero-logo-img');
     if (logo) {
-      li.src = I(logo.file_path,'w500'); li.style.display='block';
-      document.getElementById('hero-title-text').style.display='none';
+      li.src = I(logo.file_path,'w500');
+      li.style.display = 'block';
+      document.getElementById('hero-title-text').style.display = 'none';
+    } else {
+      // No logo available — show text title as fallback only
+      document.getElementById('hero-title-text').style.display = 'block';
     }
-  } catch {}
+  } catch {
+    // On error show text fallback
+    document.getElementById('hero-title-text').style.display = 'block';
+  }
   // runtime
   try {
     const detail = await tmdb(`/${h._type||'movie'}/${h.id}`);
@@ -943,20 +1285,13 @@ async function loadHeroExtras(h) {
       document.getElementById('hero-runtime-dot').style.display = 'inline';
     }
   } catch {}
-  // trailer
+  // trailer via YT API (fixes error 153)
   try {
     const d = await tmdb(`/${h._type||'movie'}/${h.id}/videos`);
     if (heroData.id !== thisId) return;
     const t = (d?.results||[]).find(v => v.type==='Trailer' && v.site==='YouTube')
             || (d?.results||[]).find(v => v.site==='YouTube');
-    if (t) {
-      const iframe = document.getElementById('hero-yt');
-      iframe.src = `https://www.youtube-nocookie.com/embed/${t.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${t.key}&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1`;
-      iframe.onload = () => {
-        if (heroData.id !== thisId) return;
-        setTimeout(() => document.getElementById('hero-video-wrap').classList.add('show'), 2000);
-      };
-    }
+    if (t) playHeroYT(t.key);
   } catch {}
 }
 
@@ -1093,57 +1428,206 @@ async function loadTVGrid() {
   grid.innerHTML = items.length ? items.map(x => makeCard(x,'tv','md')).join('') : '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📺</div>No shows found</div>';
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ DETAIL MODAL
-async function openDetail(id, type) {
-  const modal = document.getElementById('detail-modal');
-  modal.classList.add('open');
-  document.getElementById('detail-backdrop').src = '';
-  document.getElementById('detail-title-h').textContent = 'Loading…';
-  document.getElementById('detail-meta').innerHTML = '';
-  document.getElementById('detail-desc').textContent = '';
-  document.getElementById('detail-actions').innerHTML = '';
-  document.getElementById('detail-logo-img').style.display = 'none';
-  document.getElementById('detail-title-h').style.display = 'block';
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ FULL-SCREEN DETAIL
+let detailTrailerKey = null;
+let detailItem = null;
 
-  const data = await tmdb(`/${type}/${id}`, {append_to_response:'videos'});
+async function openDetail(id, type) {
+  detailItem = {id, type};
+  detailTrailerKey = null;
+
+  const page = document.getElementById('detail-page');
+  page.scrollTop = 0;
+
+  // Reset
+  document.getElementById('dp-backdrop').style.backgroundImage = '';
+  document.getElementById('dp-title').textContent = '';
+  document.getElementById('dp-title').style.display = 'none';
+  document.getElementById('dp-logo').style.display = 'none';
+  document.getElementById('dp-meta').innerHTML = '';
+  document.getElementById('dp-desc').textContent = '';
+  document.getElementById('dp-actions').innerHTML = '';
+  document.getElementById('dp-cast-section').style.display = 'none';
+  document.getElementById('dp-similar-section').style.display = 'none';
+  document.getElementById('dp-info-grid').innerHTML = '';
+  document.getElementById('dp-trailer-wrap').classList.remove('show');
+  document.getElementById('dp-trailer-yt').src = '';
+
+  page.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Fetch main data + credits + similar in parallel
+  const [data, credits, similar, images] = await Promise.all([
+    tmdb(`/${type}/${id}`, {append_to_response:'videos,watch/providers'}),
+    tmdb(`/${type}/${id}/credits`),
+    tmdb(`/${type}/${id}/similar`),
+    tmdb(`/${type}/${id}/images`, {include_image_language:'en,null'})
+  ]);
   if (!data) return;
 
-  const title  = data.title || data.name || '';
-  const year   = yr(data.release_date || data.first_air_date);
-  const genres = (data.genres||[]).map(g => `<span class="d-badge d-badge-genre">${g.name}</span>`).join('');
-  const inList = myList.some(x => x.id === id);
-  const poster = I(data.poster_path,'w300') || '';
-  const safeTitle = title.replace(/\\/g,'\\\\').replace(/`/g,"'").replace(/'/g,"\\'");
-  const safePoster = poster.replace(/'/g,"\\'");
+  // Check still the same item (user may have navigated away)
+  if (detailItem.id !== id) return;
 
-  document.getElementById('detail-backdrop').src = I(data.backdrop_path,'w780') || '';
-  document.getElementById('detail-title-h').textContent = title;
-  document.getElementById('detail-desc').textContent = data.overview || '';
-  document.getElementById('detail-meta').innerHTML = `
-    <span class="d-badge d-badge-gold">★ ${data.vote_average ? data.vote_average.toFixed(1) : 'N/A'}</span>
-    <span class="d-badge d-badge-year">${year}</span>
-    ${data.runtime ? `<span class="d-badge d-badge-year">${data.runtime} min</span>` : ''}
-    ${data.number_of_seasons ? `<span class="d-badge d-badge-year">${data.number_of_seasons} season${data.number_of_seasons>1?'s':''}</span>` : ''}
+  const title   = data.title || data.name || '';
+  const year    = yr(data.release_date || data.first_air_date);
+  const poster  = I(data.poster_path,'w300') || '';
+  const inList  = myList.some(x => x.id === id);
+  const safeTitle  = title.replace(/\\/g,'\\\\').replace(/`/g,"'").replace(/'/g,"\\'");
+  const safePoster = poster.replace(/'/g,"\\'");
+  const rating  = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
+
+  // Backdrop
+  if (data.backdrop_path) {
+    document.getElementById('dp-backdrop').style.backgroundImage = `url(${I(data.backdrop_path,'original')})`;
+  }
+
+  // Logo — show logo if found, only fall back to text title if no logo
+  const logo = (images?.logos||[]).find(x => x.file_path && x.aspect_ratio > 1.3);
+  if (logo) {
+    const li = document.getElementById('dp-logo');
+    li.src = I(logo.file_path,'w500');
+    li.style.display = 'block';
+    document.getElementById('dp-title').style.display = 'none';
+  } else {
+    document.getElementById('dp-title').textContent = title;
+    document.getElementById('dp-title').style.display = 'block';
+  }
+
+  // Quality — overrides first, then streaming providers, then real digital dates
+  let qualityInfo = { label: 'HD', cls: 'q-hd' }; // TV default
+  if (type === 'movie') {
+    if (QUALITY_OVERRIDES[id]) {
+      qualityInfo = QUALITY_OVERRIDES[id];
+    } else if (!data.release_date) {
+      qualityInfo = null;
+    } else {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const theatrical = new Date(data.release_date);
+      if (theatrical > today) {
+        qualityInfo = { label: 'Coming Soon', cls: 'q-soon' };
+      } else {
+        // Check providers from the already-fetched data (append_to_response includes watch/providers)
+        const provRegions = Object.values(data['watch/providers']?.results || {});
+        let onStreaming = false;
+        for (const region of provRegions) {
+          const all = [...(region.flatrate||[]),...(region.rent||[]),...(region.buy||[]),...(region.free||[])];
+          if (all.some(p => STREAMING_PROVIDERS.has(p.provider_id))) { onStreaming = true; break; }
+        }
+        if (onStreaming) {
+          qualityInfo = { label: 'HD', cls: 'q-hd' };
+        } else {
+          const digitalDate = await fetchDigitalDate(id);
+          qualityInfo = getQualityFromDates(data.release_date, digitalDate, type);
+        }
+      }
+    }
+  }
+  if (qualityInfo) qualityCache[id] = qualityInfo;
+
+  // Meta badges
+  const genres = (data.genres||[]).map(g => `<span class="dp-pill">${g.name}</span>`).join('');
+  document.getElementById('dp-meta').innerHTML = `
+    <span class="dp-score">★ ${rating}</span>
+    ${qualityInfo ? `<span class="dp-quality-badge ${qualityInfo.cls}">${qualityInfo.label === 'HD' ? '&#9654; HD' : qualityInfo.label === 'CAM' ? '&#128247; CAM' : '&#9201; ' + qualityInfo.label}</span>` : ''}
+    <span class="dp-muted">${year}</span>
+    ${data.runtime ? `<span class="dp-muted">· ${data.runtime} min</span>` : ''}
+    ${data.number_of_seasons ? `<span class="dp-muted">· ${data.number_of_seasons} Season${data.number_of_seasons>1?'s':''}</span>` : ''}
     ${genres}
   `;
-  document.getElementById('detail-actions').innerHTML = `
-    <button class="btn-play" onclick="openPlayer(${id},'${type}','${safeTitle}');closeDetail()">
-      <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-      Watch Now
-    </button>
-    <button class="btn-plus ${inList?'in-list':''}" id="d-plus" onclick="cardToggleList(${id},'${type}','${safeTitle}','${safePoster}','${year}',this);updateHeroBtn()">${inList?'✓':'+'}</button>
+
+  // Description
+  document.getElementById('dp-desc').textContent = data.overview || '';
+
+  // Trailer key
+  const trailer = (data.videos?.results||[]).find(v => v.type==='Trailer' && v.site==='YouTube')
+               || (data.videos?.results||[]).find(v => v.site==='YouTube');
+  if (trailer) detailTrailerKey = trailer.key;
+
+  const isSoon = qualityInfo?.label === 'Coming Soon';
+  // Actions
+  document.getElementById('dp-actions').innerHTML = `
+    ${isSoon
+      ? `<button class="btn-play" style="opacity:.45;cursor:not-allowed" disabled>&#9201; Coming Soon</button>`
+      : `<button class="btn-play" onclick="openPlayer(${id},'${type}','${safeTitle}')">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          Play Now
+        </button>`
+    }
+    ${detailTrailerKey ? `<button class="btn-trailer" onclick="openTrailerModal()">
+      <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" stroke="currentColor" stroke-width="1.5" fill="currentColor"/></svg>
+      Watch Trailer
+    </button>` : ''}
+    <button class="btn-plus ${inList?'in-list':''}" id="dp-plus-btn" onclick="cardToggleList(${id},'${type}','${safeTitle}','${safePoster}','${year}',this);updateHeroBtn()">${inList?'✓':'+'}</button>
   `;
 
-  // logo
-  try {
-    const imgs = await tmdb(`/${type}/${id}/images`, {include_image_language:'en,null'});
-    const logo = (imgs?.logos||[]).find(x => x.file_path && x.aspect_ratio > 1.2);
-    const li = document.getElementById('detail-logo-img');
-    if (logo) { li.src = I(logo.file_path,'w300'); li.style.display='block'; document.getElementById('detail-title-h').style.display='none'; }
-  } catch {}
+  // Auto-play trailer muted in hero bg
+  if (detailTrailerKey) {
+    const iframe = document.getElementById('dp-trailer-yt');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${detailTrailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${detailTrailerKey}&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&playsinline=1`;
+    iframe.onload = () => {
+      if (detailItem.id !== id) return;
+      setTimeout(() => document.getElementById('dp-trailer-wrap').classList.add('show'), 2200);
+    };
+  }
+
+  // Cast
+  const cast = (credits?.cast||[]).filter(c => c.profile_path).slice(0,20);
+  if (cast.length) {
+    document.getElementById('dp-cast-section').style.display = 'block';
+    document.getElementById('dp-cast-row').innerHTML = cast.map(c => `
+      <div class="cast-card" onclick="void(0)">
+        <img class="cast-avatar" src="${I(c.profile_path,'w185')}" alt="${c.name}" loading="lazy">
+        <div class="cast-name">${c.name}</div>
+        <div class="cast-char">${(c.character||'').split('/')[0].trim()}</div>
+      </div>`).join('');
+  }
+
+  // Info grid
+  const director = (credits?.crew||[]).find(c => c.job==='Director');
+  const creator  = (data.created_by||[])[0];
+  const infoPairs = [
+    director ? ['Director', director.name] : null,
+    creator  ? ['Creator',  creator.name]  : null,
+    data.status           ? ['Status',   data.status]           : null,
+    data.original_language? ['Language', data.original_language.toUpperCase()] : null,
+    data.budget > 0       ? ['Budget',   '$' + (data.budget/1e6).toFixed(0)+'M'] : null,
+    data.revenue > 0      ? ['Revenue',  '$' + (data.revenue/1e6).toFixed(0)+'M'] : null,
+    data.vote_count       ? ['Votes',    data.vote_count.toLocaleString()] : null,
+    data.popularity       ? ['Popularity', data.popularity.toFixed(0)] : null,
+  ].filter(Boolean);
+  document.getElementById('dp-info-grid').innerHTML = infoPairs.map(([k,v]) =>
+    `<div class="dp-info-row"><div class="dp-info-label">${k}</div><div class="dp-info-value">${v}</div></div>`
+  ).join('');
+
+  // Similar
+  const simItems = (similar?.results||[]).filter(x => x.poster_path).slice(0,20);
+  if (simItems.length) {
+    document.getElementById('dp-similar-section').style.display = 'block';
+    document.getElementById('dp-similar-row').innerHTML = simItems.map(x => makeCard(x, type, 'md')).join('');
+  }
 }
-function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
-function detailBgClick(e) { if (e.target === document.getElementById('detail-modal')) closeDetail(); }
+
+function closeDetail() {
+  document.getElementById('detail-page').classList.remove('open');
+  document.getElementById('dp-trailer-wrap').classList.remove('show');
+  document.getElementById('dp-trailer-yt').src = '';
+  document.body.style.overflow = '';
+  detailItem = null;
+}
+
+// Trailer popup modal (with sound/controls)
+function openTrailerModal() {
+  if (!detailTrailerKey) return;
+  document.getElementById('trailer-modal').classList.add('open');
+  document.getElementById('trailer-iframe').src =
+    `https://www.youtube-nocookie.com/embed/${detailTrailerKey}?autoplay=1&rel=0&modestbranding=1`;
+}
+function closeTrailerModal(e) {
+  if (e && e.target !== document.getElementById('trailer-modal')) return;
+  document.getElementById('trailer-modal').classList.remove('open');
+  document.getElementById('trailer-iframe').src = '';
+}
+function detailBgClick(){} // kept for compat
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PLAYER
 async function openPlayer(id, type, title) {
@@ -1229,7 +1713,10 @@ function closePlayer() {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ KEYBOARD
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    closePlayer(); closeDetail(); closeSearch();
+    if (document.getElementById('trailer-modal').classList.contains('open')) { closeTrailerModal(); return; }
+    if (document.getElementById('player-modal').classList.contains('open')) { closePlayer(); return; }
+    if (document.getElementById('detail-page').classList.contains('open')) { closeDetail(); return; }
+    closeSearch();
   }
 });
 
