@@ -2,7 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script>
+(function(){
+  var ua=navigator.userAgent||'';
+  var isTV=(
+    /GoogleTV|Android TV|Chromecast|BRAVIA|SMART-TV|SmartTV|HbbTV|Tizen|WebOS|NetCast|PHILIPS|VIZIO|Roku/i.test(ua)||
+    (window.screen&&window.screen.width>=1920&&navigator.maxTouchPoints===0)||
+    (window.screen&&window.screen.width>=1280&&/Android/i.test(ua)&&navigator.maxTouchPoints===0)
+  );
+  if(isTV)document.documentElement.classList.add('tv-mode');
+  window._isTV=!!isTV;
+})();
+</script>
 <title>StreamVault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -544,9 +556,548 @@ img{display:block}
 }
 .ep-select{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:6px 12px;border-radius:7px;font-size:13px;cursor:pointer;outline:none}
 .ep-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+
+/* ══════════════════════════════════════════
+   MOBILE  (≤ 768px)
+══════════════════════════════════════════ */
+@media (max-width:768px){
+  :root{ --nav-h:58px; }
+
+  /* Nav */
+  #nav{ padding:0 16px; gap:8px; }
+  .logo{ font-size:20px; letter-spacing:2px; }
+  .nav-pills{ gap:1px; }
+  .nav-pill{ padding:6px 14px; font-size:12px; }
+  .icon-btn{ width:34px; height:34px; }
+  .icon-btn svg{ width:15px; height:15px; }
+
+  /* Hero */
+  #hero{ height:75vh; min-height:480px; }
+  .hero-content{ padding:0 20px 52px; max-width:100%; }
+  #hero-title-text{ font-size:38px; }
+  #hero-desc{ font-size:13px; -webkit-line-clamp:2; }
+  .hero-meta{ gap:6px; }
+  .hero-genre{ font-size:11px; padding:2px 8px; }
+  .btn-play{ padding:11px 22px; font-size:14px; }
+  .btn-more{ padding:11px 18px; font-size:14px; }
+  .btn-plus{ width:40px; height:40px; font-size:20px; }
+  .hero-actions{ gap:8px; }
+  .hero-nav-btns{ right:16px; bottom:60px; }
+  #hero-logo-img{ max-height:70px; max-width:220px; }
+
+  /* Sections */
+  .section{ padding:24px 0 6px; }
+  .section-head{ padding:0 16px; margin-bottom:12px; }
+  .section-title{ font-size:16px; }
+  .h-row{ padding:4px 16px 16px; gap:10px; }
+
+  /* Cards */
+  .card-sm{ width:110px; }
+  .card-md{ width:130px; }
+  .card-lg{ width:148px; }
+  .card-wide-md{ width:190px; }
+  .card-wide-lg{ width:220px; }
+  .cw-card{ width:210px; }
+
+  /* Filter bar */
+  .filter-bar{ padding:12px 16px; gap:8px; }
+  .fselect{ font-size:12px; padding:6px 28px 6px 10px; }
+
+  /* Grid */
+  .grid-view{ padding:16px 16px 48px; gap:10px;
+    grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
+
+  /* Detail page */
+  .dp-hero{ min-height:50vh; }
+  .dp-hero-content{ padding:0 20px 32px; max-width:100%; }
+  .dp-title{ font-size:38px; }
+  .dp-desc{ font-size:13px; max-width:100%; }
+  .dp-actions{ gap:8px; }
+  .dp-body{ padding:0 16px 60px; }
+  .dp-section{ margin-top:28px; }
+  .dp-info-grid{ grid-template-columns:1fr 1fr; gap:8px 16px; }
+
+  /* Player */
+  .player-topbar{ padding:10px 16px; }
+  .player-sources{ padding:8px 16px; gap:6px; flex-wrap:wrap; }
+  .src-btn{ padding:6px 12px; font-size:12px; }
+
+  /* Search */
+  #search-overlay{ padding:0 16px; }
+  #search-input{ font-size:18px; }
+  #search-results{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
+
+  /* Toast */
+  #toast{ font-size:13px; padding:10px 18px; bottom:20px; }
+
+  /* Hide hover overlays on touch */
+  .card-overlay{ opacity:1; background:linear-gradient(to top,rgba(7,7,13,0.85) 0%,transparent 60%); }
+  .card-plus{ opacity:1; }
+  .cw-play-overlay{ opacity:1; }
+}
+
+/* ══════════════════════════════════════════
+   TV BROWSER  (large screen, pointer:none / coarse)
+   Google TV / Android TV / smart TV browsers
+   Detected via .tv-mode class on <html>
+══════════════════════════════════════════ */
+html.tv-mode,
+@media (min-width:1280px) and (pointer:coarse),
+@media (min-width:1280px) and (hover:none) {
+  /* intentional empty — rules below */
+}
+
+html.tv-mode {
+  --nav-h:80px;
+  font-size:18px;
+}
+
+/* Nav — bigger targets */
+html.tv-mode #nav{ padding:0 60px; }
+html.tv-mode .logo{ font-size:32px; letter-spacing:5px; }
+html.tv-mode .nav-pill{ padding:10px 30px; font-size:16px; }
+html.tv-mode .icon-btn{ width:52px; height:52px; }
+html.tv-mode .icon-btn svg{ width:22px; height:22px; }
+
+/* Hero — cinematic */
+html.tv-mode #hero{ height:100vh; }
+html.tv-mode .hero-content{ padding:0 80px 100px; max-width:680px; }
+html.tv-mode #hero-title-text{ font-size:88px; }
+html.tv-mode #hero-desc{ font-size:17px; -webkit-line-clamp:4; }
+html.tv-mode .btn-play{ padding:18px 40px; font-size:18px; border-radius:12px; }
+html.tv-mode .btn-more{ padding:18px 34px; font-size:18px; border-radius:12px; }
+html.tv-mode .btn-plus{ width:58px; height:58px; font-size:28px; }
+html.tv-mode .hero-nav-btns{ right:60px; bottom:110px; }
+html.tv-mode .hero-nav-btn{ width:56px; height:56px; font-size:28px; }
+html.tv-mode .hero-dot-btn{ width:10px; height:10px; }
+html.tv-mode .hero-dot-btn.active{ width:30px; }
+html.tv-mode #hero-logo-img{ max-height:140px; max-width:480px; }
+
+/* Sections */
+html.tv-mode .section{ padding:48px 0 12px; }
+html.tv-mode .section-head{ padding:0 60px; margin-bottom:22px; }
+html.tv-mode .section-title{ font-size:26px; }
+html.tv-mode .h-row{ padding:4px 60px 28px; gap:18px; }
+
+/* Cards — bigger, no hover scale (remote nav) */
+html.tv-mode .card-sm{ width:180px; }
+html.tv-mode .card-md{ width:210px; }
+html.tv-mode .card-lg{ width:240px; }
+html.tv-mode .card-wide-md{ width:320px; }
+html.tv-mode .card-wide-lg{ width:380px; }
+html.tv-mode .cw-card{ width:340px; }
+
+/* Show overlays always (no hover on remote) */
+html.tv-mode .card-overlay{ opacity:1; }
+html.tv-mode .card-plus{ opacity:1; width:36px; height:36px; font-size:20px; }
+html.tv-mode .cw-play-overlay{ opacity:1; }
+html.tv-mode .cw-play-circle{ width:60px; height:60px; }
+html.tv-mode .cw-play-circle svg{ width:24px; height:24px; }
+
+/* Focus ring for D-pad navigation */
+html.tv-mode .card:focus,
+html.tv-mode button:focus,
+html.tv-mode select:focus,
+html.tv-mode .nav-pill:focus{
+  outline:3px solid var(--accent);
+  outline-offset:3px;
+  box-shadow:0 0 0 6px rgba(255,60,92,0.25);
+}
+html.tv-mode .card:focus{ transform:scale(1.06) translateY(-4px); z-index:10;
+  box-shadow:0 0 0 4px var(--accent), 0 20px 60px rgba(0,0,0,0.8); }
+
+/* Filter bar */
+html.tv-mode .filter-bar{ padding:24px 60px; gap:16px; }
+html.tv-mode .fselect{ font-size:16px; padding:10px 36px 10px 16px; border-radius:10px; }
+
+/* Grid */
+html.tv-mode .grid-view{ padding:32px 60px 80px; gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+
+/* Detail page */
+html.tv-mode .dp-hero{ min-height:65vh; }
+html.tv-mode .dp-hero-content{ padding:0 80px 64px; max-width:780px; }
+html.tv-mode .dp-title{ font-size:80px; }
+html.tv-mode .dp-desc{ font-size:17px; max-width:640px; }
+html.tv-mode .btn-trailer{ padding:16px 30px; font-size:17px; }
+html.tv-mode .dp-body{ padding:0 80px 100px; }
+html.tv-mode .dp-section{ margin-top:56px; }
+html.tv-mode .dp-section-title{ font-size:24px; margin-bottom:24px; }
+html.tv-mode .cast-avatar{ width:100px; height:100px; }
+html.tv-mode .cast-card{ width:120px; }
+html.tv-mode .cast-name{ font-size:14px; }
+html.tv-mode .cast-char{ font-size:12px; }
+html.tv-mode .dp-info-grid{ grid-template-columns:repeat(3,1fr); gap:16px 48px; max-width:100%; }
+html.tv-mode .dp-info-value{ font-size:17px; }
+
+/* Player */
+html.tv-mode .player-topbar{ padding:18px 36px; }
+html.tv-mode .player-title-text{ font-size:24px; }
+html.tv-mode .player-close-btn{ font-size:34px; }
+html.tv-mode .player-sources{ padding:16px 36px; gap:12px; }
+html.tv-mode .src-btn{ padding:10px 22px; font-size:16px; border-radius:10px; }
+html.tv-mode .ep-selector{ padding:14px 36px; gap:14px; }
+html.tv-mode .ep-select{ padding:10px 16px; font-size:16px; border-radius:10px; }
+html.tv-mode .ep-label{ font-size:14px; }
+
+/* Search */
+html.tv-mode #search-overlay{ padding:0 60px; }
+html.tv-mode .search-header{ padding:30px 0 26px; }
+html.tv-mode #search-input{ font-size:32px; }
+html.tv-mode .search-close{ font-size:28px; }
+html.tv-mode #search-results{ grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:20px; padding:36px 0; }
+
+/* Toast — readable from couch */
+html.tv-mode #toast{ font-size:18px; padding:16px 32px; border-radius:12px; bottom:48px; }
+
+/* D-pad keyboard nav helper */
+html.tv-mode [tabindex="-1"]{ display:none; }
+
+/* ── PROVIDER LOGOS ── */
+.provider-title{ align-items:center; min-height:32px; }
+.provider-logo{
+  height:32px;
+  width:auto;
+  max-width:160px;
+  object-fit:contain;
+  opacity:0.9;
+  transition:opacity .2s;
+  border-radius:6px;
+}
+.provider-logo:hover{ opacity:1; }
+.provider-logo-fallback{
+  font-family:var(--font-display);
+  font-size:20px;
+  letter-spacing:1.5px;
+  opacity:0.9;
+}
+.provider-logo-name{ opacity:0.9; }
+html.tv-mode .provider-logo{ height:42px; max-width:200px; }
+html.tv-mode .provider-logo-fallback{ font-size:26px; }
+@media(max-width:768px){ .provider-logo{ height:24px; max-width:120px; } .provider-logo-fallback{ font-size:16px; } }
+
+/* ── LOADING SCREEN ── */
+#sv-loader{
+  position:fixed;inset:0;z-index:9999;
+  background:#07070d;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;
+  overflow:hidden;
+}
+#sv-collage{
+  position:absolute;inset:0;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:3px;
+  opacity:0;
+  animation:svCollageFade .6s ease .1s both;
+}
+@keyframes svCollageFade{ to{opacity:1} }
+.sv-collage-img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:brightness(.5) saturate(.75);
+}
+#sv-collage-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, rgba(7,7,13,0.1) 0%, rgba(7,7,13,0.6) 65%, rgba(7,7,13,0.92) 100%);
+}
+#sv-loader-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+}
+#sv-loader.hidden{
+  opacity:0;transition:opacity .5s ease .2s;pointer-events:none;
+}
+#sv-loader.gone{ display:none; }
+
+/* SV monogram */
+.sv-mono{
+  font-family:var(--font-display);
+  font-size:72px;
+  letter-spacing:6px;
+  background:linear-gradient(120deg,#ff3c5c,#ff7043);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  opacity:0;
+  animation:svPop .5s cubic-bezier(.34,1.56,.64,1) .2s both;
+}
+@keyframes svPop{
+  from{opacity:0;transform:scale(.6)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* Full wordmark that spells out from center */
+.sv-wordmark{
+  font-family:var(--font-display);
+  font-size:52px;
+  letter-spacing:10px;
+  color:var(--text);
+  margin-top:18px;
+  display:flex;
+  overflow:hidden;
+  opacity:0;
+  animation:svWordFadeIn .3s ease .95s both;
+}
+@keyframes svWordFadeIn{ to{opacity:1} }
+
+/* Each letter animates from center outward */
+.sv-letter{
+  display:inline-block;
+  opacity:0;
+  transform:scale(.5);
+}
+/* Letters left of center slide left, right slide right */
+.sv-letter.from-left{
+  animation:svLetterLeft .45s cubic-bezier(.34,1.2,.64,1) both;
+}
+.sv-letter.from-right{
+  animation:svLetterRight .45s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes svLetterLeft{
+  from{opacity:0;transform:translateX(40px) scale(.7)}
+  to{opacity:1;transform:translateX(0) scale(1)}
+}
+@keyframes svLetterRight{
+  from{opacity:0;transform:translateX(-40px) scale(.7)}
+  to{opacity:1;transform:translateX(0) scale(1)}
+}
+
+/* Tagline */
+.sv-line{
+  width:0;height:2px;
+  background:linear-gradient(to right,#ff3c5c,#ff7043);
+  border-radius:2px;
+  margin-top:20px;
+  animation:svLine .5s ease 1.3s both;
+}
+@keyframes svLine{
+  from{width:0;opacity:0}
+  to{width:120px;opacity:1}
+}
+
+/* ── INVITE GATE ── */
+#invite-gate{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(7,7,13,0.97);
+  backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;
+  animation:igFadeIn .4s ease both;
+}
+@keyframes igFadeIn{from{opacity:0}to{opacity:1}}
+#invite-gate.hiding{animation:igFadeOut .5s ease both}
+@keyframes igFadeOut{from{opacity:1}to{opacity:0}}
+#invite-gate.gone{display:none}
+
+.ig-box{
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:52px 48px;
+  max-width:440px;
+  width:90%;
+  text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,0.6);
+  animation:igBoxUp .5s cubic-bezier(.34,1.2,.64,1) .1s both;
+}
+@keyframes igBoxUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+.ig-logo{
+  font-family:var(--font-display);
+  font-size:30px;letter-spacing:5px;
+  background:linear-gradient(120deg,#ff3c5c,#ff7043);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:24px;
+}
+.ig-title{
+  font-family:var(--font-display);
+  font-size:26px;letter-spacing:2px;
+  color:var(--text);margin-bottom:10px;
+}
+.ig-sub{
+  font-size:14px;color:var(--muted);
+  line-height:1.6;margin-bottom:32px;
+}
+.ig-input-wrap{
+  position:relative;margin-bottom:14px;
+}
+#ig-input{
+  width:100%;
+  background:var(--surface2);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;
+  padding:15px 20px;
+  font-size:16px;
+  font-family:var(--font);
+  color:var(--text);
+  outline:none;
+  text-align:center;
+  letter-spacing:2px;
+  transition:border-color .2s;
+}
+#ig-input::placeholder{color:var(--muted2);letter-spacing:1px}
+#ig-input:focus{border-color:rgba(255,255,255,0.25)}
+#ig-input.error{border-color:var(--accent);animation:igShake .35s ease}
+@keyframes igShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+}
+.ig-err{
+  font-size:12px;color:var(--accent);
+  min-height:18px;margin-bottom:10px;
+  opacity:0;transition:opacity .2s;
+}
+.ig-err.show{opacity:1}
+#ig-btn{
+  width:100%;
+  background:var(--accent);
+  color:#fff;border:none;
+  border-radius:12px;
+  padding:15px;
+  font-size:16px;font-weight:600;
+  font-family:var(--font);
+  cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 4px 20px rgba(255,60,92,0.35);
+}
+#ig-btn:hover{background:#e02444;transform:translateY(-1px);box-shadow:0 8px 28px rgba(255,60,92,0.5)}
+#ig-btn:active{transform:translateY(0)}
+.ig-lock{font-size:32px;margin-bottom:20px}
 </style>
 </head>
 <body>
+
+<!-- INVITE GATE -->
+<div id="invite-gate" style="display:none">
+  <div class="ig-box">
+    <div class="ig-logo">STREAMVAULT</div>
+    <div class="ig-lock">🔒</div>
+    <div class="ig-title">MEMBERS ONLY</div>
+    <div class="ig-sub">Enter your invite code to unlock access to StreamVault.</div>
+    <div class="ig-input-wrap">
+      <input id="ig-input" type="text" placeholder="Enter invite code" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="ig-err" id="ig-err">Invalid invite code. Try again.</div>
+    <button id="ig-btn" onclick="igSubmit()">Unlock Access</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const INVITE_CODE = 'str34mv4u1t';
+  const STORAGE_KEY = 'sv_access';
+
+  function igShow() {
+    const gate = document.getElementById('invite-gate');
+    gate.style.display = 'flex';
+  }
+
+  function igHide() {
+    const gate = document.getElementById('invite-gate');
+    gate.classList.add('hiding');
+    setTimeout(() => gate.classList.add('gone'), 500);
+  }
+
+  window.igSubmit = function() {
+    const input = document.getElementById('ig-input');
+    const err   = document.getElementById('ig-err');
+    const val   = input.value.trim().toLowerCase();
+
+    if (val === INVITE_CODE) {
+      localStorage.setItem(STORAGE_KEY, '1');
+      input.classList.remove('error');
+      err.classList.remove('show');
+      igHide();
+    } else {
+      input.classList.add('error');
+      err.classList.add('show');
+      setTimeout(() => input.classList.remove('error'), 400);
+      input.value = '';
+      input.focus();
+    }
+  };
+
+  // Allow Enter key to submit
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('ig-input');
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') igSubmit();
+    });
+  });
+
+  // igShow will be called by the loader after it finishes
+  window._igShouldShow = !localStorage.getItem(STORAGE_KEY);
+})();
+</script>
+
+
+<!-- LOADING SCREEN -->
+<div id="sv-loader">
+  <div id="sv-collage"></div>
+  <div id="sv-collage-vignette"></div>
+  <div id="sv-loader-content">
+    <div class="sv-mono">SV</div>
+    <div class="sv-wordmark" id="sv-wordmark"></div>
+    <div class="sv-line"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ── Letter animation ──
+  const word = 'STREAMVAULT';
+  const mid  = Math.floor(word.length / 2);
+  const el   = document.getElementById('sv-wordmark');
+  const baseDelay = 0.9;
+  word.split('').forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'sv-letter ' + (i < mid ? 'from-left' : 'from-right');
+    span.textContent = ch;
+    const dist = Math.abs(i - mid);
+    span.style.animationDelay = (baseDelay + dist * 0.06) + 's';
+    el.appendChild(span);
+  });
+
+  // ── Collage: fetch 15 trending movie posters and fill grid ──
+  const collage = document.getElementById('sv-collage');
+  const TMDB_KEY = 'e7e658fd82cc0dd5ffd5cb4949f45b2c';
+  fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${TMDB_KEY}`)
+    .then(r => r.json())
+    .then(d => {
+      const posters = (d.results || []).filter(x => x.poster_path).slice(0, 18);
+      // Fill 15 cells (5 cols × 3 rows)
+      posters.forEach(m => {
+        const img = document.createElement('img');
+        img.className = 'sv-collage-img';
+        img.src = `https://image.tmdb.org/t/p/w342${m.poster_path}`;
+        img.alt = '';
+        img.loading = 'eager';
+        collage.appendChild(img);
+      });
+      // If fewer than 15, duplicate to fill gaps
+      const need = 18 - posters.length;
+      for (let i = 0; i < need; i++) {
+        const clone = collage.children[i % collage.children.length].cloneNode();
+        collage.appendChild(clone);
+      }
+    })
+    .catch(() => {}); // silently fail — collage just stays dark
+
+  // ── Hide loader, then show invite gate if needed ──
+  setTimeout(() => {
+    const loader = document.getElementById('sv-loader');
+    loader.classList.add('hidden');
+    setTimeout(() => {
+      loader.classList.add('gone');
+      if (window._igShouldShow) igShow();
+    }, 750);
+  }, 4000);
+})();
+</script>
+
 
 <!-- NAV -->
 <nav id="nav">
@@ -708,45 +1259,48 @@ img{display:block}
   </div>
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <span style="display:inline-block;width:22px;height:14px;background:#e50914;border-radius:2px;font-size:0;margin-right:4px;vertical-align:middle"></span>
-        On Netflix
+      <div class="section-title provider-title" id="logo-netflix">
+        <span class="provider-logo-fallback" style="color:#e50914">Netflix</span>
       </div>
     </div>
     <div class="h-row" id="row-netflix"></div>
   </div>
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <span style="display:inline-block;width:22px;height:14px;background:#006e99;border-radius:2px;font-size:0;margin-right:4px;vertical-align:middle"></span>
-        On Disney+
+      <div class="section-title provider-title" id="logo-disney">
+        <span class="provider-logo-fallback" style="color:#006e99">Disney+</span>
       </div>
     </div>
     <div class="h-row" id="row-disney"></div>
   </div>
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <span style="display:inline-block;width:22px;height:14px;background:#1c1c1e;border:1px solid rgba(255,255,255,0.2);border-radius:2px;font-size:0;margin-right:4px;vertical-align:middle"></span>
-        On Apple TV+
+      <div class="section-title provider-title" id="logo-apple">
+        <span class="provider-logo-fallback" style="color:#fff">Apple TV+</span>
       </div>
     </div>
     <div class="h-row" id="row-apple"></div>
   </div>
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <span style="display:inline-block;width:22px;height:14px;background:#00a8e0;border-radius:2px;font-size:0;margin-right:4px;vertical-align:middle"></span>
-        On Prime Video
+      <div class="section-title provider-title" id="logo-prime">
+        <span class="provider-logo-fallback" style="color:#00a8e0">Prime Video</span>
       </div>
     </div>
     <div class="h-row" id="row-prime"></div>
   </div>
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <span style="display:inline-block;width:22px;height:14px;background:#5822b4;border-radius:2px;font-size:0;margin-right:4px;vertical-align:middle"></span>
-        On Max
+      <div class="section-title provider-title" id="logo-hulu">
+        <span class="provider-logo-fallback" style="color:#1ce783">Hulu</span>
+      </div>
+    </div>
+    <div class="h-row" id="row-hulu"></div>
+  </div>
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title provider-title" id="logo-max">
+        <span class="provider-logo-fallback" style="color:#8a2be2">Max</span>
       </div>
     </div>
     <div class="h-row" id="row-hbo"></div>
@@ -914,8 +1468,8 @@ function createYTPlayer(key) {
   ytPlayer = new YT.Player('yt-player-div', {
     videoId: key,
     playerVars: {
-      autoplay: 1, mute: 1, controls: 0, loop: 1,
-      playlist: key, rel: 0, showinfo: 0,
+      autoplay: 1, mute: 1, controls: 0, loop: 0,
+      rel: 0, showinfo: 0,
       modestbranding: 1, iv_load_policy: 3,
       playsinline: 1, disablekb: 1,
     },
@@ -923,12 +1477,20 @@ function createYTPlayer(key) {
       onReady: e => { e.target.mute(); e.target.playVideo(); },
       onStateChange: e => {
         if (e.data === YT.PlayerState.PLAYING) {
+          // Pause interval-based timer while video plays
+          clearInterval(heroTimer); heroTimer = null;
           setTimeout(() => document.getElementById('hero-video-wrap').classList.add('show'), 600);
+        }
+        if (e.data === YT.PlayerState.ENDED) {
+          // Video finished — advance to next hero item
+          document.getElementById('hero-video-wrap').classList.remove('show');
+          heroNav(1);
         }
       },
       onError: () => {
-        // Error 153 / 150 = embedding disabled by uploader → silently hide
+        // Error 153 / 150 = embedding disabled by uploader → fall back to timed rotation
         document.getElementById('hero-video-wrap').classList.remove('show');
+        if (!heroTimer) heroTimer = setInterval(() => heroNav(1), HERO_INTERVAL);
       }
     }
   });
@@ -1191,6 +1753,10 @@ function updateHeroDots() {
 
 function startHeroTimer() {
   clearInterval(heroTimer);
+  // If a YT video is currently playing, let it run to completion first
+  try {
+    if (ytPlayer && ytPlayer.getPlayerState && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) return;
+  } catch {}
   heroTimer = setInterval(() => heroNav(1), HERO_INTERVAL);
 }
 
@@ -1392,12 +1958,19 @@ async function loadRow(endpoint, rowId, type, params={}) {
   row.innerHTML = items.length ? items.map(x => makeCard(x, type)).join('') : '<div class="empty-state">Nothing here yet</div>';
 }
 async function loadProviderRow(rowId, type, providerId) {
-  await loadRow(`/discover/${type}`, rowId, type, {
-    with_watch_providers: providerId,
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  row.innerHTML = skels(8);
+  // Support multiple provider IDs (e.g. Max = 384|1899)
+  const ids = Array.isArray(providerId) ? providerId.join('|') : String(providerId);
+  const d = await tmdb(`/discover/${type}`, {
+    with_watch_providers: ids,
     watch_region: 'US',
     sort_by: 'popularity.desc',
-    'vote_count.gte': 100
+    'vote_count.gte': 20
   });
+  const items = (d?.results||[]).filter(x => x.poster_path).slice(0,20);
+  row.innerHTML = items.length ? items.map(x => makeCard(x, type)).join('') : '<div class="empty-state">Nothing here yet</div>';
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ GRIDS
@@ -1560,15 +2133,7 @@ async function openDetail(id, type) {
     <button class="btn-plus ${inList?'in-list':''}" id="dp-plus-btn" onclick="cardToggleList(${id},'${type}','${safeTitle}','${safePoster}','${year}',this);updateHeroBtn()">${inList?'✓':'+'}</button>
   `;
 
-  // Auto-play trailer muted in hero bg
-  if (detailTrailerKey) {
-    const iframe = document.getElementById('dp-trailer-yt');
-    iframe.src = `https://www.youtube-nocookie.com/embed/${detailTrailerKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${detailTrailerKey}&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&playsinline=1`;
-    iframe.onload = () => {
-      if (detailItem.id !== id) return;
-      setTimeout(() => document.getElementById('dp-trailer-wrap').classList.add('show'), 2200);
-    };
-  }
+  // No auto-play in detail hero — trailer plays via Watch Trailer button only
 
   // Cast
   const cast = (credits?.cast||[]).filter(c => c.profile_path).slice(0,20);
@@ -1712,13 +2277,51 @@ function closePlayer() {
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ KEYBOARD
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
+  if (e.key === 'Escape' || e.key === 'Backspace' || e.keyCode===461) {
     if (document.getElementById('trailer-modal').classList.contains('open')) { closeTrailerModal(); return; }
     if (document.getElementById('player-modal').classList.contains('open')) { closePlayer(); return; }
     if (document.getElementById('detail-page').classList.contains('open')) { closeDetail(); return; }
     closeSearch();
   }
 });
+
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ TV D-PAD & FOCUS
+if (window._isTV) {
+  // Enter key clicks focused element
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') {
+      var el = document.activeElement;
+      if (el && el !== document.body) { e.preventDefault(); el.click(); }
+    }
+  });
+  // Auto-add tabindex to interactive elements as they're inserted
+  var _tvObs = new MutationObserver(function(){
+    document.querySelectorAll('.card,.cw-card,.nav-pill,.icon-btn,.btn-play,.btn-more,.btn-plus,.src-btn,.fselect,.dp-back,.btn-trailer,.hero-nav-btn,.cast-card').forEach(function(el){
+      if (!el.getAttribute('tabindex')) el.setAttribute('tabindex','0');
+    });
+  });
+  _tvObs.observe(document.body, {childList:true, subtree:true});
+}
+
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PROVIDER LOGOS
+async function loadProviderLogos() {
+  try {
+    const d = await tmdb('/watch/providers/movie', {watch_region:'US'});
+    if (!d?.results) return;
+    const map = {8:'netflix',9:'prime',15:'hulu',337:'disney',350:'apple',384:'max',1899:'max'};
+    const nameMap = {8:'Netflix',9:'Prime Video',15:'Hulu',337:'Disney+',350:'Apple TV+',384:'Max',1899:'Max'};
+    d.results.forEach(p => {
+      const key = map[p.provider_id];
+      if (!key || !p.logo_path) return;
+      const el = document.getElementById('logo-' + key);
+      if (!el) return;
+      const name = nameMap[p.provider_id] || p.provider_name;
+      el.innerHTML = `<img class="provider-logo" src="${I(p.logo_path,'w92')}" alt="${name}" onerror="this.style.display='none'"><span class="provider-logo-name">${name}</span>`;
+    });
+  } catch(e) { console.warn('Provider logos failed', e); }
+}
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ INIT
 async function init() {
@@ -1732,7 +2335,9 @@ async function init() {
   loadProviderRow('row-disney',  'movie', 337);
   loadProviderRow('row-apple',   'tv',   350);
   loadProviderRow('row-prime',   'movie', 9);
-  loadProviderRow('row-hbo',     'tv',   384);
+  loadProviderRow('row-hulu',    'movie', 15);
+  loadProviderRow('row-hbo',     'movie', [384, 1899]);
+  loadProviderLogos();
 }
 init();
 </script>
