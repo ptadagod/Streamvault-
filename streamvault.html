@@ -416,6 +416,30 @@ img{display:block}
 }
 .empty-icon{font-size:40px;margin-bottom:8px}
 
+/* ── HERO DOTS & NAV ── */
+.hero-dots{display:flex;gap:7px;margin-top:22px;align-items:center}
+.hero-dot-btn{
+  width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,0.3);transition:all .3s;padding:0;
+}
+.hero-dot-btn.active{background:var(--accent);width:24px;border-radius:4px;box-shadow:0 0 10px rgba(255,60,92,0.6)}
+.hero-nav-btns{
+  position:absolute;bottom:80px;right:44px;z-index:20;
+  display:flex;gap:10px;
+}
+.hero-nav-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:#fff;font-size:22px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;line-height:1;
+}
+.hero-nav-btn:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.3)}
+/* hero transition */
+#hero-poster{transition:opacity .7s ease}
+#hero-poster.fading{opacity:0}
+.hero-content{transition:opacity .5s ease,transform .5s ease}
+.hero-content.fading{opacity:0;transform:translateY(10px)}
 /* ── TV EPISODE SELECTOR ── */
 .ep-selector{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
@@ -524,6 +548,11 @@ img{display:block}
         </button>
         <button class="btn-plus" id="hero-plus-btn" onclick="heroToggleList()">+</button>
       </div>
+      <div class="hero-dots" id="hero-dots"></div>
+    </div>
+    <div class="hero-nav-btns">
+      <button class="hero-nav-btn" id="hero-prev" onclick="heroNav(-1)">&#8249;</button>
+      <button class="hero-nav-btn" id="hero-next" onclick="heroNav(1)">&#8250;</button>
     </div>
   </div>
 
@@ -798,65 +827,137 @@ function makeCard(item, type, size='md') {
   </div>`;
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ HERO
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ HERO (AUTO-ROTATING)
+let heroItems   = [];
+let heroIndex   = 0;
+let heroTimer   = null;
+const HERO_INTERVAL = 9000; // ms between rotations
+
 async function loadHero() {
   const d = await tmdb('/trending/movie/week');
   if (!d?.results?.length) return;
-  const items = d.results.filter(x => x.backdrop_path && x.poster_path);
-  heroData = items[0]; heroData._type = 'movie';
-  applyHero();
-  loadHeroTrailer(heroData.id, 'movie');
+  heroItems = d.results.filter(x => x.backdrop_path && x.poster_path).slice(0, 8);
+  heroItems.forEach(h => h._type = 'movie');
+  buildHeroDots();
+  await setHero(0, true);
+  startHeroTimer();
 }
 
-async function applyHero() {
-  const h = heroData;
+function buildHeroDots() {
+  document.getElementById('hero-dots').innerHTML = heroItems.map((_, i) =>
+    `<button class="hero-dot-btn ${i===0?'active':''}" onclick="heroJump(${i})"></button>`
+  ).join('');
+}
+
+function updateHeroDots() {
+  document.querySelectorAll('.hero-dot-btn').forEach((b, i) =>
+    b.classList.toggle('active', i === heroIndex));
+}
+
+function startHeroTimer() {
+  clearInterval(heroTimer);
+  heroTimer = setInterval(() => heroNav(1), HERO_INTERVAL);
+}
+
+function heroNav(dir) {
+  clearInterval(heroTimer);
+  const next = (heroIndex + dir + heroItems.length) % heroItems.length;
+  setHero(next, false);
+  heroTimer = setInterval(() => heroNav(1), HERO_INTERVAL);
+}
+
+function heroJump(i) {
+  clearInterval(heroTimer);
+  setHero(i, false);
+  heroTimer = setInterval(() => heroNav(1), HERO_INTERVAL);
+}
+
+async function setHero(idx, instant) {
+  heroIndex = idx;
+  heroData  = heroItems[idx];
+  updateHeroDots();
+
+  const poster  = document.getElementById('hero-poster');
+  const content = document.querySelector('.hero-content');
+
+  if (!instant) {
+    // fade out
+    poster.classList.add('fading');
+    content.classList.add('fading');
+    // stop video
+    const yw = document.getElementById('hero-video-wrap');
+    yw.classList.remove('show');
+    document.getElementById('hero-yt').src = '';
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  applyHeroDOM(heroData);
+
+  if (!instant) {
+    await new Promise(r => setTimeout(r, 50));
+    poster.classList.remove('fading');
+    content.classList.remove('fading');
+  }
+
+  // load logo + runtime + trailer async (non-blocking)
+  loadHeroExtras(heroData);
+}
+
+function applyHeroDOM(h) {
   const title = h.title || h.name || '';
   document.getElementById('hero-poster').style.backgroundImage = `url(${I(h.backdrop_path,'original')})`;
   document.getElementById('hero-title-text').textContent = title;
+  document.getElementById('hero-title-text').style.display = 'block';
+  document.getElementById('hero-logo-img').style.display = 'none';
   document.getElementById('hero-score').textContent = '★ ' + (h.vote_average ? h.vote_average.toFixed(1) : 'N/A');
   document.getElementById('hero-year').textContent = yr(h.release_date || h.first_air_date);
+  document.getElementById('hero-runtime').style.display = 'none';
+  document.getElementById('hero-runtime-dot').style.display = 'none';
   document.getElementById('hero-desc').textContent = h.overview || '';
-  // genres
   const gmap = h._type === 'tv' ? TV_GENRES : MOVIE_GENRES;
   document.getElementById('hero-genres').innerHTML = (h.genre_ids||[]).slice(0,3).map(g =>
     `<span class="hero-genre">${gmap[g]||''}</span>`).join('');
+  updateHeroBtn();
+}
 
+async function loadHeroExtras(h) {
+  const thisId = h.id;
   // logo
   try {
     const imgs = await tmdb(`/${h._type||'movie'}/${h.id}/images`, {include_image_language:'en,null'});
+    if (heroData.id !== thisId) return; // stale
     const logo = (imgs?.logos||[]).find(x => x.file_path && x.aspect_ratio > 1.3);
     const li = document.getElementById('hero-logo-img');
     if (logo) {
       li.src = I(logo.file_path,'w500'); li.style.display='block';
       document.getElementById('hero-title-text').style.display='none';
-    } else {
-      li.style.display='none';
-      document.getElementById('hero-title-text').style.display='block';
     }
   } catch {}
-
   // runtime
   try {
     const detail = await tmdb(`/${h._type||'movie'}/${h.id}`);
+    if (heroData.id !== thisId) return;
     if (detail?.runtime) {
-      const rt = document.getElementById('hero-runtime');
-      rt.textContent = detail.runtime + ' min';
-      rt.style.display='inline';
-      document.getElementById('hero-runtime-dot').style.display='inline';
+      document.getElementById('hero-runtime').textContent = detail.runtime + ' min';
+      document.getElementById('hero-runtime').style.display = 'inline';
+      document.getElementById('hero-runtime-dot').style.display = 'inline';
     }
   } catch {}
-
-  updateHeroBtn();
-}
-
-async function loadHeroTrailer(id, type) {
-  const d = await tmdb(`/${type}/${id}/videos`);
-  const t = (d?.results||[]).find(v => v.type==='Trailer' && v.site==='YouTube')
-          || (d?.results||[]).find(v => v.site==='YouTube');
-  if (!t) return;
-  const iframe = document.getElementById('hero-yt');
-  iframe.src = `https://www.youtube-nocookie.com/embed/${t.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${t.key}&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1`;
-  iframe.onload = () => setTimeout(() => document.getElementById('hero-video-wrap').classList.add('show'), 1800);
+  // trailer
+  try {
+    const d = await tmdb(`/${h._type||'movie'}/${h.id}/videos`);
+    if (heroData.id !== thisId) return;
+    const t = (d?.results||[]).find(v => v.type==='Trailer' && v.site==='YouTube')
+            || (d?.results||[]).find(v => v.site==='YouTube');
+    if (t) {
+      const iframe = document.getElementById('hero-yt');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${t.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${t.key}&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1`;
+      iframe.onload = () => {
+        if (heroData.id !== thisId) return;
+        setTimeout(() => document.getElementById('hero-video-wrap').classList.add('show'), 2000);
+      };
+    }
+  } catch {}
 }
 
 function updateHeroBtn() {
