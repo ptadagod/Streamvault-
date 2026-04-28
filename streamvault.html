@@ -1286,16 +1286,16 @@ function showPage(p) {
   if (p === 'live')   loadLive('all');
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ LIVE (streamed.pk)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ LIVE (sportsrc.org)
 let liveStreams      = [];
 let liveLoaded      = false;
 let liveCurrentFilter = 'all';
-let liveCurrentMatch  = null;
 
 const SPORT_EMOJI = {
   football:'⚽', basketball:'🏀', baseball:'⚾', hockey:'🏒',
-  tennis:'🎾', mma:'🥊', boxing:'🥊', wrestling:'🤼', rugby:'🏉',
-  nfl:'🏈', f1:'🏎️', golf:'⛳', cricket:'🏏', darts:'🎯',
+  tennis:'🎾', fight:'🥊', wrestling:'🤼', rugby:'🏉',
+  'american-football':'🏈', 'motor-sports':'🏎️', golf:'⛳',
+  cricket:'🏏', darts:'🎯', billiards:'🎱', afl:'🏉', other:'📺',
 };
 function sportEmoji(cat) {
   return SPORT_EMOJI[(cat||'').toLowerCase()] || '📺';
@@ -1311,26 +1311,33 @@ async function loadLive(filter) {
   status.style.display = 'none';
 
   try {
-    // Fetch live + today's matches together
-    const [liveRes, todayRes] = await Promise.all([
-      fetch('https://streamed.pk/api/matches/live'),
-      fetch('https://streamed.pk/api/matches/all-today'),
-    ]);
-    const live  = liveRes.ok  ? await liveRes.json()  : [];
-    const today = todayRes.ok ? await todayRes.json() : [];
+    // Fetch all sports categories first, then all matches
+    const sportsRes = await fetch('https://api.sportsrc.org/?data=sports');
+    const sportsData = await sportsRes.json();
+    const sports = sportsData.data || [];
 
-    // Merge, deduplicate by id, live matches first
+    // Fetch matches for all sports in parallel
+    const matchArrays = await Promise.all(
+      sports.map(s =>
+        fetch(`https://api.sportsrc.org/?data=matches&category=${s.id}`)
+          .then(r => r.json())
+          .then(d => (d.data || []).map(m => ({ ...m, category: m.category || s.id })))
+          .catch(() => [])
+      )
+    );
+
+    // Merge, deduplicate, sort by date desc
     const seen = new Set();
-    liveStreams = [];
-    for (const m of [...live, ...today]) {
-      if (!seen.has(m.id)) { seen.add(m.id); liveStreams.push(m); }
-    }
-    liveLoaded = true;
+    liveStreams = matchArrays.flat().filter(m => {
+      if (seen.has(m.id)) return false;
+      seen.add(m.id);
+      return true;
+    }).sort((a, b) => (b.date || 0) - (a.date || 0));
 
-    // Also populate sport filter dynamically
-    populateLiveSportFilter();
+    liveLoaded = true;
+    populateLiveSportFilter(sports);
   } catch(e) {
-    console.error('Streamed API error:', e);
+    console.error('SportSRC API error:', e);
     liveStreams = [];
     liveLoaded  = false;
   }
@@ -1338,12 +1345,12 @@ async function loadLive(filter) {
   renderLiveGrid(filter);
 }
 
-function populateLiveSportFilter() {
-  const sports = [...new Set(liveStreams.map(m => m.category).filter(Boolean))].sort();
+function populateLiveSportFilter(sports) {
   const sel = document.getElementById('live-cat');
-  // Keep "All Sports" option, replace the rest
   sel.innerHTML = '<option value="all">All Sports</option>' +
-    sports.map(s => `<option value="${s}">${sportEmoji(s)} ${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('');
+    (sports || []).map(s =>
+      `<option value="${s.id}">${sportEmoji(s.id)} ${s.name}</option>`
+    ).join('');
 }
 
 function renderLiveGrid(filter) {
@@ -1352,12 +1359,16 @@ function renderLiveGrid(filter) {
   const countEl = document.getElementById('live-count');
   const labelEl = document.getElementById('live-section-label');
 
+  const now = Date.now();
   let items = filter === 'all'
     ? liveStreams
     : liveStreams.filter(m => (m.category||'').toLowerCase() === filter.toLowerCase());
 
-  if (labelEl) labelEl.textContent = filter === 'all' ? 'Live & Today\'s Matches' : `${sportEmoji(filter)} ${filter.charAt(0).toUpperCase()+filter.slice(1)} — Today`;
-  if (countEl) countEl.textContent = items.length ? items.length + ' matches' : '';
+  // Filter: live now or upcoming within 12 hours, or no date set
+  items = items.filter(m => !m.date || m.date === 0 || m.date <= (now + 12 * 3600 * 1000));
+
+  if (labelEl) labelEl.textContent = filter === 'all' ? 'Live Sports' : `${sportEmoji(filter)} ${filter.charAt(0).toUpperCase()+filter.slice(1).replace(/-/g,' ')}`;
+  if (countEl) countEl.textContent = '';
 
   if (!liveLoaded) {
     grid.style.display = 'none';
@@ -1373,42 +1384,78 @@ function renderLiveGrid(filter) {
     return;
   }
 
-  grid.style.display = 'grid';
+  grid.style.display = 'block';
   status.style.display = 'none';
 
-  const now = Date.now();
-  grid.innerHTML = items.map(m => {
-    const emoji    = sportEmoji(m.category);
-    const isLive   = m.date <= now;
-    const timeStr  = isLive ? '🔴 Live now' : new Date(m.date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    const hasBadges = m.teams?.home?.badge && m.teams?.away?.badge;
-    const poster = m.poster
-      ? `<img class="live-thumb" src="https://streamed.pk/api/images/poster/${m.poster}.webp" alt="${m.title}" loading="lazy" onerror="this.outerHTML='<div class=\\'live-thumb-placeholder\\'>${emoji}</div>'">`
-      : hasBadges
-        ? `<div class="live-thumb-placeholder" style="gap:16px;flex-direction:row">
-             <img src="https://streamed.pk/api/images/badge/${m.teams.home.badge}.webp" style="height:48px;object-fit:contain" onerror="this.style.display='none'">
-             <span style="font-size:18px;color:var(--muted)">vs</span>
-             <img src="https://streamed.pk/api/images/badge/${m.teams.away.badge}.webp" style="height:48px;object-fit:contain" onerror="this.style.display='none'">
-           </div>`
-        : `<div class="live-thumb-placeholder">${emoji}</div>`;
+  const liveItems    = items.filter(m => m.date && m.date > 0 && m.date <= now);
+  const upcomingItems = items.filter(m => !m.date || m.date === 0 || m.date > now);
 
-    return `
-    <div class="live-card" onclick="openLiveMatch('${m.id}')">
-      ${poster}
-      <div class="live-card-body">
-        <div class="live-card-top">
-          <div class="live-card-name">${m.title}</div>
-          ${isLive ? `<div class="live-badge"><span class="live-badge-dot"></span>LIVE</div>` : ''}
+  function renderCards(arr) {
+    return arr.map(m => {
+      const emoji   = sportEmoji(m.category);
+      const isLive  = m.date && m.date > 0 && m.date <= now;
+      const timeStr = !m.date || m.date === 0 ? '' : isLive ? '🔴 Live now' : new Date(m.date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      const homeBadge = m.teams?.home?.badge;
+      const awayBadge = m.teams?.away?.badge;
+      const poster = m.poster
+        ? `<img class="live-thumb" src="${m.poster}" alt="${m.title}" loading="lazy" onerror="this.outerHTML='<div class=\\'live-thumb-placeholder\\'>${emoji}</div>'">`
+        : (homeBadge && awayBadge)
+          ? `<div class="live-thumb-placeholder" style="gap:16px;flex-direction:row">
+               <img src="${homeBadge}" style="height:52px;object-fit:contain" onerror="this.style.display='none'">
+               <span style="font-size:18px;color:var(--muted)">vs</span>
+               <img src="${awayBadge}" style="height:52px;object-fit:contain" onerror="this.style.display='none'">
+             </div>`
+          : `<div class="live-thumb-placeholder">${emoji}</div>`;
+
+      return `
+      <div class="live-card" onclick="openLiveMatch('${m.id}','${(m.category||'').replace(/'/g,"\\'")}')">
+        ${poster}
+        <div class="live-card-body">
+          <div class="live-card-top">
+            <div class="live-card-name">${m.title}</div>
+            ${isLive ? `<div class="live-badge"><span class="live-badge-dot"></span>LIVE</div>` : ''}
+          </div>
+          <div class="live-card-cat">${emoji} ${(m.category||'').charAt(0).toUpperCase()+(m.category||'').slice(1).replace(/-/g,' ')}</div>
+          ${timeStr ? `<div class="live-card-time">${timeStr}</div>` : ''}
+          <button class="live-play-btn" onclick="event.stopPropagation();openLiveMatch('${m.id}','${(m.category||'').replace(/'/g,"\\'")}')">
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+            Watch Now
+          </button>
         </div>
-        <div class="live-card-cat">${emoji} ${(m.category||'').charAt(0).toUpperCase()+(m.category||'').slice(1)}</div>
-        <div class="live-card-time">${timeStr}</div>
-        <button class="live-play-btn" onclick="event.stopPropagation();openLiveMatch('${m.id}')">
-          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-          Watch Now
-        </button>
+      </div>`;
+    }).join('');
+  }
+
+  let html = '';
+
+  if (liveItems.length) {
+    html += `
+      <div class="section-head" style="padding:28px 44px 12px">
+        <div class="section-title">
+          <span class="section-accent" style="background:var(--accent)"></span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span class="live-badge-dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;animation:livePulse 1.2s ease-in-out infinite;box-shadow:0 0 6px rgba(255,60,92,0.9)"></span>
+            Live Now
+          </span>
+        </div>
+        <span style="font-size:13px;color:var(--muted)">${liveItems.length} match${liveItems.length !== 1 ? 'es' : ''}</span>
       </div>
-    </div>`;
-  }).join('');
+      <div class="live-grid" style="padding:0 44px 32px">${renderCards(liveItems)}</div>`;
+  }
+
+  if (upcomingItems.length) {
+    html += `
+      <div class="section-head" style="padding:${liveItems.length ? '8px' : '28px'} 44px 12px">
+        <div class="section-title">
+          <span class="section-accent"></span>
+          Coming Up
+        </div>
+        <span style="font-size:13px;color:var(--muted)">${upcomingItems.length} match${upcomingItems.length !== 1 ? 'es' : ''}</span>
+      </div>
+      <div class="live-grid" style="padding:0 44px 60px">${renderCards(upcomingItems)}</div>`;
+  }
+
+  grid.innerHTML = html;
 }
 
 function filterLiveSelect() {
@@ -1422,85 +1469,49 @@ function filterLive(cat) {
   renderLiveGrid(cat);
 }
 
-async function openLiveMatch(matchId) {
+async function openLiveMatch(matchId, category) {
   const match = liveStreams.find(m => m.id === matchId);
-  if (!match || !match.sources?.length) return;
+  if (!match) return;
 
-  liveCurrentMatch = match;
   const title = match.title || 'Live Match';
-
   currentPlayer = { id: matchId, type: 'live', title };
   document.getElementById('player-label').textContent = title;
   document.getElementById('ep-selector').style.display = 'none';
+  document.getElementById('player-sources').innerHTML = `<span class="player-src-label">Loading stream…</span>`;
+  document.getElementById('player-iframe').src = '';
   document.getElementById('player-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Show loading state
-  document.getElementById('player-sources').innerHTML = `<span class="player-src-label">Loading streams…</span>`;
-  document.getElementById('player-iframe').src = '';
+  try {
+    const res = await fetch(`https://api.sportsrc.org/?data=detail&category=${category}&id=${matchId}`);
+    const data = await res.json();
+    const detail = data.data || data;
+    console.log('SportSRC detail:', JSON.stringify(detail).slice(0, 500));
 
-  // Fetch streams for each source in parallel
-  const streamResults = await Promise.all(
-    match.sources.map(async s => {
-      try {
-        const res = await fetch(`https://streamed.pk/api/stream/${s.source}/${s.id}`);
-        if (!res.ok) return null;
-        const streams = await res.json();
-        return { source: s.source, streams };
-      } catch { return null; }
-    })
-  );
+    // Find embed URL — may be at detail.embedUrl, detail.streams[0].embedUrl, etc.
+    const embedUrl = detail.embedUrl
+      || detail.streams?.[0]?.embedUrl
+      || detail.stream
+      || detail.iframe;
 
-  // Flatten to a list of playable streams
-  const allStreams = streamResults
-    .filter(Boolean)
-    .flatMap(r => r.streams.map(s => ({ ...s, sourceName: r.source })));
-
-  console.log('All streams:', JSON.stringify(allStreams));
-
-  if (!allStreams.length) {
-    document.getElementById('player-sources').innerHTML = `<span class="player-src-label" style="color:var(--muted)">No streams available</span>`;
-    return;
+    if (embedUrl) {
+      document.getElementById('player-sources').innerHTML =
+        `<span class="player-src-label">Source:</span><button class="src-btn active">Stream 1</button>`;
+      document.getElementById('player-iframe').src = embedUrl;
+    } else {
+      document.getElementById('player-sources').innerHTML =
+        `<span class="player-src-label" style="color:var(--muted)">No stream available yet</span>`;
+    }
+  } catch(e) {
+    console.error('Stream fetch error:', e);
+    document.getElementById('player-sources').innerHTML =
+      `<span class="player-src-label" style="color:var(--muted)">Failed to load stream</span>`;
   }
-
-  // Build source buttons
-  const bar = document.getElementById('player-sources');
-  bar.innerHTML = `<span class="player-src-label">Stream:</span>` +
-    allStreams.map((s, i) =>
-      `<button class="src-btn" data-idx="${i}" onclick="setStreamedSource(${i})">${s.sourceName} ${s.streamNo}${s.hd ? ' HD' : ''}${s.language && s.language !== 'English' ? ' · '+s.language : ''}</button>`
-    ).join('');
-
-  // Store streams on window for access
-  window._liveStreams = allStreams;
-  setStreamedSource(0);
-}
-
-function setStreamedSource(idx) {
-  document.querySelectorAll('.src-btn').forEach((b,i) => b.classList.toggle('active', i === idx));
-  const stream = window._liveStreams?.[idx];
-  if (!stream?.embedUrl) return;
-
-  const url = stream.embedUrl;
-  console.log('Loading:', url);
-
-  // Wrap in a blob page — bypasses file:// security restrictions
-  // and sends no referrer to the embed host
-  const page = `<!DOCTYPE html><html><head>
-<meta name="referrer" content="no-referrer">
-<style>*{margin:0;padding:0;overflow:hidden}iframe{width:100vw;height:100vh;border:none}</style>
-</head><body>
-<iframe src="${url}" allowfullscreen allow="autoplay;fullscreen;encrypted-media" referrerpolicy="no-referrer" scrolling="no"></iframe>
-</body></html>`;
-
-  const blob = new Blob([page], { type: 'text/html' });
-  const blobUrl = URL.createObjectURL(blob);
-  document.getElementById('player-iframe').src = blobUrl;
 }
 
 async function openLiveStream(id) {
-  openLiveMatch(String(id));
+  openLiveMatch(String(id), 'other');
 }
-
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ NAV SCROLL EFFECT
 window.addEventListener('scroll', () => {
