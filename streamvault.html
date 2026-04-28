@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
 <script>
 (function(){
   var ua=navigator.userAgent||'';
@@ -879,7 +880,7 @@ html.tv-mode .live-card-name{font-size:17px}
     <span class="ep-label">Episode</span>
     <select class="ep-select" id="ep-sel" onchange="reloadSource()"></select>
   </div>
-  <iframe id="player-iframe" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer"></iframe>
+  <iframe id="player-iframe" allowfullscreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
   <div class="player-sources" id="player-sources">
     <span class="player-src-label">Source:</span>
   </div>
@@ -1455,6 +1456,8 @@ async function openLiveMatch(matchId) {
     .filter(Boolean)
     .flatMap(r => r.streams.map(s => ({ ...s, sourceName: r.source })));
 
+  console.log('All streams:', JSON.stringify(allStreams));
+
   if (!allStreams.length) {
     document.getElementById('player-sources').innerHTML = `<span class="player-src-label" style="color:var(--muted)">No streams available</span>`;
     return;
@@ -1475,9 +1478,23 @@ async function openLiveMatch(matchId) {
 function setStreamedSource(idx) {
   document.querySelectorAll('.src-btn').forEach((b,i) => b.classList.toggle('active', i === idx));
   const stream = window._liveStreams?.[idx];
-  if (stream?.embedUrl) {
-    document.getElementById('player-iframe').src = stream.embedUrl;
-  }
+  if (!stream?.embedUrl) return;
+
+  const url = stream.embedUrl;
+  console.log('Loading:', url);
+
+  // Wrap in a blob page — bypasses file:// security restrictions
+  // and sends no referrer to the embed host
+  const page = `<!DOCTYPE html><html><head>
+<meta name="referrer" content="no-referrer">
+<style>*{margin:0;padding:0;overflow:hidden}iframe{width:100vw;height:100vh;border:none}</style>
+</head><body>
+<iframe src="${url}" allowfullscreen allow="autoplay;fullscreen;encrypted-media" referrerpolicy="no-referrer" scrolling="no"></iframe>
+</body></html>`;
+
+  const blob = new Blob([page], { type: 'text/html' });
+  const blobUrl = URL.createObjectURL(blob);
+  document.getElementById('player-iframe').src = blobUrl;
 }
 
 async function openLiveStream(id) {
