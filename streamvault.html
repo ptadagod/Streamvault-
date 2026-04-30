@@ -588,16 +588,7 @@ window.addEventListener('message', e => {
       const itemIdx = parseInt(iframe.dataset.heroIndex||'0');
       if(itemIdx === heroIndex){
         clearTimeout(heroTimer);
-        const trailerWrap = document.getElementById('heroTrailerWrap');
-        const muteBtn = document.getElementById('heroMuteBtn');
-        const trailerBtn = document.getElementById('heroTrailerBtn');
-        trailerWrap.style.opacity = '0';
-        setTimeout(()=>{
-          iframe.src = '';
-          trailerWrap.style.display = 'none';
-          if(muteBtn) muteBtn.style.display = 'none';
-          if(trailerBtn) trailerBtn.style.display = 'flex';
-        }, 800);
+        if(window._showHeroImage) window._showHeroImage();
       }
     }
   } catch(_){}
@@ -716,7 +707,7 @@ async function loadHeroItem(i){
   document.getElementById('heroDesc').textContent = detail.overview||'';
   document.querySelectorAll('.hero-dot-ind').forEach((d,idx)=>d.classList.toggle('active',idx===i));
 
-  // Trailer — show backdrop first, fade trailer in after delay, advance on end
+  // Trailer — show hero image for 10s, then fade to black and play trailer
   const trailerWrap = document.getElementById('heroTrailerWrap');
   const trailerIframe = document.getElementById('heroTrailerIframe');
   const muteBtn = document.getElementById('heroMuteBtn');
@@ -729,6 +720,9 @@ async function loadHeroItem(i){
   trailerWrap.style.opacity = '0';
   trailerWrap.style.display = 'none';
   muteBtn.style.display = 'none';
+  // Restore hero bg in case it was hidden from a previous trailer
+  heroBg.style.opacity = '1';
+  heroBg.style.transition = 'opacity 1.2s ease, background-image .8s';
 
   window._heroCandidates = [
     ...videos.filter(v=>v.site==='YouTube' && v.type==='Trailer'),
@@ -736,19 +730,27 @@ async function loadHeroItem(i){
     ...videos.filter(v=>v.site==='YouTube' && v.type!=='Trailer' && v.type!=='Teaser'),
   ];
 
-  // Fallback: if no trailer loads, advance after 12s
-  function setFallbackTimer(ms){ heroTimer = setTimeout(advanceHero, ms); }
+  function showHeroImage(){
+    // Fade trailer out, fade hero bg back in
+    trailerWrap.style.opacity = '0';
+    heroBg.style.opacity = '1';
+    muteBtn.style.display = 'none';
+    const tBtn = document.getElementById('heroTrailerBtn');
+    if(tBtn) tBtn.style.display = window._heroCandidates.length ? 'flex' : 'none';
+    setTimeout(()=>{
+      trailerIframe.src = '';
+      trailerWrap.style.display = 'none';
+    }, 1200);
+  }
 
   function tryLoadTrailer(index){
     const avail = window._heroCandidates.filter(v=>!heroBlockedKeys.has(v.key));
     if(!avail.length || index >= avail.length){
-      // No trailer — show backdrop only, advance after 10s
-      setFallbackTimer(10000);
+      // No embeddable trailer found — stay on hero image
       return;
     }
     const v = avail[index];
     const mute = heroMuted ? 1 : 0;
-    // No loop — we want to know when it ends so we can advance
     trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
     trailerIframe.dataset.currentKey = v.key;
     trailerIframe.dataset.tryIndex = String(index);
@@ -757,42 +759,42 @@ async function loadHeroItem(i){
     fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
       .then(r => {
         if(r.ok){
+          // Fade hero bg to black, then reveal trailer
+          heroBg.style.opacity = '0';
           trailerWrap.style.display = 'block';
-          // Small rAF delay so display:block has painted before opacity transition
-          requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
+          setTimeout(()=>{
+            requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
+          }, 400);
           muteBtn.style.display = 'flex';
           updateMuteIcon();
-          // Hide play trailer btn while auto-playing
           const tBtn = document.getElementById('heroTrailerBtn');
           if(tBtn) tBtn.style.display = 'none';
-          // Fallback: advance after 3min max in case postMessage never fires
-          setFallbackTimer(180000);
         } else {
           heroBlockedKeys.add(v.key);
           tryLoadTrailer(index + 1);
         }
       })
       .catch(() => {
+        // Network error — still try to play
+        heroBg.style.opacity = '0';
         trailerWrap.style.display = 'block';
-        requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
+        setTimeout(()=>{
+          requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
+        }, 400);
         muteBtn.style.display = 'flex';
         updateMuteIcon();
         const tBtn2 = document.getElementById('heroTrailerBtn');
         if(tBtn2) tBtn2.style.display = 'none';
-        setFallbackTimer(180000);
       });
   }
 
-  // Show backdrop image for 5 seconds, then fade in trailer
+  // Wait 10 seconds on hero image, then fade to trailer
   window._trailerDelay = setTimeout(()=>{
     if(window._heroCandidates.length) tryLoadTrailer(0);
-    else setFallbackTimer(10000);
-  }, 5000);
+  }, 10000);
 
-  // Fallback if no trailer at all — advance after 15s total
-  setFallbackTimer(15000);
-
-  tryLoadTrailer(0);
+  // Store showHeroImage so scroll handler and postMessage can call it
+  window._showHeroImage = showHeroImage;
 
   document.getElementById('heroPlayBtn').onclick = ()=>openDetail(item.id, type);
   // Play Trailer button
@@ -803,17 +805,21 @@ async function loadHeroItem(i){
       const trailerWrap = document.getElementById('heroTrailerWrap');
       const trailerIframe = document.getElementById('heroTrailerIframe');
       const muteBtn = document.getElementById('heroMuteBtn');
+      const heroBgEl = document.getElementById('heroBg');
       const avail = (window._heroCandidates||[]).filter(v=>!heroBlockedKeys.has(v.key));
       if(!avail.length) return;
       trailerBtnEl.style.display = 'none';
+      clearTimeout(window._trailerDelay);
       const v = avail[0];
       const mute = heroMuted ? 1 : 0;
       trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
       trailerIframe.dataset.currentKey = v.key;
       trailerIframe.dataset.tryIndex = '0';
       trailerIframe.dataset.heroIndex = String(heroIndex);
+      // Fade hero bg to black, then show trailer
+      heroBgEl.style.opacity = '0';
       trailerWrap.style.display = 'block';
-      requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
+      setTimeout(()=>{ requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; }); }, 400);
       muteBtn.style.display = 'flex';
       updateMuteIcon();
     };
@@ -1267,6 +1273,31 @@ function showToast(msg){
 /* ── INIT ── */
 initHero();
 loadHomeRows();
+
+/* ── SCROLL: hide trailer when user scrolls away from hero ── */
+(function(){
+  const homePage = document.getElementById('page-home');
+  // We listen on window scroll since the page itself scrolls
+  let lastScrollY = 0;
+  window.addEventListener('scroll', ()=>{
+    // Only act when home page is visible
+    if(!homePage || homePage.style.display === 'none') return;
+    const heroEl = document.getElementById('hero');
+    if(!heroEl) return;
+    const heroBottom = heroEl.getBoundingClientRect().bottom;
+    const trailerWrap = document.getElementById('heroTrailerWrap');
+    const heroBg = document.getElementById('heroBg');
+    const muteBtn = document.getElementById('heroMuteBtn');
+    const trailerIframe = document.getElementById('heroTrailerIframe');
+    const trailerPlaying = trailerWrap && trailerWrap.style.display !== 'none' && parseFloat(trailerWrap.style.opacity) > 0;
+
+    if(heroBottom < window.innerHeight * 0.4 && trailerPlaying){
+      // User has scrolled away — kill trailer, restore hero image
+      if(window._showHeroImage) window._showHeroImage();
+      clearTimeout(window._trailerDelay);
+    }
+  }, { passive: true });
+})();
 
 /* ── VIDKING PLAYER ── */
 let currentPlayerState = null;
