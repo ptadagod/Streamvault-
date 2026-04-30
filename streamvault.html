@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+// TV scaling: scale the whole page down on large low-DPR screens (smart TVs)
+(function(){
+  var dpr = window.devicePixelRatio || 1;
+  var sw  = window.screen.width;
+  // Detect TV: wide screen with DPR of 1 (most smart TV browsers report dpr=1)
+  if(sw >= 1280 && dpr <= 1.2){
+    var scale = 0.68;
+    var s = document.createElement('style');
+    s.textContent = 'html{zoom:' + scale + ';width:' + Math.round(100/scale) + '%}';
+    document.head.appendChild(s);
+  }
+})();
+</script>
 <title>StreamVault</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
