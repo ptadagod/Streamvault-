@@ -78,6 +78,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .btn-play{display:flex;align-items:center;gap:12px;background:#ffffff !important;color:#000 !important;border:none;padding:18px 42px;border-radius:50px;font-size:19px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;position:relative;z-index:10;box-shadow:0 2px 20px rgba(0,0,0,0.3)}
 .btn-play:hover{background:rgba(255,255,255,0.85);transform:scale(1.02)}
 .btn-play svg{width:22px;height:22px}
+.btn-trailer{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);color:#fff;border:1.5px solid rgba(255,255,255,0.4);padding:18px 34px;border-radius:50px;font-size:17px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.btn-trailer:hover{background:rgba(255,255,255,0.22);border-color:rgba(255,255,255,0.75)}
+.btn-trailer svg{width:19px;height:19px}
 /* Combined +/i pill */
 .btn-icon-pill{display:flex;align-items:center;border-radius:50px;border:1.5px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.18);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:border-color .2s,background .2s;color:#fff}
 .btn-icon-pill:hover{border-color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.26)}
@@ -87,7 +90,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .btn-icon-half svg{width:26px;height:26px;pointer-events:none;display:block;stroke:#fff;stroke-width:2}
 .hero-indicators{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
 /* Trailer */
-.hero-trailer-wrap{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;transition:opacity .6s ease;-webkit-mask-image:linear-gradient(to bottom,black 0%,black 30%,rgba(0,0,0,0.9) 50%,rgba(0,0,0,0.5) 75%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 30%,rgba(0,0,0,0.9) 50%,rgba(0,0,0,0.5) 75%,transparent 100%)}
+.hero-trailer-wrap{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;transition:opacity .8s ease;background:#000;-webkit-mask-image:linear-gradient(to bottom,black 0%,black 30%,rgba(0,0,0,0.9) 50%,rgba(0,0,0,0.5) 75%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 30%,rgba(0,0,0,0.9) 50%,rgba(0,0,0,0.5) 75%,transparent 100%)}
 .hero-trailer-wrap::after{content:'';position:absolute;inset:0;z-index:3;background:linear-gradient(to right,rgba(8,8,14,0.75) 0%,rgba(8,8,14,0.4) 35%,rgba(8,8,14,0.05) 60%,transparent 100%),linear-gradient(to bottom,rgba(8,8,14,0.4) 0%,transparent 20%);pointer-events:none}
 .hero-trailer-wrap iframe{position:absolute;top:50%;left:50%;width:200vh;height:112.5vw;min-width:120%;min-height:120%;transform:translate(-50%,-50%);pointer-events:none}
 .hero-mute-btn{position:absolute;bottom:36px;right:40px;z-index:4;width:42px;height:42px;border-radius:50%;background:rgba(20,20,28,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.3);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
@@ -156,7 +159,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;background:#08080e;scroll-behavior:smooth}
 .detail-page.open{display:block}
 .detail-hero{position:relative;height:85vh;min-height:560px;overflow:hidden}
-.detail-bg{position:absolute;inset:-60px;background-size:cover;background-position:center top;transition:background-image .6s, opacity .8s}
+.detail-bg{position:absolute;inset:-60px;background-size:cover;background-position:center top;transition:background-image .6s}
 .detail-bg::after{content:'';position:absolute;inset:0;background:
   linear-gradient(to right,rgba(8,8,14,0.92) 0%,rgba(8,8,14,0.6) 45%,rgba(8,8,14,0.1) 75%,transparent 100%),
   linear-gradient(to top,rgba(8,8,14,1) 0%,rgba(8,8,14,0.7) 25%,transparent 60%),
@@ -335,6 +338,8 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   .hero-actions{gap:10px}
   .btn-play{padding:13px 26px;font-size:15px}
   .btn-play svg{width:17px;height:17px}
+  .btn-trailer{padding:13px 20px;font-size:13px}
+  .btn-trailer svg{width:15px;height:15px}
   .btn-icon-half{width:52px;height:48px}
   .btn-icon-half svg{width:20px;height:20px}
   .btn-icon-divider{height:20px}
@@ -365,9 +370,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   .page-header{padding:80px 16px 20px;font-size:24px}
 
   /* ── Detail page ── */
-  .detail-hero{height:60vh;min-height:400px;width:100%}
-  .detail-bg{position:absolute;inset:-60px}
-  .detail-hero-content{position:absolute;inset:0;flex-direction:column;padding:80px 16px 28px;gap:12px;justify-content:flex-end !important;align-items:flex-start !important}
+  .detail-hero{height:auto;min-height:0}
+  .detail-hero-content{position:relative;inset:auto;flex-direction:column;padding:80px 16px 24px;gap:12px;justify-content:flex-start !important;align-items:flex-start !important}
+  .detail-bg{position:absolute;inset:0;min-height:320px}
   .detail-left{max-width:100%}
   .detail-logo{max-width:180px;max-height:80px;margin-bottom:10px}
   .detail-logo-text{font-size:36px;margin-bottom:10px}
@@ -480,6 +485,10 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
             <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Play
           </button>
+          <button class="btn-trailer" id="heroTrailerBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+            Play Trailer
+          </button>
           <div class="btn-icon-pill">
             <button class="btn-icon-half" id="heroAddBtn" title="Add to My List">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -574,16 +583,21 @@ window.addEventListener('message', e => {
       }
     }
 
-    // State change: 0 = ended → advance to next hero item
+    // State change: 0 = ended → fade back to hero image, no replay
     if(data?.event === 'onStateChange' && data?.info === 0){
       const itemIdx = parseInt(iframe.dataset.heroIndex||'0');
-      // Only advance if this event is for the currently showing hero item
       if(itemIdx === heroIndex){
         clearTimeout(heroTimer);
-        // Fade trailer out before advancing
         const trailerWrap = document.getElementById('heroTrailerWrap');
+        const muteBtn = document.getElementById('heroMuteBtn');
+        const trailerBtn = document.getElementById('heroTrailerBtn');
         trailerWrap.style.opacity = '0';
-        heroTimer = setTimeout(advanceHero, 800);
+        setTimeout(()=>{
+          iframe.src = '';
+          trailerWrap.style.display = 'none';
+          if(muteBtn) muteBtn.style.display = 'none';
+          if(trailerBtn) trailerBtn.style.display = 'flex';
+        }, 800);
       }
     }
   } catch(_){}
@@ -748,6 +762,9 @@ async function loadHeroItem(i){
           requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
           muteBtn.style.display = 'flex';
           updateMuteIcon();
+          // Hide play trailer btn while auto-playing
+          const tBtn = document.getElementById('heroTrailerBtn');
+          if(tBtn) tBtn.style.display = 'none';
           // Fallback: advance after 3min max in case postMessage never fires
           setFallbackTimer(180000);
         } else {
@@ -760,6 +777,8 @@ async function loadHeroItem(i){
         requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
         muteBtn.style.display = 'flex';
         updateMuteIcon();
+        const tBtn2 = document.getElementById('heroTrailerBtn');
+        if(tBtn2) tBtn2.style.display = 'none';
         setFallbackTimer(180000);
       });
   }
@@ -776,6 +795,29 @@ async function loadHeroItem(i){
   tryLoadTrailer(0);
 
   document.getElementById('heroPlayBtn').onclick = ()=>openDetail(item.id, type);
+  // Play Trailer button
+  const trailerBtnEl = document.getElementById('heroTrailerBtn');
+  if(trailerBtnEl){
+    trailerBtnEl.style.display = window._heroCandidates && window._heroCandidates.length ? 'flex' : 'none';
+    trailerBtnEl.onclick = ()=>{
+      const trailerWrap = document.getElementById('heroTrailerWrap');
+      const trailerIframe = document.getElementById('heroTrailerIframe');
+      const muteBtn = document.getElementById('heroMuteBtn');
+      const avail = (window._heroCandidates||[]).filter(v=>!heroBlockedKeys.has(v.key));
+      if(!avail.length) return;
+      trailerBtnEl.style.display = 'none';
+      const v = avail[0];
+      const mute = heroMuted ? 1 : 0;
+      trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
+      trailerIframe.dataset.currentKey = v.key;
+      trailerIframe.dataset.tryIndex = '0';
+      trailerIframe.dataset.heroIndex = String(heroIndex);
+      trailerWrap.style.display = 'block';
+      requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
+      muteBtn.style.display = 'flex';
+      updateMuteIcon();
+    };
+  }
   document.getElementById('heroAddBtn').onclick = ()=>toggleList(detail);
   document.getElementById('heroInfoBtn').onclick = ()=>openDetail(item.id, type);
 }
@@ -952,7 +994,6 @@ async function openDetail(id, type){
   detailTrailerWrap.style.opacity = '0';
   detailMuteBtn.style.display = 'none';
   window._detailMuted = true;
-  document.getElementById('detailBg').style.opacity = '1';
 
   const trailerVideos = (detail.videos?.results || []).filter(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
   if(trailerVideos.length){
@@ -961,8 +1002,8 @@ async function openDetail(id, type){
       detailTrailerWrap.style.display = 'block';
       detailTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
       fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
-        .then(r=>{ if(r.ok){ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; document.getElementById('detailBg').style.opacity='0'; }); detailMuteBtn.style.display='flex'; } })
-        .catch(()=>{ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; document.getElementById('detailBg').style.opacity='0'; }); detailMuteBtn.style.display='flex'; });
+        .then(r=>{ if(r.ok){ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; } })
+        .catch(()=>{ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; });
     }, 1500);
   }
 
@@ -1124,7 +1165,6 @@ document.getElementById('detailBack').onclick=()=>{
   document.getElementById('detailTrailerIframe').src='';
   document.getElementById('detailTrailerWrap').style.display='none';
   document.getElementById('detailMuteBtn').style.display='none';
-  document.getElementById('detailBg').style.opacity='1';
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
