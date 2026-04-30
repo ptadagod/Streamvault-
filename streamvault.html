@@ -89,10 +89,6 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .btn-icon-divider{width:1.5px;height:26px;background:rgba(255,255,255,0.4);border-radius:1px;flex-shrink:0;pointer-events:none}
 .btn-icon-half svg{width:26px;height:26px;pointer-events:none;display:block;stroke:#fff;stroke-width:2}
 .hero-indicators{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
-/* Trailer */
-.hero-trailer-wrap{position:absolute;top:0;left:0;right:-20px;bottom:0;z-index:1;pointer-events:none;overflow:hidden;transition:opacity .8s ease;background:#000}
-.hero-trailer-wrap::after{content:'';position:absolute;inset:0;z-index:3;background:linear-gradient(to right,rgba(8,8,14,0.85) 0%,rgba(8,8,14,0.5) 30%,rgba(8,8,14,0.1) 55%,rgba(8,8,14,0.05) 75%,rgba(8,8,14,0.4) 100%),linear-gradient(to bottom,rgba(8,8,14,0.5) 0%,transparent 18%),linear-gradient(to top,#08080e 0%,rgba(8,8,14,0.85) 15%,rgba(8,8,14,0.3) 30%,transparent 50%);pointer-events:none}
-.hero-trailer-wrap iframe{position:absolute;top:50%;left:50%;width:200vh;height:112.5vw;min-width:120%;min-height:120%;transform:translate(-50%,-50%);pointer-events:none}
 .hero-mute-btn{position:absolute;bottom:36px;right:40px;z-index:4;width:42px;height:42px;border-radius:50%;background:rgba(20,20,28,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.3);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .hero-mute-btn:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.6)}
 .hero-mute-btn svg{width:18px;height:18px}
@@ -164,10 +160,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   linear-gradient(to right,rgba(8,8,14,0.92) 0%,rgba(8,8,14,0.6) 45%,rgba(8,8,14,0.1) 75%,transparent 100%),
   linear-gradient(to top,rgba(8,8,14,1) 0%,rgba(8,8,14,0.7) 25%,transparent 60%),
   linear-gradient(to bottom,rgba(8,8,14,0.5) 0%,transparent 20%)}
-/* Detail trailer */
-.detail-trailer-wrap{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;background:#000;transition:opacity .8s ease}
-.detail-trailer-wrap::after{content:'';position:absolute;inset:0;z-index:3;background:linear-gradient(to right,rgba(8,8,14,0.75) 0%,rgba(8,8,14,0.4) 35%,rgba(8,8,14,0.05) 60%,transparent 100%),linear-gradient(to bottom,rgba(8,8,14,0.4) 0%,transparent 20%);pointer-events:none}
-.detail-trailer-wrap iframe{position:absolute;top:50%;left:50%;width:200vh;height:112.5vw;min-width:120%;min-height:120%;transform:translate(-50%,-50%);pointer-events:none}
+
 .detail-back{position:absolute;top:24px;left:28px;z-index:3;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .detail-back:hover{background:rgba(255,255,255,0.15)}
 .detail-back svg{width:18px;height:18px}
@@ -464,9 +457,6 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   <!-- HERO -->
   <div class="hero" id="hero">
     <div class="hero-bg" id="heroBg"></div>
-    <div class="hero-trailer-wrap" id="heroTrailerWrap" style="display:none">
-      <iframe id="heroTrailerIframe" frameborder="0" allow="autoplay; encrypted-media"></iframe>
-      <div style="position:absolute;inset:0;z-index:2;pointer-events:none;background:transparent"></div>
     </div>
     <div class="hero-content">
       <div class="hero-info">
@@ -501,9 +491,6 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
         </div>
       </div>
     </div>
-    <button class="hero-mute-btn" id="heroMuteBtn" style="display:none" title="Unmute">
-      <svg id="heroMuteIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-    </button>
     <div class="hero-indicators" id="heroIndicators"></div>
   </div>
 
@@ -530,15 +517,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 <div class="detail-page" id="detailPage">
   <div class="detail-hero">
     <div class="detail-bg" id="detailBg"></div>
-    <div class="detail-trailer-wrap" id="detailTrailerWrap" style="display:none">
-      <iframe id="detailTrailerIframe" frameborder="0" allow="autoplay; encrypted-media"></iframe>
-    </div>
     <div class="detail-back" id="detailBack">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     </div>
-    <button class="hero-mute-btn" id="detailMuteBtn" style="display:none;position:absolute;bottom:36px;right:40px;z-index:4" onclick="toggleDetailMute()">
-      <svg id="detailMuteIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-    </button>
     <div class="detail-hero-content">
       <div class="detail-left">
         <img class="detail-logo" id="detailLogoImg" style="display:none" alt="">
@@ -558,85 +539,79 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 <div class="toast" id="toast"></div>
 
 <script>
+
+/* ── CINEMA TRAILER MODAL ── */
+let cinemaMuted = false;
+
+function openCinema(youtubeKey){
+  if(!youtubeKey) return;
+  const modal = document.getElementById('cinemaModal');
+  const wrap = document.getElementById('cinemaWrap');
+  const iframe = document.getElementById('cinemaIframe');
+  const closeBtn = document.getElementById('cinemaClose');
+  const muteBtn = document.getElementById('cinemaMuteBtn');
+
+  const mute = cinemaMuted ? 1 : 0;
+  iframe.src = `https://www.youtube-nocookie.com/embed/${youtubeKey}?autoplay=1&mute=${mute}&controls=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&fs=1`;
+
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(()=>{
+    modal.style.background = 'rgba(0,0,0,0.92)';
+    wrap.style.opacity = '1';
+    wrap.style.transform = 'scale(1)';
+    closeBtn.style.opacity = '1';
+    muteBtn.style.display = 'flex';
+  });
+}
+
+function closeCinema(){
+  const modal = document.getElementById('cinemaModal');
+  const wrap = document.getElementById('cinemaWrap');
+  const iframe = document.getElementById('cinemaIframe');
+  const closeBtn = document.getElementById('cinemaClose');
+  const muteBtn = document.getElementById('cinemaMuteBtn');
+
+  modal.style.background = 'rgba(0,0,0,0)';
+  wrap.style.opacity = '0';
+  wrap.style.transform = 'scale(0.92)';
+  closeBtn.style.opacity = '0';
+  muteBtn.style.display = 'none';
+  setTimeout(()=>{
+    modal.style.display = 'none';
+    iframe.src = '';
+    // Only restore body scroll if detail page isn't open
+    if(!document.getElementById('detailPage').classList.contains('open')){
+      document.body.style.overflow = '';
+    }
+  }, 500);
+}
+
+function toggleCinemaMute(){
+  cinemaMuted = !cinemaMuted;
+  const iframe = document.getElementById('cinemaIframe');
+  const btn = document.getElementById('cinemaMuteBtn');
+  // Reload with new mute state
+  iframe.src = iframe.src.replace(/mute=\d/, `mute=${cinemaMuted?1:0}`);
+  btn.innerHTML = cinemaMuted
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+}
+
+// Close on backdrop click or Escape
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeCinema(); });
+document.getElementById('cinemaModal').addEventListener('click', e=>{
+  if(e.target === document.getElementById('cinemaModal')) closeCinema();
+});
+document.getElementById('cinemaClose').addEventListener('click', closeCinema);
+
 const API_KEY = 'e7e658fd82cc0dd5ffd5cb4949f45b2c';
 const IMG = 'https://image.tmdb.org/t/p/';
 const myList = JSON.parse(localStorage.getItem('myList')||'[]');
-let heroItems = [], heroIndex = 0, heroTimer;
+let heroItems = [], heroIndex = 0;
 let currentDetail = null;
-const heroBlockedKeys = new Set(); // tracks YouTube keys that returned Error 150/153
-
-/* ── YOUTUBE POSTMESSAGE LISTENER ── */
-window.addEventListener('message', e => {
-  try {
-    const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-    const iframe = document.getElementById('heroTrailerIframe');
-    if(!iframe) return;
-
-    // Error event: embedding blocked
-    if(data?.event === 'onError'){
-      const code = data?.info;
-      if(code === 150 || code === 153 || code === 101){
-        const key = iframe.dataset.currentKey;
-        const nextIdx = parseInt(iframe.dataset.tryIndex||'0') + 1;
-        if(key) heroBlockedKeys.add(key);
-        tryLoadTrailerGlobal(nextIdx);
-      }
-    }
-
-    // State change: 0 = ended → fade back to hero image, no replay
-    if(data?.event === 'onStateChange' && data?.info === 0){
-      const itemIdx = parseInt(iframe.dataset.heroIndex||'0');
-      if(itemIdx === heroIndex){
-        clearTimeout(heroTimer);
-        if(window._showHeroImage) window._showHeroImage();
-      }
-    }
-  } catch(_){}
-});
-
-// Global reference so the postMessage handler can retry on error
-function tryLoadTrailerGlobal(index){
-  const trailerWrap = document.getElementById('heroTrailerWrap');
-  const trailerIframe = document.getElementById('heroTrailerIframe');
-  const muteBtn = document.getElementById('heroMuteBtn');
-  if(!window._heroCandidates || !window._heroCandidates.length){
-    trailerIframe.src=''; trailerWrap.style.display='none'; muteBtn.style.display='none';
-    clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 10000);
-    return;
-  }
-  const avail = window._heroCandidates.filter(v=>!heroBlockedKeys.has(v.key));
-  if(!avail.length || index >= avail.length){
-    trailerIframe.src=''; trailerWrap.style.display='none'; muteBtn.style.display='none';
-    clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 10000);
-    return;
-  }
-  const v = avail[index];
-  const mute = heroMuted ? 1 : 0;
-  trailerWrap.style.opacity = '0';
-  trailerWrap.style.display = 'block';
-  // No loop — onStateChange 0 fires when it ends
-  trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
-  trailerIframe.dataset.currentKey = v.key;
-  trailerIframe.dataset.tryIndex = String(index);
-  trailerIframe.dataset.heroIndex = String(heroIndex);
-  fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
-    .then(r => {
-      if(r.ok){
-        requestAnimationFrame(()=>{ trailerWrap.style.opacity='1'; });
-        muteBtn.style.display='flex'; updateMuteIcon();
-        clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 180000);
-      } else {
-        heroBlockedKeys.add(v.key);
-        trailerWrap.style.display='none';
-        tryLoadTrailerGlobal(index+1);
-      }
-    })
-    .catch(() => {
-      requestAnimationFrame(()=>{ trailerWrap.style.opacity='1'; });
-      muteBtn.style.display='flex'; updateMuteIcon();
-      clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 180000);
-    });
-}
+// Hero trailer candidates stored for Play Trailer button
+let _heroTrailerKey = null;
 
 /* ── API ── */
 async function api(path, params=''){
@@ -672,8 +647,6 @@ async function jumpHero(i){
   await loadHeroItem(i);
 }
 
-let heroMuted = true;
-
 async function loadHeroItem(i){
   const item = heroItems[i];
   const type = item._type;
@@ -707,144 +680,23 @@ async function loadHeroItem(i){
   document.getElementById('heroDesc').textContent = detail.overview||'';
   document.querySelectorAll('.hero-dot-ind').forEach((d,idx)=>d.classList.toggle('active',idx===i));
 
-  // Trailer — show hero image for 10s, then fade to black and play trailer
-  const trailerWrap = document.getElementById('heroTrailerWrap');
-  const trailerIframe = document.getElementById('heroTrailerIframe');
-  const muteBtn = document.getElementById('heroMuteBtn');
+  // Store trailer key for cinema button
   const videos = detail.videos?.results || [];
-
-  // Clear any pending timers from previous item
-  clearTimeout(heroTimer);
-  clearTimeout(window._trailerDelay);
-  trailerIframe.src = '';
-  trailerWrap.style.opacity = '0';
-  trailerWrap.style.display = 'none';
-  muteBtn.style.display = 'none';
-  // Restore hero bg in case it was hidden from a previous trailer
-  heroBg.style.opacity = '1';
-  heroBg.style.transition = 'opacity 1.2s ease, background-image .8s';
-
-  window._heroCandidates = [
-    ...videos.filter(v=>v.site==='YouTube' && v.type==='Trailer'),
-    ...videos.filter(v=>v.site==='YouTube' && v.type==='Teaser'),
-    ...videos.filter(v=>v.site==='YouTube' && v.type!=='Trailer' && v.type!=='Teaser'),
-  ];
-
-  function showHeroImage(){
-    // Fade trailer out, fade hero bg back in
-    trailerWrap.style.opacity = '0';
-    heroBg.style.opacity = '1';
-    muteBtn.style.display = 'none';
-    const tBtn = document.getElementById('heroTrailerBtn');
-    if(tBtn) tBtn.style.display = window._heroCandidates.length ? 'flex' : 'none';
-    setTimeout(()=>{
-      trailerIframe.src = '';
-      trailerWrap.style.display = 'none';
-    }, 1200);
-  }
-
-  function tryLoadTrailer(index){
-    const avail = window._heroCandidates.filter(v=>!heroBlockedKeys.has(v.key));
-    if(!avail.length || index >= avail.length){
-      // No embeddable trailer found — stay on hero image
-      return;
-    }
-    const v = avail[index];
-    const mute = heroMuted ? 1 : 0;
-    trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
-    trailerIframe.dataset.currentKey = v.key;
-    trailerIframe.dataset.tryIndex = String(index);
-    trailerIframe.dataset.heroIndex = String(i);
-
-    fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
-      .then(r => {
-        if(r.ok){
-          // Fade hero bg to black, then reveal trailer
-          heroBg.style.opacity = '0';
-          trailerWrap.style.display = 'block';
-          setTimeout(()=>{
-            requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
-          }, 400);
-          muteBtn.style.display = 'flex';
-          updateMuteIcon();
-          const tBtn = document.getElementById('heroTrailerBtn');
-          if(tBtn) tBtn.style.display = 'none';
-        } else {
-          heroBlockedKeys.add(v.key);
-          tryLoadTrailer(index + 1);
-        }
-      })
-      .catch(() => {
-        // Network error — still try to play
-        heroBg.style.opacity = '0';
-        trailerWrap.style.display = 'block';
-        setTimeout(()=>{
-          requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
-        }, 400);
-        muteBtn.style.display = 'flex';
-        updateMuteIcon();
-        const tBtn2 = document.getElementById('heroTrailerBtn');
-        if(tBtn2) tBtn2.style.display = 'none';
-      });
-  }
-
-  // Wait 10 seconds on hero image, then fade to trailer
-  window._trailerDelay = setTimeout(()=>{
-    if(window._heroCandidates.length) tryLoadTrailer(0);
-  }, 10000);
-
-  // Store showHeroImage so scroll handler and postMessage can call it
-  window._showHeroImage = showHeroImage;
+  const trailerVid = videos.find(v=>v.site==='YouTube' && v.type==='Trailer')
+    || videos.find(v=>v.site==='YouTube' && v.type==='Teaser')
+    || videos.find(v=>v.site==='YouTube');
+  _heroTrailerKey = trailerVid?.key || null;
 
   document.getElementById('heroPlayBtn').onclick = ()=>openDetail(item.id, type);
-  // Play Trailer button
+  // Play Trailer button — opens cinema modal
   const trailerBtnEl = document.getElementById('heroTrailerBtn');
   if(trailerBtnEl){
-    trailerBtnEl.style.display = window._heroCandidates && window._heroCandidates.length ? 'flex' : 'none';
-    trailerBtnEl.onclick = ()=>{
-      const trailerWrap = document.getElementById('heroTrailerWrap');
-      const trailerIframe = document.getElementById('heroTrailerIframe');
-      const muteBtn = document.getElementById('heroMuteBtn');
-      const heroBgEl = document.getElementById('heroBg');
-      const avail = (window._heroCandidates||[]).filter(v=>!heroBlockedKeys.has(v.key));
-      if(!avail.length) return;
-      trailerBtnEl.style.display = 'none';
-      clearTimeout(window._trailerDelay);
-      const v = avail[0];
-      const mute = heroMuted ? 1 : 0;
-      trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
-      trailerIframe.dataset.currentKey = v.key;
-      trailerIframe.dataset.tryIndex = '0';
-      trailerIframe.dataset.heroIndex = String(heroIndex);
-      // Fade hero bg to black, then show trailer
-      heroBgEl.style.opacity = '0';
-      trailerWrap.style.display = 'block';
-      setTimeout(()=>{ requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; }); }, 400);
-      muteBtn.style.display = 'flex';
-      updateMuteIcon();
-    };
+    trailerBtnEl.style.display = _heroTrailerKey ? 'flex' : 'none';
+    trailerBtnEl.onclick = ()=>{ openCinema(_heroTrailerKey); };
   }
   document.getElementById('heroAddBtn').onclick = ()=>toggleList(detail);
   document.getElementById('heroInfoBtn').onclick = ()=>openDetail(item.id, type);
 }
-
-function updateMuteIcon(){
-  const muteBtn = document.getElementById('heroMuteBtn');
-  muteBtn.title = heroMuted ? 'Unmute' : 'Mute';
-  muteBtn.innerHTML = heroMuted
-    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`
-    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
-}
-
-document.getElementById('heroMuteBtn').onclick = ()=>{
-  heroMuted = !heroMuted;
-  // Reload iframe with new mute state
-  const iframe = document.getElementById('heroTrailerIframe');
-  const currentSrc = iframe.src;
-  // Preserve youtube-nocookie domain when toggling mute
-  iframe.src = currentSrc.replace(/mute=\d/, `mute=${heroMuted?1:0}`);
-  updateMuteIcon();
-};
 
 /* ── ROW BUILDER ── */
 function buildCard(item, size='card-sm', rank=null){
@@ -991,27 +843,9 @@ async function openDetail(id, type){
     document.getElementById('globalBg').style.backgroundImage=`url(${backdrop})`;
   }
 
-  // Trailer
-  const detailTrailerWrap = document.getElementById('detailTrailerWrap');
-  const detailTrailerIframe = document.getElementById('detailTrailerIframe');
-  const detailMuteBtn = document.getElementById('detailMuteBtn');
-  detailTrailerIframe.src = '';
-  detailTrailerWrap.style.display = 'none';
-  detailTrailerWrap.style.opacity = '0';
-  detailMuteBtn.style.display = 'none';
-  window._detailMuted = true;
-
+  // Store trailer key for cinema button
   const trailerVideos = (detail.videos?.results || []).filter(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
-  if(trailerVideos.length){
-    const v = trailerVideos[0];
-    setTimeout(()=>{
-      detailTrailerWrap.style.display = 'block';
-      detailTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
-      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
-        .then(r=>{ if(r.ok){ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; } })
-        .catch(()=>{ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; });
-    }, 1500);
-  }
+  const detailTrailerKey = trailerVideos[0]?.key || null;
 
   // Logo / Title
   const logo = detail.images?.logos?.find(l=>l.iso_639_1==='en' && l.file_path);
@@ -1041,10 +875,17 @@ async function openDetail(id, type){
 
   // Actions
   const inList=myList.some(x=>x.id===detail.id);
+  const trailerBtnHtml = detailTrailerKey
+    ? `<button class="btn-outline" onclick="openCinema('${detailTrailerKey}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        Trailer
+      </button>`
+    : '';
   document.getElementById('detailActions').innerHTML=`
     <button class="btn-play-detail" onclick="playVidking(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
       <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play
     </button>
+    ${trailerBtnHtml}
     <button class="btn-outline" id="detailAddBtn" onclick="toggleList(currentDetail)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
       ${inList?'In My List':'My List'}
@@ -1153,24 +994,10 @@ async function loadSeason(tvId, sn){
     </div>`).join('');
 }
 
-function toggleDetailMute(){
-  window._detailMuted = !window._detailMuted;
-  const iframe = document.getElementById('detailTrailerIframe');
-  const src = iframe.src;
-  iframe.src = src.replace(/mute=\d/, `mute=${window._detailMuted?1:0}`);
-  const icon = document.getElementById('detailMuteIcon');
-  icon.innerHTML = window._detailMuted
-    ? '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>'
-    : '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
-}
 
 document.getElementById('detailBack').onclick=()=>{
   document.getElementById('detailPage').classList.remove('open');
   document.body.style.overflow='';
-  // Stop trailer
-  document.getElementById('detailTrailerIframe').src='';
-  document.getElementById('detailTrailerWrap').style.display='none';
-  document.getElementById('detailMuteBtn').style.display='none';
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
@@ -1274,30 +1101,7 @@ function showToast(msg){
 initHero();
 loadHomeRows();
 
-/* ── SCROLL: hide trailer when user scrolls away from hero ── */
-(function(){
-  const homePage = document.getElementById('page-home');
-  // We listen on window scroll since the page itself scrolls
-  let lastScrollY = 0;
-  window.addEventListener('scroll', ()=>{
-    // Only act when home page is visible
-    if(!homePage || homePage.style.display === 'none') return;
-    const heroEl = document.getElementById('hero');
-    if(!heroEl) return;
-    const heroBottom = heroEl.getBoundingClientRect().bottom;
-    const trailerWrap = document.getElementById('heroTrailerWrap');
-    const heroBg = document.getElementById('heroBg');
-    const muteBtn = document.getElementById('heroMuteBtn');
-    const trailerIframe = document.getElementById('heroTrailerIframe');
-    const trailerPlaying = trailerWrap && trailerWrap.style.display !== 'none' && parseFloat(trailerWrap.style.opacity) > 0;
 
-    if(heroBottom < window.innerHeight * 0.4 && trailerPlaying){
-      // User has scrolled away — kill trailer, restore hero image
-      if(window._showHeroImage) window._showHeroImage();
-      clearTimeout(window._trailerDelay);
-    }
-  }, { passive: true });
-})();
 
 /* ── VIDKING PLAYER ── */
 let currentPlayerState = null;
@@ -1447,5 +1251,19 @@ document.getElementById('brave-overlay').addEventListener('click', function(e){
   if(e.target === this) closeBravePopup();
 });
 </script>
+
+<!-- CINEMA TRAILER MODAL -->
+<div id="cinemaModal" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:background .5s ease">
+  <button id="cinemaClose" style="position:absolute;top:24px;right:28px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .2s;backdrop-filter:blur(12px);opacity:0;transition:opacity .4s .3s">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div id="cinemaWrap" style="position:relative;width:85vw;max-width:1200px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.9);transform:scale(0.92);transition:transform .5s cubic-bezier(.16,1,.3,1);opacity:0;transition:transform .5s cubic-bezier(.16,1,.3,1),opacity .4s .15s">
+    <iframe id="cinemaIframe" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen style="width:100%;height:100%;display:block;border:none"></iframe>
+  </div>
+  <div id="cinemaMuteBtn" style="position:absolute;bottom:28px;right:28px;width:42px;height:42px;border-radius:50%;background:rgba(20,20,28,0.7);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.25);color:#fff;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2;transition:all .2s" onclick="toggleCinemaMute()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+  </div>
+</div>
+
 </body>
 </html>
