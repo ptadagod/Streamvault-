@@ -14,7 +14,7 @@
   --glass-border:rgba(255,255,255,0.12);
   --glass-hover:rgba(255,255,255,0.14);
 }
-html,body{height:100%;background:#08080e;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidden}
+html{background:#08080e;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidden}body{min-height:100%;background:#08080e;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:0;background:rgba(8,8,14,0.45);pointer-events:none}
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
@@ -1881,8 +1881,21 @@ html.tv-mode .ep-num{font-size:10px}
 
 <script>
 (function(){
-  var isTV = localStorage.getItem('sv_tv_mode') === '1';
-  if(isTV) applyTV(true);
+  // ── TV AUTO-DETECTION ──────────────────────────────────────────
+  // Detects large screens (TVs, big monitors) automatically.
+  // Manual toggle overrides auto-detect and is remembered in localStorage.
+  // Set localStorage key to 'auto' (or clear it) to go back to auto mode.
+
+  var TV_WIDTH = 1280;   // px — screens wider than this are treated as TV
+  var TV_HEIGHT = 720;   // px — and taller than this (rules out wide laptops less reliably)
+
+  function isLargeScreen(){
+    var w = window.screen ? window.screen.width : window.innerWidth;
+    var h = window.screen ? window.screen.height : window.innerHeight;
+    // Also check pixel ratio: TVs are typically 1x, retina laptops are 2x+
+    var dpr = window.devicePixelRatio || 1;
+    return w >= TV_WIDTH && h >= TV_HEIGHT && dpr <= 1.5;
+  }
 
   function applyTV(on){
     document.documentElement.classList.toggle('tv-mode', on);
@@ -1890,10 +1903,42 @@ html.tv-mode .ep-num{font-size:10px}
     if(btn) btn.classList.toggle('active', on);
   }
 
+  function init(){
+    var stored = localStorage.getItem('sv_tv_mode');
+    if(stored === '1'){
+      applyTV(true);
+    } else if(stored === '0'){
+      applyTV(false);
+    } else {
+      // Auto mode — no manual override stored
+      applyTV(isLargeScreen());
+    }
+  }
+
+  init();
+
+  // Re-check on resize (e.g. browser window resized, or orientation change)
+  var resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      var stored = localStorage.getItem('sv_tv_mode');
+      if(stored !== '1' && stored !== '0'){
+        applyTV(isLargeScreen());
+      }
+    }, 200);
+  });
+
   window.toggleTV = function(){
     var on = !document.documentElement.classList.contains('tv-mode');
     applyTV(on);
     localStorage.setItem('sv_tv_mode', on ? '1' : '0');
+  };
+
+  // Call resetTVMode() from console to go back to auto-detection
+  window.resetTVMode = function(){
+    localStorage.removeItem('sv_tv_mode');
+    applyTV(isLargeScreen());
   };
 })();
 </script>
