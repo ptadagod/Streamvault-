@@ -191,6 +191,79 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   .seeall-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;padding:16px 16px 100px}
 }
 
+/* ══════════════════════════════════════
+   TV / large-screen (≥1800px)
+   Tightens spacing & sizes so everything
+   fits a 1080p TV viewport without overflow
+   ══════════════════════════════════════ */
+@media(min-width:1800px){
+  :root{ --nav-h:52px }
+
+  /* Nav */
+  nav{ padding:0 32px; top:12px }
+  .logo{ font-size:22px; letter-spacing:2px }
+  .nav-item{ padding:9px 20px; font-size:13px }
+  .nav-item.active{ padding:9px 22px }
+  .nav-search-btn{ width:30px; height:30px }
+
+  /* Hero */
+  .hero{ height:92vh; min-height:500px }
+  .hero-content{ padding:0 52px 80px }
+  .hero-logo-img{ max-width:480px; max-height:200px; margin-bottom:18px }
+  .hero-logo-fallback{ font-size:120px; margin-bottom:14px }
+  .hero-meta{ gap:10px; margin-bottom:16px }
+  .hero-year,.hero-rating,.hero-genre{ font-size:15px }
+  .hero-desc{ font-size:16px; margin-bottom:28px }
+  .btn-play{ padding:14px 32px; font-size:15px }
+  .btn-play svg{ width:18px; height:18px }
+  .btn-trailer{ padding:14px 26px; font-size:14px }
+  .btn-trailer svg{ width:16px; height:16px }
+  .btn-icon-half{ width:60px; height:50px }
+  .btn-icon-half svg{ width:20px; height:20px }
+  .hero-mute-btn{ bottom:28px; right:32px; width:36px; height:36px }
+  .hero-indicators{ bottom:18px }
+
+  /* Rows */
+  .rows-section{ margin-top:-80px; padding:80px 0 40px }
+  .row-block{ margin-bottom:32px }
+  .row-header{ padding:0 32px; margin-bottom:12px }
+  .row-title{ font-size:18px }
+  .row-track-wrap{ padding:0 32px }
+  .row-track{ gap:10px; padding:8px 2px 16px }
+  .platform-bar{ padding:0 32px; margin-bottom:20px }
+  .platform-bar-title{ font-size:18px }
+  .platform-pill{ padding:8px 16px; font-size:12px }
+
+  /* Cards */
+  .card-sm{ width:155px; height:232px }
+  .card-md{ width:260px; height:146px }
+  .card-lg{ width:185px; height:278px }
+  .card-rank{ font-size:18px; padding:5px 11px 5px 8px }
+  .card-quality{ font-size:9px; padding:2px 5px }
+  .card-hover-title{ font-size:11px }
+  .card-meta{ font-size:10px }
+
+  /* Detail page */
+  .detail-hero{ height:75vh; min-height:440px }
+  .detail-hero-content{ padding:0 40px 44px; gap:28px }
+  .detail-logo-text{ font-size:44px }
+  .detail-desc{ font-size:13px; margin-bottom:20px }
+  .btn-play-detail{ padding:12px 26px; font-size:14px }
+  .btn-outline{ padding:11px 18px; font-size:13px }
+
+  /* See all grid */
+  .seeall-grid{ grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; padding:24px 32px 40px }
+  .seeall-header{ padding:16px 32px }
+  .seeall-title{ font-size:22px }
+
+  /* Search */
+  .search-box{ max-width:500px }
+  .search-input{ font-size:15px }
+
+  /* Player */
+  .player-container{ width:85vw }
+}
+
 /* ── DETAIL PAGE ── */
 .detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;background:#08080e;scroll-behavior:smooth}
 .detail-page.open{display:block}
