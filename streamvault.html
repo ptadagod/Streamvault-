@@ -450,11 +450,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   .brave-btn{padding:13px 18px;font-size:14px}
 }
 
-/* ══════════════════════════════════════
-   TV — wide screen + low pixel density
-   (devicePixelRatio=1 on TVs, 1.5-2 on
-   laptops/monitors so they're unaffected)
-   ══════════════════════════════════════ */
+/* TV mode via media query as fallback — main TV styles applied via .tv-mode class */
 @media(min-width:1281px) and (max-resolution:1.5dppx) and (-webkit-max-device-pixel-ratio:1.5){
 
   /* Nav */
@@ -1764,6 +1760,134 @@ document.getElementById('cinemaModal').addEventListener('click', e=>{
   if(e.target === document.getElementById('cinemaModal')) closeCinema();
 });
 document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeCinema(); });
+</script>
+
+<!-- ── TV MODE TOGGLE ── -->
+<style>
+#tv-toggle{
+  position:fixed;bottom:24px;right:24px;z-index:9998;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(20,20,28,0.92);
+  border:1.5px solid rgba(255,255,255,0.18);
+  border-radius:50px;padding:10px 18px;
+  color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 4px 24px rgba(0,0,0,0.5);
+  transition:all .2s;user-select:none;
+}
+#tv-toggle:hover{background:rgba(40,40,56,0.98);border-color:rgba(255,255,255,0.35)}
+#tv-toggle svg{width:16px;height:16px;flex-shrink:0}
+#tv-toggle.active{background:rgba(232,200,74,0.15);border-color:rgba(232,200,74,0.6);color:#E8C84A}
+
+/* TV mode styles applied via class on <html> */
+html.tv-mode {
+  /* Nav */
+  --tv-active:1;
+}
+html.tv-mode nav{top:10px;padding:0 28px}
+html.tv-mode .logo{font-size:18px}
+html.tv-mode .nav-pill{padding:4px 6px}
+html.tv-mode .nav-item{padding:7px 16px;font-size:12px}
+html.tv-mode .nav-item.active{padding:7px 18px}
+html.tv-mode .nav-search-btn{width:28px;height:28px}
+html.tv-mode .nav-search-btn svg{width:13px;height:13px}
+
+/* Hero */
+html.tv-mode .hero{height:52vh;min-height:320px}
+html.tv-mode .hero-content{padding:0 40px 36px}
+html.tv-mode .hero-info{max-width:520px}
+html.tv-mode .hero-logo-img{max-width:260px;max-height:110px;margin-bottom:12px}
+html.tv-mode .hero-logo-fallback{font-size:80px;margin-bottom:10px}
+html.tv-mode .hero-meta{gap:8px;margin-bottom:10px}
+html.tv-mode .hero-year,html.tv-mode .hero-rating,html.tv-mode .hero-genre{font-size:12px}
+html.tv-mode .hero-desc{font-size:12px;line-height:1.55;margin-bottom:16px;-webkit-line-clamp:2}
+
+/* Buttons — forced inline */
+html.tv-mode .hero-actions{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:8px}
+html.tv-mode .btn-play{padding:10px 22px;font-size:12px;gap:7px;flex-shrink:0;white-space:nowrap}
+html.tv-mode .btn-play svg{width:14px;height:14px}
+html.tv-mode .btn-trailer{padding:10px 16px;font-size:12px;gap:7px;flex-shrink:0;white-space:nowrap}
+html.tv-mode .btn-trailer svg{width:13px;height:13px}
+html.tv-mode .btn-icon-pill{flex-shrink:0}
+html.tv-mode .btn-icon-half{width:40px;height:36px}
+html.tv-mode .btn-icon-half svg{width:15px;height:15px}
+html.tv-mode .btn-icon-divider{height:16px}
+html.tv-mode .hero-mute-btn{width:30px;height:30px;bottom:14px;right:20px}
+html.tv-mode .hero-indicators{bottom:10px}
+
+/* Rows */
+html.tv-mode .rows-section{margin-top:-60px;padding:60px 0 30px}
+html.tv-mode .row-block{margin-bottom:20px}
+html.tv-mode .row-header{padding:0 28px;margin-bottom:8px}
+html.tv-mode .row-title{font-size:14px}
+html.tv-mode .row-track-wrap{padding:0 28px}
+html.tv-mode .row-track{gap:8px;padding:6px 2px 10px}
+
+/* Cards */
+html.tv-mode .card-sm{width:110px;height:165px}
+html.tv-mode .card-md{width:190px;height:107px}
+html.tv-mode .card-lg{width:130px;height:195px}
+html.tv-mode .card-rank{font-size:14px;padding:4px 9px 4px 7px}
+html.tv-mode .card-quality{font-size:8px;padding:2px 5px}
+html.tv-mode .card-play{width:34px;height:34px}
+html.tv-mode .card-hover-title{font-size:10px}
+
+/* Platform bar */
+html.tv-mode .platform-bar{padding:0 28px;margin-bottom:14px;margin-top:4px}
+html.tv-mode .platform-bar-title{font-size:14px}
+html.tv-mode .platform-pill{padding:6px 12px;font-size:10px;gap:5px}
+html.tv-mode .platform-pill .pp-dot{width:6px;height:6px}
+
+/* Detail page */
+html.tv-mode .detail-hero{height:52vh;min-height:320px}
+html.tv-mode .detail-hero-content{padding:0 32px 32px;gap:20px}
+html.tv-mode .detail-left{max-width:420px}
+html.tv-mode .detail-logo{max-width:180px;max-height:70px;margin-bottom:10px}
+html.tv-mode .detail-logo-text{font-size:36px;margin-bottom:8px}
+html.tv-mode .detail-badges{gap:5px;margin-bottom:10px}
+html.tv-mode .pill-badge{padding:3px 9px;font-size:10px}
+html.tv-mode .detail-desc{font-size:11px;line-height:1.6;margin-bottom:14px}
+html.tv-mode .detail-actions{gap:8px}
+html.tv-mode .btn-play-detail{padding:9px 20px;font-size:12px}
+html.tv-mode .btn-outline{padding:9px 14px;font-size:11px}
+html.tv-mode .detail-info-panel{width:180px;padding:16px;gap:12px}
+html.tv-mode .info-label{font-size:9px}
+html.tv-mode .info-value{font-size:12px}
+html.tv-mode .section-title{font-size:16px;margin-top:28px;margin-bottom:12px}
+html.tv-mode .episode-item{padding:10px;gap:10px}
+html.tv-mode .ep-thumb{width:90px;height:51px}
+html.tv-mode .ep-title{font-size:12px}
+html.tv-mode .ep-desc{font-size:11px}
+</style>
+
+<button id="tv-toggle" onclick="toggleTV()" title="Toggle TV Mode">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+  </svg>
+  <span id="tv-toggle-label">TV Mode</span>
+</button>
+
+<script>
+(function(){
+  var isTV = localStorage.getItem('sv_tv_mode') === '1';
+  if(isTV) applyTV(true);
+
+  function applyTV(on){
+    document.documentElement.classList.toggle('tv-mode', on);
+    var btn = document.getElementById('tv-toggle');
+    var lbl = document.getElementById('tv-toggle-label');
+    if(btn){
+      btn.classList.toggle('active', on);
+      lbl.textContent = on ? 'TV Mode ON' : 'TV Mode';
+    }
+  }
+
+  window.toggleTV = function(){
+    var on = !document.documentElement.classList.contains('tv-mode');
+    applyTV(on);
+    localStorage.setItem('sv_tv_mode', on ? '1' : '0');
+  };
+})();
 </script>
 
 </body>
