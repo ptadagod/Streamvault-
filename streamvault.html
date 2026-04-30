@@ -156,7 +156,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;background:#08080e;scroll-behavior:smooth}
 .detail-page.open{display:block}
 .detail-hero{position:relative;height:85vh;min-height:560px;overflow:hidden}
-.detail-bg{position:absolute;inset:-60px;background-size:cover;background-position:center top;transition:background-image .6s}
+.detail-bg{position:absolute;inset:-60px;background-size:cover;background-position:center top;transition:background-image .6s, opacity .8s}
 .detail-bg::after{content:'';position:absolute;inset:0;background:
   linear-gradient(to right,rgba(8,8,14,0.92) 0%,rgba(8,8,14,0.6) 45%,rgba(8,8,14,0.1) 75%,transparent 100%),
   linear-gradient(to top,rgba(8,8,14,1) 0%,rgba(8,8,14,0.7) 25%,transparent 60%),
@@ -365,9 +365,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   .page-header{padding:80px 16px 20px;font-size:24px}
 
   /* ── Detail page ── */
-  .detail-hero{height:auto;min-height:0}
-  .detail-hero-content{position:relative;inset:auto;flex-direction:column;padding:80px 16px 24px;gap:12px;justify-content:flex-start !important;align-items:flex-start !important}
-  .detail-bg{position:absolute;inset:0;min-height:320px}
+  .detail-hero{height:60vh;min-height:400px;width:100%}
+  .detail-bg{position:absolute;inset:-60px}
+  .detail-hero-content{position:absolute;inset:0;flex-direction:column;padding:80px 16px 28px;gap:12px;justify-content:flex-end !important;align-items:flex-start !important}
   .detail-left{max-width:100%}
   .detail-logo{max-width:180px;max-height:80px;margin-bottom:10px}
   .detail-logo-text{font-size:36px;margin-bottom:10px}
@@ -952,6 +952,7 @@ async function openDetail(id, type){
   detailTrailerWrap.style.opacity = '0';
   detailMuteBtn.style.display = 'none';
   window._detailMuted = true;
+  document.getElementById('detailBg').style.opacity = '1';
 
   const trailerVideos = (detail.videos?.results || []).filter(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
   if(trailerVideos.length){
@@ -960,8 +961,8 @@ async function openDetail(id, type){
       detailTrailerWrap.style.display = 'block';
       detailTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
       fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
-        .then(r=>{ if(r.ok){ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; } })
-        .catch(()=>{ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; });
+        .then(r=>{ if(r.ok){ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; document.getElementById('detailBg').style.opacity='0'; }); detailMuteBtn.style.display='flex'; } })
+        .catch(()=>{ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; document.getElementById('detailBg').style.opacity='0'; }); detailMuteBtn.style.display='flex'; });
     }, 1500);
   }
 
@@ -1123,6 +1124,7 @@ document.getElementById('detailBack').onclick=()=>{
   document.getElementById('detailTrailerIframe').src='';
   document.getElementById('detailTrailerWrap').style.display='none';
   document.getElementById('detailMuteBtn').style.display='none';
+  document.getElementById('detailBg').style.opacity='1';
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
