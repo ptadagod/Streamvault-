@@ -451,64 +451,122 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 }
 
 /* ══════════════════════════════════════
-   TV / large screen (≥1281px)
-   Only fixes what's broken at TV scale.
-   Desktop (≤1280px) is untouched.
+   TV (≥1281px) — scaled to feel like
+   desktop on a large screen
    ══════════════════════════════════════ */
 @media(min-width:1281px){
 
-  /* Hero: shrink height so card rows show below the fold */
-  .hero{height:62vh;min-height:380px}
-  .hero-content{padding:0 56px 48px}
-  .hero-info{max-width:640px}
+  /* Nav */
+  nav{top:10px;padding:0 28px}
+  .logo{font-size:18px}
+  .nav-pill{padding:4px 6px}
+  .nav-item{padding:7px 16px;font-size:12px}
+  .nav-item.active{padding:7px 18px}
+  .nav-search-btn{width:28px;height:28px}
+  .nav-search-btn svg{width:13px;height:13px}
 
-  /* Logo: was 720×320, massive on a TV */
-  .hero-logo-img{max-width:380px;max-height:160px;margin-bottom:16px}
-  .hero-logo-fallback{font-size:110px;margin-bottom:14px}
+  /* Hero */
+  .hero{height:52vh;min-height:320px}
+  .hero-content{padding:0 40px 36px}
+  .hero-info{max-width:520px}
+  .hero-logo-img{max-width:260px;max-height:110px;margin-bottom:12px}
+  .hero-logo-fallback{font-size:80px;margin-bottom:10px}
+  .hero-meta{gap:8px;margin-bottom:10px}
+  .hero-year,.hero-rating,.hero-genre{font-size:12px}
+  .hero-dot{width:3px;height:3px}
+  .hero-desc{font-size:12px;line-height:1.55;margin-bottom:16px;-webkit-line-clamp:2}
 
-  /* Meta row inline */
-  .hero-meta{gap:10px;margin-bottom:14px}
-  .hero-year,.hero-rating,.hero-genre{font-size:14px}
+  /* Buttons — all inline, no wrap */
+  .hero-actions{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:8px}
+  .btn-play{padding:10px 22px;font-size:12px;gap:7px;flex-shrink:0;white-space:nowrap;border-radius:50px}
+  .btn-play svg{width:14px;height:14px}
+  .btn-trailer{padding:10px 16px;font-size:12px;gap:7px;flex-shrink:0;white-space:nowrap;border-radius:50px}
+  .btn-trailer svg{width:13px;height:13px}
+  .btn-icon-pill{flex-shrink:0;border-radius:50px}
+  .btn-icon-half{width:40px;height:36px}
+  .btn-icon-half svg{width:15px;height:15px}
+  .btn-icon-divider{height:16px}
+  .hero-mute-btn{width:30px;height:30px;bottom:14px;right:20px}
+  .hero-mute-btn svg{width:13px;height:13px}
+  .hero-indicators{bottom:10px}
 
-  /* Description: readable but compact, 2 lines */
-  .hero-desc{font-size:14px;line-height:1.6;margin-bottom:22px;-webkit-line-clamp:2}
+  /* Rows */
+  .rows-section{margin-top:-60px;padding:60px 0 30px}
+  .row-block{margin-bottom:20px}
+  .row-header{padding:0 28px;margin-bottom:8px}
+  .row-title{font-size:14px}
+  .row-see-all{font-size:11px}
+  .row-track-wrap{padding:0 28px}
+  .row-track{gap:8px;padding:6px 2px 10px}
 
-  /* Buttons: force single row, no shrinking */
-  .hero-actions{gap:10px;flex-wrap:nowrap;align-items:center}
-  .btn-play{padding:13px 30px;font-size:14px;gap:8px;flex-shrink:0;white-space:nowrap}
-  .btn-play svg{width:17px;height:17px}
-  .btn-trailer{padding:13px 22px;font-size:13px;gap:8px;flex-shrink:0;white-space:nowrap}
-  .btn-trailer svg{width:15px;height:15px}
-  .btn-icon-pill{flex-shrink:0}
-  .btn-icon-half{width:54px;height:46px}
-  .btn-icon-half svg{width:20px;height:20px}
-  .btn-icon-divider{height:20px}
+  /* Cards */
+  .card-sm{width:110px;height:165px}
+  .card-md{width:190px;height:107px}
+  .card-lg{width:130px;height:195px}
+  .card-rank{font-size:14px;padding:4px 9px 4px 7px}
+  .card-quality{font-size:8px;padding:2px 5px}
+  .card-play{width:34px;height:34px}
+  .card-play svg{width:12px;height:12px}
+  .card-hover-title{font-size:10px}
 
-  /* Rows: tighter gaps so more rows fit */
-  .rows-section{margin-top:-80px;padding:80px 0 40px}
-  .row-block{margin-bottom:28px}
-  .row-header{padding:0 36px;margin-bottom:12px}
-  .row-title{font-size:18px}
-  .row-track-wrap{padding:0 36px}
-  .row-track{gap:10px;padding:8px 2px 14px}
-
-  /* Cards: slightly smaller so more are in view */
-  .card-sm{width:150px;height:225px}
-  .card-md{width:260px;height:146px}
-  .card-lg{width:180px;height:270px}
-
-  /* Platform filter bar */
-  .platform-bar{padding:0 36px;margin-bottom:22px}
-  .platform-bar-title{font-size:18px}
-  .platform-pill{padding:8px 16px;font-size:12px}
+  /* Platform bar */
+  .platform-bar{padding:0 28px;margin-bottom:14px;margin-top:4px}
+  .platform-bar-inner{gap:10px}
+  .platform-bar-title{font-size:14px}
+  .platform-pills{gap:6px}
+  .platform-pill{padding:6px 12px;font-size:10px;gap:5px}
+  .platform-pill .pp-dot{width:6px;height:6px}
 
   /* Detail page */
-  .detail-hero{height:62vh;min-height:380px}
-  .detail-hero-content{padding:0 40px 44px;gap:28px}
-  .detail-logo-text{font-size:44px}
-  .detail-desc{font-size:13px;margin-bottom:20px}
-  .btn-play-detail{padding:12px 26px;font-size:14px}
-  .btn-outline{padding:12px 18px;font-size:13px}
+  .detail-hero{height:52vh;min-height:320px}
+  .detail-hero-content{padding:0 32px 32px;gap:20px}
+  .detail-left{max-width:420px}
+  .detail-logo{max-width:180px;max-height:70px;margin-bottom:10px}
+  .detail-logo-text{font-size:36px;margin-bottom:8px}
+  .detail-badges{gap:5px;margin-bottom:10px}
+  .pill-badge{padding:3px 9px;font-size:10px}
+  .detail-desc{font-size:11px;line-height:1.6;margin-bottom:14px;max-width:380px}
+  .detail-actions{gap:8px}
+  .btn-play-detail{padding:9px 20px;font-size:12px;gap:7px}
+  .btn-play-detail svg{width:13px;height:13px}
+  .btn-outline{padding:9px 14px;font-size:11px;gap:6px}
+  .btn-outline svg{width:13px;height:13px}
+  .detail-info-panel{width:180px;padding:16px;gap:12px;border-radius:14px}
+  .info-label{font-size:9px}
+  .info-value{font-size:12px}
+  .detail-back{width:32px;height:32px;top:16px;left:20px}
+  .detail-back svg{width:14px;height:14px}
+
+  /* Below detail */
+  .detail-below{padding:0 32px 60px}
+  .section-title{font-size:16px;margin-top:32px;margin-bottom:14px}
+  .actor-card{width:72px}
+  .actor-img{width:72px;height:72px}
+  .actor-name{font-size:10px}
+  .actor-char{font-size:9px}
+  .similar-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+  .episode-item{padding:10px;gap:10px}
+  .ep-thumb{width:90px;height:51px}
+  .ep-title{font-size:12px}
+  .ep-desc{font-size:11px}
+  .ep-num{font-size:11px}
+
+  /* Seeall */
+  .seeall-header{padding:14px 28px}
+  .seeall-title{font-size:20px}
+  .seeall-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;padding:20px 28px 40px}
+
+  /* Search */
+  .search-box{max-width:440px;top:14px}
+  .search-input-wrap{padding:10px 16px}
+  .search-input{font-size:14px}
+  .search-result-poster{width:34px;height:50px}
+  .search-result-title{font-size:12px}
+  .search-result-meta{font-size:10px}
+
+  /* Player */
+  .player-container{width:88vw}
+  .player-title{font-size:12px}
 }
 
 /* ── CINEMA MODAL ── */
