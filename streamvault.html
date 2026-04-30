@@ -381,52 +381,81 @@ let heroItems = [], heroIndex = 0, heroTimer;
 let currentDetail = null;
 const heroBlockedKeys = new Set(); // tracks YouTube keys that returned Error 150/153
 
-/* ── YOUTUBE ERROR LISTENER ── */
+/* ── YOUTUBE POSTMESSAGE LISTENER ── */
 window.addEventListener('message', e => {
-  // YouTube postMessage sends JSON strings
   try {
     const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-    // YouTube IFrame API error event
+    const iframe = document.getElementById('heroTrailerIframe');
+    if(!iframe) return;
+
+    // Error event: embedding blocked
     if(data?.event === 'onError'){
       const code = data?.info;
-      // 150 = embedding restricted by video owner, 153 = same (HTML5)
       if(code === 150 || code === 153 || code === 101){
-        const iframe = document.getElementById('heroTrailerIframe');
-        const key = iframe?.dataset?.currentKey;
-        const nextIdx = parseInt(iframe?.dataset?.tryIndex||'0') + 1;
+        const key = iframe.dataset.currentKey;
+        const nextIdx = parseInt(iframe.dataset.tryIndex||'0') + 1;
         if(key) heroBlockedKeys.add(key);
-        // Try next candidate silently
-        if(iframe) tryLoadTrailerGlobal(nextIdx);
+        tryLoadTrailerGlobal(nextIdx);
+      }
+    }
+
+    // State change: 0 = ended → advance to next hero item
+    if(data?.event === 'onStateChange' && data?.info === 0){
+      const itemIdx = parseInt(iframe.dataset.heroIndex||'0');
+      // Only advance if this event is for the currently showing hero item
+      if(itemIdx === heroIndex){
+        clearTimeout(heroTimer);
+        // Fade trailer out before advancing
+        const trailerWrap = document.getElementById('heroTrailerWrap');
+        trailerWrap.style.opacity = '0';
+        heroTimer = setTimeout(advanceHero, 800);
       }
     }
   } catch(_){}
 });
 
-// Global reference so the postMessage handler can call it — delegates to tryLoadTrailer via re-entry
+// Global reference so the postMessage handler can retry on error
 function tryLoadTrailerGlobal(index){
   const trailerWrap = document.getElementById('heroTrailerWrap');
   const trailerIframe = document.getElementById('heroTrailerIframe');
   const muteBtn = document.getElementById('heroMuteBtn');
   if(!window._heroCandidates || !window._heroCandidates.length){
-    trailerIframe.src=''; trailerWrap.style.display='none'; muteBtn.style.display='none'; return;
+    trailerIframe.src=''; trailerWrap.style.display='none'; muteBtn.style.display='none';
+    clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 10000);
+    return;
   }
   const avail = window._heroCandidates.filter(v=>!heroBlockedKeys.has(v.key));
   if(!avail.length || index >= avail.length){
-    trailerIframe.src=''; trailerWrap.style.display='none'; muteBtn.style.display='none'; return;
+    trailerIframe.src=''; trailerWrap.style.display='none'; muteBtn.style.display='none';
+    clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 10000);
+    return;
   }
   const v = avail[index];
   const mute = heroMuted ? 1 : 0;
   trailerWrap.style.opacity = '0';
   trailerWrap.style.display = 'block';
-  trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&loop=1&playlist=${v.key}&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
+  // No loop — onStateChange 0 fires when it ends
+  trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
   trailerIframe.dataset.currentKey = v.key;
   trailerIframe.dataset.tryIndex = String(index);
+  trailerIframe.dataset.heroIndex = String(heroIndex);
   fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
     .then(r => {
-      if(r.ok){ trailerWrap.style.opacity='1'; muteBtn.style.display='flex'; updateMuteIcon(); }
-      else { heroBlockedKeys.add(v.key); trailerWrap.style.display='none'; tryLoadTrailerGlobal(index+1); }
+      if(r.ok){
+        requestAnimationFrame(()=>{ trailerWrap.style.opacity='1'; });
+        muteBtn.style.display='flex'; updateMuteIcon();
+        clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 180000);
+      } else {
+        heroBlockedKeys.add(v.key);
+        trailerWrap.style.display='none';
+        tryLoadTrailerGlobal(index+1);
+      }
     })
-    .catch(() => { trailerWrap.style.opacity='1'; muteBtn.style.display='flex'; updateMuteIcon(); });
+    .catch(() => {
+      requestAnimationFrame(()=>{ trailerWrap.style.opacity='1'; });
+      muteBtn.style.display='flex'; updateMuteIcon();
+      clearTimeout(heroTimer); heroTimer = setTimeout(advanceHero, 180000);
+    });
 }
 
 /* ── API ── */
@@ -446,10 +475,12 @@ async function initHero(){
   heroItems = items.sort(()=>Math.random()-0.5).slice(0,8);
   buildHeroIndicators();
   await loadHeroItem(0);
-  heroTimer = setInterval(()=>{
-    heroIndex=(heroIndex+1)%heroItems.length;
-    loadHeroItem(heroIndex);
-  }, 7000);
+  // Rotation is now driven by trailer end events; fallback timer set inside loadHeroItem
+}
+
+function advanceHero(){
+  heroIndex = (heroIndex+1) % heroItems.length;
+  loadHeroItem(heroIndex);
 }
 
 function buildHeroIndicators(){
@@ -458,10 +489,9 @@ function buildHeroIndicators(){
 }
 
 async function jumpHero(i){
-  clearInterval(heroTimer);
+  clearTimeout(heroTimer);
   heroIndex=i;
   await loadHeroItem(i);
-  heroTimer=setInterval(()=>{heroIndex=(heroIndex+1)%heroItems.length;loadHeroItem(heroIndex);},7000);
 }
 
 let heroMuted = true;
@@ -499,15 +529,17 @@ async function loadHeroItem(i){
   document.getElementById('heroDesc').textContent = detail.overview||'';
   document.querySelectorAll('.hero-dot-ind').forEach((d,idx)=>d.classList.toggle('active',idx===i));
 
-  // Trailer — robust Error 153 handling
+  // Trailer — show backdrop first, fade trailer in after delay, advance on end
   const trailerWrap = document.getElementById('heroTrailerWrap');
   const trailerIframe = document.getElementById('heroTrailerIframe');
   const muteBtn = document.getElementById('heroMuteBtn');
   const videos = detail.videos?.results || [];
 
-  // Reset trailer state
-  clearTimeout(window._trailerWatchdog);
+  // Clear any pending timers from previous item
+  clearTimeout(heroTimer);
+  clearTimeout(window._trailerDelay);
   trailerIframe.src = '';
+  trailerWrap.style.opacity = '0';
   trailerWrap.style.display = 'none';
   muteBtn.style.display = 'none';
 
@@ -517,47 +549,56 @@ async function loadHeroItem(i){
     ...videos.filter(v=>v.site==='YouTube' && v.type!=='Trailer' && v.type!=='Teaser'),
   ];
 
+  // Fallback: if no trailer loads, advance after 12s
+  function setFallbackTimer(ms){ heroTimer = setTimeout(advanceHero, ms); }
+
   function tryLoadTrailer(index){
-    clearTimeout(window._trailerWatchdog);
     const avail = window._heroCandidates.filter(v=>!heroBlockedKeys.has(v.key));
     if(!avail.length || index >= avail.length){
-      trailerIframe.src='';
-      trailerWrap.style.display='none';
-      muteBtn.style.display='none';
+      // No trailer — show backdrop only, advance after 10s
+      setFallbackTimer(10000);
       return;
     }
     const v = avail[index];
     const mute = heroMuted ? 1 : 0;
-    // Keep iframe hidden until we confirm it loaded without error
-    trailerWrap.style.opacity = '0';
-    trailerWrap.style.display = 'block';
-    trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&loop=1&playlist=${v.key}&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
+    // No loop — we want to know when it ends so we can advance
+    trailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=${mute}&controls=0&rel=0&modestbranding=0&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
     trailerIframe.dataset.currentKey = v.key;
     trailerIframe.dataset.tryIndex = String(index);
+    trailerIframe.dataset.heroIndex = String(i);
 
-    // Watchdog: if YouTube shows an error screen we won't get a postMessage,
-    // so probe the oEmbed endpoint — if the video is not embeddable, skip it
     fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
       .then(r => {
         if(r.ok){
-          // Video is embeddable — reveal the trailer
-          trailerWrap.style.opacity = '1';
+          trailerWrap.style.display = 'block';
+          // Small rAF delay so display:block has painted before opacity transition
+          requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
           muteBtn.style.display = 'flex';
           updateMuteIcon();
+          // Fallback: advance after 3min max in case postMessage never fires
+          setFallbackTimer(180000);
         } else {
-          // 401/403 = embedding disabled — try next
           heroBlockedKeys.add(v.key);
-          trailerWrap.style.display = 'none';
           tryLoadTrailer(index + 1);
         }
       })
       .catch(() => {
-        // Network error or CORS block — just reveal and hope for the best
-        trailerWrap.style.opacity = '1';
+        trailerWrap.style.display = 'block';
+        requestAnimationFrame(()=>{ trailerWrap.style.opacity = '1'; });
         muteBtn.style.display = 'flex';
         updateMuteIcon();
+        setFallbackTimer(180000);
       });
   }
+
+  // Show backdrop image for 5 seconds, then fade in trailer
+  window._trailerDelay = setTimeout(()=>{
+    if(window._heroCandidates.length) tryLoadTrailer(0);
+    else setFallbackTimer(10000);
+  }, 5000);
+
+  // Fallback if no trailer at all — advance after 15s total
+  setFallbackTimer(15000);
 
   tryLoadTrailer(0);
 
