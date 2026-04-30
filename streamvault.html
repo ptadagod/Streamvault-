@@ -342,21 +342,24 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .logo{display:none}
   .nav-pill{
     display:flex;flex-direction:row;align-items:center;
-    gap:2px;padding:6px 8px;
+    gap:0px;padding:6px 6px;
     border-radius:50px;
     background:rgba(255,255,255,0.07);
     backdrop-filter:blur(32px) saturate(180%);
     -webkit-backdrop-filter:blur(32px) saturate(180%);
     border:1px solid rgba(255,255,255,0.14);
     box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
-    width:auto;
-    padding-bottom:6px;
+    max-width:calc(100vw - 32px);
+    overflow:hidden;
   }
+  /* Hide TV toggle on mobile — not needed */
+  #tv-toggle{display:none !important}
   .nav-item{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;padding:8px 18px;
+    gap:3px;padding:8px 14px;
     border-radius:50px;font-size:10px;font-weight:500;
     color:rgba(255,255,255,0.45);letter-spacing:0.2px;
+    flex-shrink:1;
   }
   .nav-item .nav-icon{
     width:20px;height:20px;flex-shrink:0;
@@ -366,19 +369,21 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .nav-item.active{
     background:#fff;color:#000;font-weight:700;
     box-shadow:0 2px 12px rgba(0,0,0,0.3);
-    padding:8px 20px;
+    padding:8px 16px;
   }
   .nav-item.active .nav-icon{max-width:20px !important;opacity:1 !important;margin-right:0 !important}
   .nav-search-btn{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;padding:8px 18px;height:auto;width:auto;
+    gap:3px;padding:8px 14px;height:auto;width:auto;
     border-radius:50px;color:rgba(255,255,255,0.45);font-size:10px;
+    flex-shrink:1;
   }
   .nav-search-btn svg{width:20px;height:20px}
   .nav-search-btn::after{content:'Search';font-size:10px;font-weight:500}
 
   /* ── Hero ── */
   .hero{height:80vw;min-height:300px}
+  .hero-bg{background-position:center top !important;top:0}
   .hero-content{
     position:absolute;
     bottom:0;left:0;right:0;
