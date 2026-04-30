@@ -33,6 +33,8 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .nav-search-btn:hover{background:rgba(255,255,255,0.09);color:rgba(255,255,255,0.95)}
 .nav-search-btn svg{width:16px;height:16px}
 
+
+
 /* ── SEARCH OVERLAY ── */
 .search-overlay{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0;transition:opacity .3s}
 .search-overlay.open{pointer-events:all;opacity:1}
@@ -105,10 +107,6 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 .player-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
 .player-close:hover{background:rgba(255,255,255,0.22)}
 .player-servers{display:flex;align-items:center;gap:8px;padding:0 0 10px;flex-wrap:wrap}
-.server-label{font-size:12px;color:rgba(255,255,255,0.35);margin-right:4px;letter-spacing:0.5px;text-transform:uppercase}
-.server-btn{padding:6px 16px;border-radius:50px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
-.server-btn:hover{background:rgba(255,255,255,0.14);color:#fff;border-color:rgba(255,255,255,0.35)}
-.server-btn.active{background:#fff;color:#000;border-color:#fff;font-weight:600}
 .player-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,0.9)}
 .player-wrap iframe{width:100%;height:100%;border:none;display:block}
 
@@ -163,6 +161,10 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
   linear-gradient(to right,rgba(8,8,14,0.92) 0%,rgba(8,8,14,0.6) 45%,rgba(8,8,14,0.1) 75%,transparent 100%),
   linear-gradient(to top,rgba(8,8,14,1) 0%,rgba(8,8,14,0.7) 25%,transparent 60%),
   linear-gradient(to bottom,rgba(8,8,14,0.5) 0%,transparent 20%)}
+/* Detail trailer */
+.detail-trailer-wrap{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;transition:opacity .6s ease;-webkit-mask-image:linear-gradient(to bottom,black 0%,black 30%,rgba(0,0,0,0.9) 50%,rgba(0,0,0,0.5) 75%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 30%,rgba(0,0,0,0.9) 50%,rgba(0,0,0,0.5) 75%,transparent 100%)}
+.detail-trailer-wrap::after{content:'';position:absolute;inset:0;z-index:3;background:linear-gradient(to right,rgba(8,8,14,0.75) 0%,rgba(8,8,14,0.4) 35%,rgba(8,8,14,0.05) 60%,transparent 100%),linear-gradient(to bottom,rgba(8,8,14,0.4) 0%,transparent 20%);pointer-events:none}
+.detail-trailer-wrap iframe{position:absolute;top:50%;left:50%;width:200vh;height:112.5vw;min-width:120%;min-height:120%;transform:translate(-50%,-50%);pointer-events:none}
 .detail-back{position:absolute;top:24px;left:28px;z-index:3;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .detail-back:hover{background:rgba(255,255,255,0.15)}
 .detail-back svg{width:18px;height:18px}
@@ -243,6 +245,173 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 /* ── TOAST ── */
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,28,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:12px 24px;border-radius:50px;font-size:14px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── BRAVE POPUP ── */
+#brave-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);opacity:0;transition:opacity .4s cubic-bezier(.16,1,.3,1);pointer-events:none}
+#brave-overlay.visible{opacity:1;pointer-events:all}
+#brave-modal{background:linear-gradient(145deg,#0f0f1a,#13131f);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:40px 36px 32px;max-width:440px;width:calc(100% - 40px);text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.05) inset;transform:translateY(20px) scale(0.97);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+#brave-overlay.visible #brave-modal{transform:translateY(0) scale(1)}
+.brave-lion{width:72px;height:72px;margin:0 auto 20px;display:block}
+.brave-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#fff;margin-bottom:8px}
+.brave-title span{color:#FB542B}
+.brave-sub{font-size:15px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:28px}
+.brave-btns{display:flex;flex-direction:column;gap:10px}
+.brave-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 24px;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-family:'DM Sans',sans-serif;text-decoration:none;width:100%}
+.brave-btn-primary{background:#FB542B;color:#fff;box-shadow:0 4px 24px rgba(251,84,43,0.35)}
+.brave-btn-primary:hover{background:#ff6640;transform:translateY(-1px);box-shadow:0 6px 28px rgba(251,84,43,0.45)}
+.brave-btn-secondary{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.12)}
+.brave-btn-secondary:hover{background:rgba(255,255,255,0.12);color:#fff}
+.brave-btn svg{width:20px;height:20px;flex-shrink:0}
+.brave-store-row{display:flex;gap:10px}
+.brave-store-row .brave-btn{flex:1}
+.brave-skip{margin-top:18px;font-size:13px;color:rgba(255,255,255,0.3);cursor:pointer;transition:color .2s;background:none;border:none;font-family:'DM Sans',sans-serif;width:100%;padding:6px}
+.brave-skip:hover{color:rgba(255,255,255,0.6)}
+
+/* ══════════════════════════════════════
+   MOBILE  (≤640px) — placed last so it
+   wins over every base style above
+   ══════════════════════════════════════ */
+@media(max-width:640px){
+  :root{--nav-h:72px}
+
+  /* ── NAV → frosted pill, bottom-center ── */
+  nav{
+    top:auto;bottom:16px;left:50%;right:auto;
+    transform:translateX(-50%);
+    padding:0;width:auto;
+    justify-content:center;background:none;
+  }
+  .logo{display:none}
+  .nav-pill{
+    display:flex;flex-direction:row;align-items:center;
+    gap:2px;padding:6px 8px;
+    border-radius:50px;
+    background:rgba(255,255,255,0.07);
+    backdrop-filter:blur(32px) saturate(180%);
+    -webkit-backdrop-filter:blur(32px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.14);
+    box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
+    width:auto;
+    padding-bottom:6px;
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;padding:8px 18px;
+    border-radius:50px;font-size:10px;font-weight:500;
+    color:rgba(255,255,255,0.45);letter-spacing:0.2px;
+  }
+  .nav-item .nav-icon{
+    width:20px;height:20px;flex-shrink:0;
+    max-width:20px !important;opacity:1 !important;
+    margin-right:0 !important;overflow:visible;
+  }
+  .nav-item.active{
+    background:#fff;color:#000;font-weight:700;
+    box-shadow:0 2px 12px rgba(0,0,0,0.3);
+    padding:8px 20px;
+  }
+  .nav-item.active .nav-icon{max-width:20px !important;opacity:1 !important;margin-right:0 !important}
+  .nav-search-btn{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;padding:8px 18px;height:auto;width:auto;
+    border-radius:50px;color:rgba(255,255,255,0.45);font-size:10px;
+  }
+  .nav-search-btn svg{width:20px;height:20px}
+  .nav-search-btn::after{content:'Search';font-size:10px;font-weight:500}
+
+  /* ── Hero ── */
+  .hero{height:80vh;min-height:520px}
+  .hero-content{
+    padding:0 20px 130px;
+    align-items:flex-end !important;
+    justify-content:flex-end !important;
+  }
+  .hero-logo-img{max-width:220px;max-height:110px;margin-bottom:14px}
+  .hero-logo-fallback{font-size:60px;margin-bottom:12px}
+  .hero-info{max-width:100%;width:100%}
+  .hero-meta{gap:8px;margin-bottom:12px}
+  .hero-year,.hero-rating,.hero-genre{font-size:13px}
+  .hero-desc{font-size:14px;line-height:1.6;margin-bottom:20px;-webkit-line-clamp:2}
+  .hero-actions{gap:10px}
+  .btn-play{padding:13px 26px;font-size:15px}
+  .btn-play svg{width:17px;height:17px}
+  .btn-icon-half{width:52px;height:48px}
+  .btn-icon-half svg{width:20px;height:20px}
+  .btn-icon-divider{height:20px}
+  .hero-mute-btn{bottom:110px;right:16px;width:36px;height:36px}
+  .hero-indicators{bottom:80px}
+
+  /* ── Rows ── */
+  .rows-section{margin-top:-60px;padding:60px 0 120px}
+  .row-block{margin-bottom:32px}
+  .row-header{padding:0 16px;margin-bottom:12px}
+  .row-title{font-size:17px}
+  .row-track-wrap{padding:0 16px;-webkit-mask-image:none;mask-image:none}
+  .row-track{gap:10px;padding:6px 2px 12px}
+
+  /* ── Cards ── */
+  .card-sm{width:120px;height:180px}
+  .card-md{width:200px;height:113px}
+  .card-lg{width:140px;height:210px}
+  .card-rank{font-size:52px}
+  .card:hover{transform:none}
+  .card:active{transform:scale(0.97)}
+  .card .card-overlay{opacity:1;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.3) 50%,transparent 100%)}
+  .card .card-play{transform:scale(0.85)}
+  .card .card-hover-title{transform:translateY(0);font-size:11px}
+  .card .card-meta{transform:translateY(0)}
+
+  /* ── Page header ── */
+  .page-header{padding:80px 16px 20px;font-size:24px}
+
+  /* ── Detail page ── */
+  .detail-hero{height:auto;min-height:0}
+  .detail-hero-content{position:relative;inset:auto;flex-direction:column;padding:80px 16px 24px;gap:12px;justify-content:flex-start !important;align-items:flex-start !important}
+  .detail-bg{position:absolute;inset:0;min-height:320px}
+  .detail-left{max-width:100%}
+  .detail-logo{max-width:180px;max-height:80px;margin-bottom:10px}
+  .detail-logo-text{font-size:36px;margin-bottom:10px}
+  .detail-badges{gap:6px;margin-bottom:12px}
+  .pill-badge{font-size:11px;padding:4px 10px}
+  .detail-desc{font-size:13px;margin-bottom:16px;max-width:100%}
+  .detail-actions{gap:8px}
+  .btn-play-detail{padding:12px 22px;font-size:14px}
+  .btn-outline{padding:11px 16px;font-size:13px}
+  .detail-info-panel{display:none}
+  .detail-below{padding:0 16px 120px}
+  .section-title{font-size:18px;margin-top:28px;margin-bottom:14px}
+  .actor-card{width:72px}
+  .actor-img{width:72px;height:72px}
+  .actor-name{font-size:11px}
+  .actor-char{font-size:10px}
+  .similar-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+  .detail-back{top:16px;left:16px;width:36px;height:36px}
+
+  /* ── Episodes ── */
+  .episode-item{gap:10px;padding:12px}
+  .ep-thumb{width:90px;height:51px}
+  .ep-title{font-size:13px}
+  .ep-desc{-webkit-line-clamp:2;font-size:12px}
+  .ep-num{font-size:12px;min-width:18px}
+
+  /* ── Player ── */
+  .player-container{width:100vw}
+  .player-topbar{padding:8px 12px}
+  .player-title{font-size:13px}
+  .player-wrap{border-radius:0}
+
+  /* ── Search ── */
+  .search-box{top:10px;right:12px;left:12px}
+  .search-input{font-size:15px}
+  .search-results{max-height:55vh}
+  .search-result-poster{width:36px;height:52px}
+
+  /* ── Brave popup ── */
+  #brave-modal{padding:28px 20px 24px}
+  .brave-title{font-size:26px}
+  .brave-sub{font-size:13px;margin-bottom:20px}
+  .brave-btn{padding:13px 18px;font-size:14px}
+}
 </style>
 </head>
 <body>
@@ -352,9 +521,15 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 <div class="detail-page" id="detailPage">
   <div class="detail-hero">
     <div class="detail-bg" id="detailBg"></div>
+    <div class="detail-trailer-wrap" id="detailTrailerWrap" style="display:none">
+      <iframe id="detailTrailerIframe" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+    </div>
     <div class="detail-back" id="detailBack">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     </div>
+    <button class="hero-mute-btn" id="detailMuteBtn" style="display:none;position:absolute;bottom:36px;right:40px;z-index:4" onclick="toggleDetailMute()">
+      <svg id="detailMuteIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    </button>
     <div class="detail-hero-content">
       <div class="detail-left">
         <img class="detail-logo" id="detailLogoImg" style="display:none" alt="">
@@ -768,6 +943,28 @@ async function openDetail(id, type){
     document.getElementById('globalBg').style.backgroundImage=`url(${backdrop})`;
   }
 
+  // Trailer
+  const detailTrailerWrap = document.getElementById('detailTrailerWrap');
+  const detailTrailerIframe = document.getElementById('detailTrailerIframe');
+  const detailMuteBtn = document.getElementById('detailMuteBtn');
+  detailTrailerIframe.src = '';
+  detailTrailerWrap.style.display = 'none';
+  detailTrailerWrap.style.opacity = '0';
+  detailMuteBtn.style.display = 'none';
+  window._detailMuted = true;
+
+  const trailerVideos = (detail.videos?.results || []).filter(v => v.site === 'YouTube' && (v.type === 'Trailer' || v.type === 'Teaser'));
+  if(trailerVideos.length){
+    const v = trailerVideos[0];
+    setTimeout(()=>{
+      detailTrailerWrap.style.display = 'block';
+      detailTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${v.key}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1&disablekb=1&fs=0`;
+      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.key}&format=json`)
+        .then(r=>{ if(r.ok){ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; } })
+        .catch(()=>{ requestAnimationFrame(()=>{ detailTrailerWrap.style.opacity='1'; }); detailMuteBtn.style.display='flex'; });
+    }, 1500);
+  }
+
   // Logo / Title
   const logo = detail.images?.logos?.find(l=>l.iso_639_1==='en' && l.file_path);
   const logoEl = document.getElementById('detailLogoImg');
@@ -908,9 +1105,24 @@ async function loadSeason(tvId, sn){
     </div>`).join('');
 }
 
+function toggleDetailMute(){
+  window._detailMuted = !window._detailMuted;
+  const iframe = document.getElementById('detailTrailerIframe');
+  const src = iframe.src;
+  iframe.src = src.replace(/mute=\d/, `mute=${window._detailMuted?1:0}`);
+  const icon = document.getElementById('detailMuteIcon');
+  icon.innerHTML = window._detailMuted
+    ? '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>'
+    : '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+}
+
 document.getElementById('detailBack').onclick=()=>{
   document.getElementById('detailPage').classList.remove('open');
   document.body.style.overflow='';
+  // Stop trailer
+  document.getElementById('detailTrailerIframe').src='';
+  document.getElementById('detailTrailerWrap').style.display='none';
+  document.getElementById('detailMuteBtn').style.display='none';
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
@@ -1039,17 +1251,15 @@ function closePlayer(){
   document.body.style.overflow='';
 }
 
-document.getElementById('playerBackdrop').onclick=closePlayer;
-document.getElementById('playerCloseBtn').onclick=closePlayer;
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closePlayer();});
 </script>
 <!-- PLAYER MODAL -->
 <div class="player-modal" id="playerModal">
-  <div class="player-backdrop" id="playerBackdrop"></div>
+  <div class="player-backdrop" id="playerBackdrop" onclick="closePlayer()"></div>
   <div class="player-container">
     <div class="player-topbar">
       <div class="player-title" id="playerTitle"></div>
-      <button class="player-close" id="playerCloseBtn">✕</button>
+      <button class="player-close" id="playerCloseBtn" onclick="closePlayer()">✕</button>
     </div>
     <div class="player-servers" id="playerServers"></div>
     <div class="player-wrap">
@@ -1057,5 +1267,112 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape') closePlayer();});
     </div>
   </div>
 </div>
+<!-- BRAVE BROWSER POPUP -->
+<div id="brave-overlay">
+  <div id="brave-modal">
+    <!-- Brave Logo -->
+    <img class="brave-lion" src="https://brave.com/static-assets/images/brave-logo-sans-text.svg" alt="Brave" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/9/9d/Brave_lion_icon.svg'">
+    <div class="brave-title">Better with <span>Brave</span></div>
+    <div class="brave-sub">StreamVault runs best on Brave Browser — faster streaming, built-in ad blocking, and no buffering interruptions.</div>
+    <div class="brave-btns" id="brave-btns-container">
+      <!-- Buttons injected by JS based on platform -->
+    </div>
+    <button class="brave-skip" onclick="closeBravePopup()">Maybe later</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'sv_brave_dismissed';
+  if(localStorage.getItem(STORAGE_KEY)) return;
+
+  // Detect Brave — navigator.brave.isBrave() is the official Brave API
+  function isBrave(){
+    if(navigator.brave && typeof navigator.brave.isBrave === 'function'){
+      // isBrave() returns a Promise, but presence alone is strong signal
+      return true;
+    }
+    // Fallback: Brave modifies some fingerprinting APIs and its UA on mobile
+    // doesn't include "Brave" but this covers desktop
+    return false;
+  }
+
+  // Also check async version and bail if confirmed
+  if(navigator.brave && navigator.brave.isBrave){
+    navigator.brave.isBrave().then(yes => { if(yes) return; }).catch(()=>{});
+    return; // presence of navigator.brave is enough — it's Brave
+  }
+
+  function getOS(){
+    const ua = navigator.userAgent;
+    const platform = navigator.platform || '';
+    if(/android/i.test(ua)) return 'android';
+    if(/iPad|iPhone|iPod/.test(ua) || (platform==='MacIntel' && navigator.maxTouchPoints>1)) return 'ios';
+    if(/Win/.test(platform)) return 'windows';
+    if(/Mac/.test(platform)) return 'mac';
+    if(/Linux/.test(platform)) return 'linux';
+    return 'unknown';
+  }
+
+  const os = getOS();
+  const container = document.getElementById('brave-btns-container');
+
+  const dlIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+  const appleIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`;
+  const playIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18.5v-13A1.5 1.5 0 0 1 5.16 4.1l13 6.5a1.5 1.5 0 0 1 0 2.8l-13 6.5A1.5 1.5 0 0 1 3 18.5z"/></svg>`;
+  const winIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>`;
+
+  if(os === 'android'){
+    container.innerHTML = `
+      <a class="brave-btn brave-btn-primary" href="https://play.google.com/store/apps/details?id=com.brave.browser" target="_blank" rel="noopener">
+        ${playIcon} Get Brave on Google Play
+      </a>`;
+  } else if(os === 'ios'){
+    container.innerHTML = `
+      <a class="brave-btn brave-btn-primary" href="https://apps.apple.com/app/brave-private-web-browser-vpn/id1052879175" target="_blank" rel="noopener">
+        ${appleIcon} Download on the App Store
+      </a>`;
+  } else if(os === 'windows'){
+    container.innerHTML = `
+      <a class="brave-btn brave-btn-primary" href="https://laptop-updates.brave.com/latest/winx64" target="_blank" rel="noopener">
+        ${winIcon} Download for Windows (.exe)
+      </a>
+      <a class="brave-btn brave-btn-secondary" href="https://brave.com/download/" target="_blank" rel="noopener">
+        ${dlIcon} Other versions
+      </a>`;
+  } else if(os === 'mac'){
+    container.innerHTML = `
+      <a class="brave-btn brave-btn-primary" href="https://laptop-updates.brave.com/latest/osx" target="_blank" rel="noopener">
+        ${appleIcon} Download for macOS (.dmg)
+      </a>
+      <a class="brave-btn brave-btn-secondary" href="https://brave.com/download/" target="_blank" rel="noopener">
+        ${dlIcon} Other versions
+      </a>`;
+  } else {
+    container.innerHTML = `
+      <div class="brave-store-row">
+        <a class="brave-btn brave-btn-primary" href="https://laptop-updates.brave.com/latest/winx64" target="_blank" rel="noopener">${winIcon} Windows</a>
+        <a class="brave-btn brave-btn-primary" href="https://laptop-updates.brave.com/latest/osx" target="_blank" rel="noopener">${appleIcon} macOS</a>
+      </div>
+      <a class="brave-btn brave-btn-secondary" href="https://brave.com/download/" target="_blank" rel="noopener">${dlIcon} More options</a>`;
+  }
+
+  // Show popup after short delay
+  setTimeout(()=>{
+    document.getElementById('brave-overlay').classList.add('visible');
+  }, 800);
+})();
+
+function closeBravePopup(){
+  const overlay = document.getElementById('brave-overlay');
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+  localStorage.setItem('sv_brave_dismissed', '1');
+}
+// Close on backdrop click
+document.getElementById('brave-overlay').addEventListener('click', function(e){
+  if(e.target === this) closeBravePopup();
+});
+</script>
 </body>
 </html>
