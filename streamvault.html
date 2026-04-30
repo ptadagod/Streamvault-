@@ -472,20 +472,18 @@ async function initHero(){
   ]);
   const items = [...mov.results.slice(0,5).map(x=>({...x,_type:'movie'})),
                  ...tv.results.slice(0,5).map(x=>({...x,_type:'tv'}))];
-  heroItems = items.sort(()=>Math.random()-0.5).slice(0,8);
+  // Pick one random item per page load
+  const picked = items[Math.floor(Math.random()*items.length)];
+  heroItems = [picked];
   buildHeroIndicators();
   await loadHeroItem(0);
-  // Rotation is now driven by trailer end events; fallback timer set inside loadHeroItem
 }
 
-function advanceHero(){
-  heroIndex = (heroIndex+1) % heroItems.length;
-  loadHeroItem(heroIndex);
-}
+function advanceHero(){ /* single item — nothing to advance */ }
 
 function buildHeroIndicators(){
   const el = document.getElementById('heroIndicators');
-  el.innerHTML = heroItems.map((_,i)=>`<div class="hero-dot-ind${i===0?' active':''}" onclick="jumpHero(${i})"></div>`).join('');
+  el.style.display='none'; // single item per session
 }
 
 async function jumpHero(i){
