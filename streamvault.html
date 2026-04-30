@@ -451,10 +451,11 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:100;display:flex;align-items:
 }
 
 /* ══════════════════════════════════════
-   TV (≥1281px) — scaled to feel like
-   desktop on a large screen
+   TV — wide screen + low pixel density
+   (devicePixelRatio=1 on TVs, 1.5-2 on
+   laptops/monitors so they're unaffected)
    ══════════════════════════════════════ */
-@media(min-width:1281px){
+@media(min-width:1281px) and (max-resolution:1.5dppx) and (-webkit-max-device-pixel-ratio:1.5){
 
   /* Nav */
   nav{top:10px;padding:0 28px}
