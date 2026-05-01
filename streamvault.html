@@ -1387,11 +1387,30 @@ async function selectPlatform(id, providerId, mediaType, el){
   if(mediaType==='movie') updateMovieQualityBadges(resultsEl);
 }
 
+/* ── BODY SCROLL LOCK (iOS-safe) ── */
+let _bodyScrollY = 0;
+function lockBody(){
+  _bodyScrollY = window.scrollY;
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${_bodyScrollY}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+}
+function unlockBody(){
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  window.scrollTo(0, _bodyScrollY);
+}
+
 /* ── DETAIL PAGE ── */
 async function openDetail(id, type){
   const page = document.getElementById('detailPage');
   page.classList.add('open');
-  document.body.style.overflow='hidden';
+  lockBody();
   page.scrollTop=0;
 
   // Reset
@@ -1582,7 +1601,7 @@ async function loadSeason(tvId, sn){
 
 document.getElementById('detailBack').onclick=()=>{
   document.getElementById('detailPage').classList.remove('open');
-  document.body.style.overflow='';
+  unlockBody();
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
@@ -1639,7 +1658,7 @@ async function openSeeAll(title, items, meta={}){
   const grid = document.getElementById('seeallGrid');
   grid.innerHTML = '<div class="spinner"></div>';
   page.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  lockBody();
   page.scrollTop = 0;
 
   // Reset hero
@@ -1720,7 +1739,7 @@ async function openSeeAll(title, items, meta={}){
 
 function closeSeeAll(){
   document.getElementById('seeallPage').classList.remove('open');
-  document.body.style.overflow = '';
+  unlockBody();
 }
 
 document.getElementById('seeallBack').onclick = closeSeeAll;
@@ -1759,7 +1778,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
     // Close any overlay pages
     document.getElementById('seeallPage').classList.remove('open');
     document.getElementById('detailPage').classList.remove('open');
-    document.body.style.overflow='';
+    unlockBody();
 
     document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
@@ -1836,13 +1855,13 @@ function playVidking(id, type, title, season, episode){
   document.getElementById('playerServers').innerHTML='';
   document.getElementById('playerIframe').src=src;
   document.getElementById('playerModal').classList.add('open');
-  document.body.style.overflow='hidden';
+  lockBody();
 }
 
 function closePlayer(){
   document.getElementById('playerModal').classList.remove('open');
   document.getElementById('playerIframe').src='';
-  document.body.style.overflow='';
+  unlockBody();
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closePlayer();});
@@ -1974,7 +1993,7 @@ function openCinema(key){
   const modal = document.getElementById('cinemaModal');
   const iframe = document.getElementById('cinemaIframe');
   iframe.src = 'https://www.youtube-nocookie.com/embed/' + key + '?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1&fs=1';
-  document.body.style.overflow = 'hidden';
+  lockBody();
   requestAnimationFrame(()=>{ modal.classList.add('open'); });
 }
 
@@ -1985,7 +2004,7 @@ function closeCinema(){
   setTimeout(()=>{
     iframe.src = '';
     if(!document.getElementById('detailPage').classList.contains('open')){
-      document.body.style.overflow = '';
+      unlockBody();
     }
   }, 450);
 }
