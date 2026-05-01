@@ -215,7 +215,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 }
 
 /* ── DETAIL PAGE ── */
-.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;overflow-x:hidden;background:#08080e;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .detail-page.open{display:block}
 .detail-ambient-bg{position:fixed;inset:-80px;z-index:0;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0.9;transition:background-image 1.2s ease;will-change:background-image;pointer-events:none}
 .detail-ambient-bg::after{content:'';position:absolute;inset:0;background:rgba(8,8,14,0.25)}
@@ -1995,6 +1995,62 @@ document.getElementById('cinemaModal').addEventListener('click', e=>{
   if(e.target === document.getElementById('cinemaModal')) closeCinema();
 });
 document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeCinema(); });
+
+// ── MOBILE TOUCH SCROLL FIX ──
+// Fixes horizontal row scrolling and detail page vertical scroll on mobile
+(function(){
+  // 1. Row tracks: allow horizontal swipe without triggering vertical page scroll
+  function attachRowTouchFix(track){
+    var startX, startY, startScrollLeft;
+    track.addEventListener('touchstart', function(e){
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startScrollLeft = track.scrollLeft;
+    }, {passive:true});
+    track.addEventListener('touchmove', function(e){
+      var dx = e.touches[0].clientX - startX;
+      var dy = e.touches[0].clientY - startY;
+      // If more horizontal than vertical, take control
+      if(Math.abs(dx) > Math.abs(dy)){
+        e.stopPropagation();
+        track.scrollLeft = startScrollLeft - dx;
+      }
+    }, {passive:true});
+  }
+
+  // Attach to any existing tracks and observe for dynamically added ones
+  function fixAllTracks(){
+    document.querySelectorAll('.row-track').forEach(function(t){
+      if(!t._touchFixed){
+        t._touchFixed = true;
+        attachRowTouchFix(t);
+      }
+    });
+  }
+  fixAllTracks();
+  var obs = new MutationObserver(fixAllTracks);
+  obs.observe(document.body, {childList:true, subtree:true});
+
+  // 2. Detail page: ensure scroll works in both directions
+  var detail = document.getElementById('detailPage');
+  if(detail){
+    var lastY;
+    detail.addEventListener('touchstart', function(e){
+      lastY = e.touches[0].clientY;
+    }, {passive:true});
+    detail.addEventListener('touchmove', function(e){
+      var y = e.touches[0].clientY;
+      var dy = lastY - y;
+      lastY = y;
+      // Prevent scroll passing through to body
+      var atTop = detail.scrollTop <= 0;
+      var atBottom = detail.scrollTop + detail.clientHeight >= detail.scrollHeight - 1;
+      if((atTop && dy < 0) || (atBottom && dy > 0)){
+        e.preventDefault();
+      }
+    }, {passive:false});
+  }
+})();
 </script>
 
 <!-- ── TV MODE TOGGLE ── -->
