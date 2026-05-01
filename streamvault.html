@@ -215,7 +215,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 }
 
 /* ── DETAIL PAGE ── */
-.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;background:#08080e;scroll-behavior:smooth}
+.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;overflow-x:hidden;background:#08080e;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .detail-page.open{display:block}
 .detail-ambient-bg{position:fixed;inset:-80px;z-index:0;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0.9;transition:background-image 1.2s ease;will-change:background-image;pointer-events:none}
 .detail-ambient-bg::after{content:'';position:absolute;inset:0;background:rgba(8,8,14,0.25)}
@@ -353,7 +353,6 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
     overflow:hidden;
   }
   /* Hide TV toggle on mobile — not needed */
-  #tv-toggle{display:none !important}
   .nav-item{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:3px;padding:8px 14px;
@@ -382,7 +381,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .nav-search-btn::after{content:'Search';font-size:10px;font-weight:500}
 
   /* ── Hero ── */
-  .hero{height:80vw;min-height:300px}
+  .hero{height:80vw;min-height:300px;margin-top:60px}
   .hero-bg{background-position:center top !important;top:0}
   .hero-content{
     position:absolute;
@@ -407,7 +406,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .btn-icon-half svg{width:20px;height:20px}
   .btn-icon-divider{height:20px}
   .hero-mute-btn{bottom:110px;right:16px;width:36px;height:36px}
-  .hero-indicators{bottom:100px;right:16px}
+  .hero-indicators{bottom:72px;left:50%;right:auto;transform:translateX(-50%)}
 
   /* ── Rows ── */
   .rows-section{margin-top:-60px;padding:60px 0 120px}
@@ -415,7 +414,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .row-header{padding:0 16px;margin-bottom:12px}
   .row-title{font-size:17px}
   .row-track-wrap{padding:0 16px;-webkit-mask-image:none;mask-image:none}
-  .row-track{gap:10px;padding:6px 2px 12px}
+  .row-track{gap:10px;padding:6px 2px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 
   /* ── Cards ── */
   .card-sm{width:120px;height:180px}
@@ -630,9 +629,6 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
     </div>
     <div class="nav-search-btn" id="searchBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    </div>
-    <div class="nav-search-btn" id="tv-toggle" onclick="toggleTV()" title="TV Mode">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
     </div>
   </div>
 </nav>
