@@ -121,7 +121,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 .row-title .highlight{color:var(--gold)}
 .row-see-all{font-size:13px;color:rgba(255,255,255,0.4);cursor:pointer;transition:color .2s}
 .row-see-all:hover{color:#fff}
-.row-track{display:flex;gap:12px;overflow-x:auto;padding:12px 4px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x}
+.row-track{display:flex;gap:12px;overflow-x:auto;padding:12px 4px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .row-track::-webkit-scrollbar{display:none}
 .card{flex-shrink:0;cursor:pointer;position:relative;border-radius:10px;transition:transform .25s}
 .card:hover{transform:scale(1.06);z-index:10}
@@ -293,7 +293,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── PAGES ── */
-.page{display:none;touch-action:pan-y}.page.active{display:block}
+.page{display:none}.page.active{display:block}
 .page-header{padding:calc(var(--nav-h) + 40px) 40px 32px;font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px}
 
 /* ── MYLIST ── */
@@ -2175,6 +2175,49 @@ html.tv-mode .ep-num{font-size:10px}
   window.resetTVMode=function(){
     localStorage.removeItem('sv_tv_mode');applyTV(isLargeScreen());
   };
+})();
+
+/* ── GLOBAL HORIZONTAL SWIPE FOR ROW TRACKS ── */
+(function(){
+  let startX=0, startY=0, targetTrack=null, locked=null, startScrollLeft=0;
+
+  document.addEventListener('touchstart', function(e){
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    locked = null;
+    // Find nearest row-track ancestor or descendant
+    let el = document.elementFromPoint(t.clientX, t.clientY);
+    targetTrack = null;
+    while(el && el !== document.body){
+      if(el.classList && el.classList.contains('row-track')){ targetTrack = el; break; }
+      el = el.parentElement;
+    }
+    if(targetTrack) startScrollLeft = targetTrack.scrollLeft;
+  }, {passive:true});
+
+  document.addEventListener('touchmove', function(e){
+    if(!targetTrack) return;
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+
+    if(locked === null){
+      if(Math.abs(dx) > Math.abs(dy) + 4) locked = 'x';
+      else if(Math.abs(dy) > Math.abs(dx) + 4) locked = 'y';
+      else return;
+    }
+
+    if(locked === 'x'){
+      e.preventDefault();
+      targetTrack.scrollLeft = startScrollLeft - dx;
+    }
+  }, {passive:false});
+
+  document.addEventListener('touchend', function(){
+    targetTrack = null;
+    locked = null;
+  }, {passive:true});
 })();
 </script>
 
