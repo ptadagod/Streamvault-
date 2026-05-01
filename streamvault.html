@@ -382,13 +382,14 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .nav-search-btn::after{content:'Search';font-size:10px;font-weight:500}
 
   /* ── Hero ── */
-  .hero{height:80vw;min-height:300px}
-  .hero-bg{background-position:center top !important;top:0}
+  .hero{height:100vw;min-height:340px}
+  .hero-bg{background-position:center top !important;background-size:cover !important;top:0}
   .hero-content{
     position:absolute;
     bottom:0;left:0;right:0;
     height:auto !important;
-    padding:60px 20px 100px;
+    padding:0 20px 100px;
+    padding-top:clamp(180px, 55vw, 280px);
     align-items:flex-end !important;
     justify-content:flex-start !important;
   }
@@ -407,7 +408,12 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .btn-icon-half svg{width:20px;height:20px}
   .btn-icon-divider{height:20px}
   .hero-mute-btn{bottom:110px;right:16px;width:36px;height:36px}
-  .hero-indicators{bottom:100px;right:16px}
+  .hero-indicators{
+    bottom:78px;
+    left:0;right:0;
+    display:flex;justify-content:center;align-items:center;
+    padding:0;
+  }
 
   /* ── Rows ── */
   .rows-section{margin-top:-60px;padding:60px 0 120px}
