@@ -191,7 +191,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 .card{opacity:0;animation:cardIn .38s cubic-bezier(.16,1,.3,1) forwards}
 
 /* ── SEE ALL PAGE ── */
-.seeall-page{display:none;position:fixed;inset:0;z-index:160;overflow-y:auto;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.seeall-page{display:none;position:fixed;inset:0;z-index:160;overflow-y:scroll;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y}
 .seeall-page.open{display:block}
 .seeall-page .seeall-body{pointer-events:auto}
 .seeall-page .seeall-grid{pointer-events:auto}
@@ -218,7 +218,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 }
 
 /* ── DETAIL PAGE ── */
-.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:scroll;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y}
 .detail-page.open{display:block}
 .detail-page .card{pointer-events:auto}
 .detail-page .detail-actions{pointer-events:auto}
@@ -987,7 +987,7 @@ async function loadHeroItem(i){
     || videos.find(v=>v.site==='YouTube');
   _heroTrailerKey = trailerVid?.key || null;
 
-  document.getElementById('heroPlayBtn').onclick = ()=>playVidking(item.id, type, detail.title||detail.name);
+  document.getElementById('heroPlayBtn').onclick = ()=>playVidsrc(item.id, type, detail.title||detail.name);
   // Play Trailer button — opens cinema modal
   const trailerBtnEl = document.getElementById('heroTrailerBtn');
   if(trailerBtnEl){
@@ -1031,7 +1031,7 @@ async function loadPageHero(suffix, type){
   const trailerBtn=document.getElementById(`heroTrailerBtn-${suffix}`);
   if(trailerBtn){ trailerBtn.style.display=trailerKey?'flex':'none'; trailerBtn.onclick=()=>openCinema(trailerKey); }
 
-  document.getElementById(`heroPlayBtn-${suffix}`).onclick=()=>playVidking(item.id,type,detail.title||detail.name);
+  document.getElementById(`heroPlayBtn-${suffix}`).onclick=()=>playVidsrc(item.id,type,detail.title||detail.name);
   document.getElementById(`heroAddBtn-${suffix}`).onclick=()=>toggleList(detail);
   document.getElementById(`heroInfoBtn-${suffix}`).onclick=()=>openDetail(item.id,type);
 }
@@ -1393,20 +1393,10 @@ async function selectPlatform(id, providerId, mediaType, el){
   if(mediaType==='movie') updateMovieQualityBadges(resultsEl);
 }
 
-/* ── BODY SCROLL LOCK (iOS-safe, no jump) ── */
-function lockBody(){
-  document.body.addEventListener('touchmove', _preventTouch, {passive:false});
-  document.body.style.overflow = 'hidden';
-}
-function unlockBody(){
-  document.body.removeEventListener('touchmove', _preventTouch);
-  document.body.style.overflow = '';
-}
-function _preventTouch(e){
-  // Only block if the touch target is not inside a scrollable overlay
-  const scrollable = e.target.closest('#detailPage, #seeallPage, .row-track, #searchOverlay');
-  if(!scrollable) e.preventDefault();
-}
+/* ── BODY SCROLL LOCK ── */
+function lockBody(){ document.body.style.overflow='hidden'; }
+function unlockBody(){ document.body.style.overflow=''; }
+function _preventTouch(){}
 
 /* ── DETAIL PAGE ── */
 async function openDetail(id, type){
@@ -1486,7 +1476,7 @@ async function openDetail(id, type){
     ? `<button class="btn-play-detail" disabled style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.35);color:#000">
         <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>Coming Soon
       </button>`
-    : `<button class="btn-play-detail" onclick="playVidking(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
+    : `<button class="btn-play-detail" onclick="playVidsrc(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
         <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play
       </button>`;
   document.getElementById('detailActions').innerHTML=`
@@ -1586,7 +1576,7 @@ async function loadSeason(tvId, sn){
   const data=await api(`/tv/${tvId}/season/${sn}`);
   const eps=data.episodes||[];
   list.innerHTML=eps.map((ep,i)=>`
-    <div class="episode-item" onclick="playVidking(${tvId},'tv','${(eps[i]?.name||'').replace(/'/g,"\\'")}',${sn},${ep.episode_number||i+1})">
+    <div class="episode-item" onclick="playVidsrc(${tvId},'tv','${(eps[i]?.name||'').replace(/'/g,"\\'")}',${sn},${ep.episode_number||i+1})">
       <div class="ep-num">${ep.episode_number||i+1}</div>
       <img class="ep-thumb" src="${ep.still_path?IMG+'w300'+ep.still_path:''}" alt="" onerror="this.style.background='#1a1a24'">
       <div class="ep-info">
@@ -1604,6 +1594,10 @@ async function loadSeason(tvId, sn){
 document.getElementById('detailBack').onclick=()=>{
   document.getElementById('detailPage').classList.remove('open');
   unlockBody();
+  // Clear ambient bg so it doesn't dim the home page behind
+  document.getElementById('detailAmbientBg').style.backgroundImage='';
+  document.getElementById('detailAmbientBg').style.opacity='0';
+  setTimeout(()=>{ document.getElementById('detailAmbientBg').style.opacity=''; }, 100);
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
@@ -1721,7 +1715,7 @@ async function openSeeAll(title, items, meta={}){
         const trailerBtn=document.getElementById('seeallTrailerBtn');
         if(trailer){ trailerBtn.style.display='flex'; trailerBtn.onclick=()=>openCinema(trailer.key); }
 
-        document.getElementById('seeallPlayBtn').onclick=()=>playVidking(heroItem.id,heroItem._type||type,detail.title||detail.name);
+        document.getElementById('seeallPlayBtn').onclick=()=>playVidsrc(heroItem.id,heroItem._type||type,detail.title||detail.name);
       }catch(e){}
     })();
   }
@@ -1844,14 +1838,14 @@ loadHomeRows();
 /* ── VIDKING PLAYER ── */
 let currentPlayerState = null;
 
-function playVidking(id, type, title, season, episode){
+function playVidsrc(id, type, title, season, episode){
   currentPlayerState = {id, type, title, season, episode};
   let src;
   if(type==='movie'){
-    src=`https://www.vidking.net/embed/movie/${id}?autoPlay=true`;
+    src=`https://vidsrc.to/embed/movie/${id}`;
   } else {
     const s=season||1, e=episode||1;
-    src=`https://www.vidking.net/embed/tv/${id}/${s}/${e}?autoPlay=true&nextEpisode=true&episodeSelector=true`;
+    src=`https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
   }
   document.getElementById('playerTitle').textContent=title||'';
   document.getElementById('playerServers').innerHTML='';
