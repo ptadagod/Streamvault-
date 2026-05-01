@@ -320,7 +320,13 @@ nav.search-open .nav-search-inline{
 .detail-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .pill-badge{padding:5px 14px;border-radius:50px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06)}
 .pill-badge.gold{border-color:rgba(232,200,74,0.4);color:var(--gold);background:rgba(232,200,74,0.08)}
-.detail-desc{font-size:15px;line-height:1.75;color:rgba(255,255,255,0.72);margin-bottom:28px;max-width:520px}
+.detail-desc{font-size:15px;line-height:1.75;color:rgba(255,255,255,0.72);margin-bottom:12px;max-width:520px}
+.detail-desc.expanded{-webkit-line-clamp:unset;display:block;overflow:visible}
+.desc-toggle{display:none;background:none;border:none;color:rgba(255,255,255,0.55);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;padding:0 0 14px 0;text-decoration:underline;text-underline-offset:3px}
+.desc-toggle:hover{color:#fff}
+@media(max-width:640px){
+  .desc-toggle{display:block}
+}
 .detail-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .btn-play-detail{display:flex;align-items:center;gap:10px;background:#fff;color:#000;border:none;padding:15px 34px;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
 .btn-play-detail:hover{background:rgba(255,255,255,0.88);transform:scale(1.02)}
@@ -526,19 +532,10 @@ nav.search-open .nav-search-inline{
   .page-header{padding:80px 16px 20px;font-size:24px}
 
   /* ── Detail page ── */
-  .detail-hero{height:75vw;min-height:360px;max-height:520px}
-  .detail-hero-content{position:absolute;inset:auto 0 0 0;flex-direction:column;padding:24px 16px 0px;gap:10px;justify-content:flex-end !important;align-items:flex-start !important;transform:translateY(35%)}
-  .detail-bg{position:absolute;inset:0;min-height:320px}
-  .detail-left{max-width:100%}
-  .detail-logo{max-width:180px;max-height:80px;margin-bottom:10px}
-  .detail-logo-text{font-size:36px;margin-bottom:10px}
-  .detail-badges{gap:6px;margin-bottom:12px}
-  .pill-badge{font-size:11px;padding:4px 10px}
-  .detail-desc{font-size:13px;margin-bottom:16px;max-width:100%}
-  .detail-actions{gap:8px}
-  .btn-play-detail{padding:12px 22px;font-size:14px}
-  .detail-info-panel{display:none}
-  .btn-outline{padding:11px 16px;font-size:13px}
+  .detail-desc.expanded{-webkit-line-clamp:unset;display:block;overflow:visible}
+  .detail-actions{flex-wrap:nowrap}
+  .btn-play-detail{flex-shrink:0;white-space:nowrap}
+  .btn-outline{flex-shrink:0;white-space:nowrap}
   .detail-info-panel{display:none}
   .detail-below{padding:0 16px 120px}
   .section-title{font-size:18px;margin-top:28px;margin-bottom:14px}
@@ -920,18 +917,19 @@ nav.search-open .nav-search-inline{
 <!-- DETAIL PAGE -->
 <div class="detail-page" id="detailPage">
   <div class="detail-ambient-bg" id="detailAmbientBg"></div>
-  <div class="detail-hero">
-    <div class="detail-bg" id="detailBg"></div>
+  <div class="hero" id="detailHero">
+    <div class="hero-bg" id="detailBg"></div>
     <div class="detail-back" id="detailBack">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     </div>
-    <div class="detail-hero-content">
-      <div class="detail-left">
-        <img class="detail-logo" id="detailLogoImg" style="display:none" alt="">
-        <div class="detail-logo-text" id="detailTitle"></div>
+    <div class="hero-content">
+      <div class="hero-info">
+        <img class="hero-logo-img detail-logo" id="detailLogoImg" style="display:none" alt="">
+        <div class="hero-logo-fallback" id="detailTitle"></div>
         <div class="detail-badges" id="detailBadges"></div>
-        <p class="detail-desc" id="detailDesc"></p>
-        <div class="detail-actions" id="detailActions"></div>
+        <p class="hero-desc detail-desc" id="detailDesc"></p>
+        <button class="desc-toggle" id="descToggle" onclick="toggleDesc()">Read more</button>
+        <div class="hero-actions detail-actions" id="detailActions"></div>
       </div>
       <div style="flex:1"></div>
       <div class="detail-info-panel" id="detailInfoPanel"></div>
@@ -1082,7 +1080,7 @@ async function loadHeroItem(i){
     || videos.find(v=>v.site==='YouTube');
   _heroTrailerKey = trailerVid?.key || null;
 
-  document.getElementById('heroPlayBtn').onclick = ()=>playVidking(item.id, type, detail.title||detail.name);
+  document.getElementById('heroPlayBtn').onclick = ()=>playVidsrc(item.id, type, detail.title||detail.name);
   // Play Trailer button — opens cinema modal
   const trailerBtnEl = document.getElementById('heroTrailerBtn');
   if(trailerBtnEl){
@@ -1126,7 +1124,7 @@ async function loadPageHero(suffix, type){
   const trailerBtn=document.getElementById(`heroTrailerBtn-${suffix}`);
   if(trailerBtn){ trailerBtn.style.display=trailerKey?'flex':'none'; trailerBtn.onclick=()=>openCinema(trailerKey); }
 
-  document.getElementById(`heroPlayBtn-${suffix}`).onclick=()=>playVidking(item.id,type,detail.title||detail.name);
+  document.getElementById(`heroPlayBtn-${suffix}`).onclick=()=>playVidsrc(item.id,type,detail.title||detail.name);
   document.getElementById(`heroAddBtn-${suffix}`).onclick=()=>toggleList(detail);
   document.getElementById(`heroInfoBtn-${suffix}`).onclick=()=>openDetail(item.id,type);
 }
@@ -1547,7 +1545,10 @@ async function openDetail(id, type){
     `<span class="pill-badge">${type==='movie'?'Movie':'TV Series'}</span>`+genres;
 
   // Description
-  document.getElementById('detailDesc').textContent=detail.overview||'';
+  const descEl = document.getElementById('detailDesc');
+  descEl.textContent=detail.overview||'';
+  descEl.classList.remove('expanded');
+  document.getElementById('descToggle').textContent='Read more';
 
   // Actions
   const inList=myList.some(x=>x.id===detail.id);
@@ -1565,7 +1566,7 @@ async function openDetail(id, type){
     ? `<button class="btn-play-detail" disabled style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.35);color:#000">
         <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>Coming Soon
       </button>`
-    : `<button class="btn-play-detail" onclick="playVidking(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
+    : `<button class="btn-play-detail" onclick="playVidsrc(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
         <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play
       </button>`;
   document.getElementById('detailActions').innerHTML=`
@@ -1665,7 +1666,7 @@ async function loadSeason(tvId, sn){
   const data=await api(`/tv/${tvId}/season/${sn}`);
   const eps=data.episodes||[];
   list.innerHTML=eps.map((ep,i)=>`
-    <div class="episode-item" onclick="playVidking(${tvId},'tv','${(eps[i]?.name||'').replace(/'/g,"\\'")}',${sn},${ep.episode_number||i+1})">
+    <div class="episode-item" onclick="playVidsrc(${tvId},'tv','${(eps[i]?.name||'').replace(/'/g,"\\'")}',${sn},${ep.episode_number||i+1})">
       <div class="ep-num">${ep.episode_number||i+1}</div>
       <img class="ep-thumb" src="${ep.still_path?IMG+'w300'+ep.still_path:''}" alt="" onerror="this.style.background='#1a1a24'">
       <div class="ep-info">
@@ -1679,6 +1680,13 @@ async function loadSeason(tvId, sn){
     </div>`).join('');
 }
 
+
+function toggleDesc(){
+  const desc = document.getElementById('detailDesc');
+  const btn  = document.getElementById('descToggle');
+  const expanded = desc.classList.toggle('expanded');
+  btn.textContent = expanded ? 'Show less' : 'Read more';
+}
 
 document.getElementById('detailBack').onclick=()=>{
   navigateBack();
@@ -1837,7 +1845,7 @@ async function openSeeAll(title, items, meta={}){
         const trailer=videos.find(v=>v.site==='YouTube'&&v.type==='Trailer')||videos.find(v=>v.site==='YouTube');
         const trailerBtn=document.getElementById('seeallTrailerBtn');
         if(trailer){ trailerBtn.style.display='flex'; trailerBtn.onclick=()=>openCinema(trailer.key); }
-        document.getElementById('seeallPlayBtn').onclick=()=>playVidking(heroItem.id,heroItem._type||type,detail.title||detail.name);
+        document.getElementById('seeallPlayBtn').onclick=()=>playVidsrc(heroItem.id,heroItem._type||type,detail.title||detail.name);
       }catch(e){}
     })();
   }
@@ -2026,14 +2034,14 @@ loadHomeRows();
 /* ── VIDKING PLAYER ── */
 let currentPlayerState = null;
 
-function playVidking(id, type, title, season, episode){
+function playVidsrc(id, type, title, season, episode){
   currentPlayerState = {id, type, title, season, episode};
   let src;
   if(type==='movie'){
-    src=`https://www.vidking.net/embed/movie/${id}?autoPlay=true`;
+    src=`https://vidsrc.to/embed/movie/${id}`;
   } else {
     const s=season||1, e=episode||1;
-    src=`https://www.vidking.net/embed/tv/${id}/${s}/${e}?autoPlay=true&nextEpisode=true&episodeSelector=true`;
+    src=`https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
   }
   document.getElementById('playerTitle').textContent=title||'';
   document.getElementById('playerServers').innerHTML='';
