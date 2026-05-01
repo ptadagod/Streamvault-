@@ -1641,6 +1641,13 @@ async function doSearch(q){
 }
 
 /* ── SEE ALL ── */
+let _seeAllMeta = {};
+let _seeAllPage = 1;
+let _seeAllFetching = false;
+let _seeAllDone = false;
+let _seeAllType = 'movie';
+let _seeAllSeen = new Set();
+
 async function openSeeAll(title, items, meta={}){
   navigateTo('seeallPage', true);
   const page = document.getElementById('seeallPage');
@@ -1648,6 +1655,14 @@ async function openSeeAll(title, items, meta={}){
   const grid = document.getElementById('seeallGrid');
   grid.innerHTML = '<div class="spinner"></div>';
   page.scrollTop = 0;
+
+  // Reset infinite scroll state
+  _seeAllMeta = meta;
+  _seeAllPage = 1;
+  _seeAllFetching = false;
+  _seeAllDone = !meta.endpoint;
+  _seeAllType = meta.type || 'movie';
+  _seeAllSeen = new Set();
 
   // Reset hero
   const heroBg = document.getElementById('seeallHeroBg');
@@ -1660,26 +1675,27 @@ async function openSeeAll(title, items, meta={}){
   document.getElementById('seeallHeroDesc').textContent = '';
   document.getElementById('seeallTrailerBtn').style.display = 'none';
 
-  // Fetch more items if we have an endpoint
+  // Fetch first two pages to start
   let allItems = [...items];
   if(meta.endpoint){
     try {
+      const p = meta.params ? meta.params + '&' : '';
       const [p1, p2] = await Promise.all([
-        api(meta.endpoint, (meta.params||'')+'&page=1'),
-        api(meta.endpoint, (meta.params||'')+'&page=2'),
+        api(meta.endpoint, p+'page=1'),
+        api(meta.endpoint, p+'page=2'),
       ]);
       const extra = [...(p1.results||[]), ...(p2.results||[])];
-      // Merge: keep order, dedupe by id
       const seen = new Set(allItems.map(x=>x.id));
       extra.forEach(x=>{ if(!seen.has(x.id)){ seen.add(x.id); allItems.push(x); }});
+      _seeAllPage = 2;
     } catch(e){}
   }
 
-  // Tag type on all items
-  const type = meta.type || 'movie';
+  const type = _seeAllType;
   allItems = allItems.map(x=>({...x, _type: x._type || x.media_type || type}));
+  allItems.forEach(x=>_seeAllSeen.add(x.id));
 
-  // Pick hero from first item with a backdrop
+  // Hero
   const heroItem = allItems.find(x=>x.backdrop_path) || allItems[0];
   if(heroItem){
     (async()=>{
@@ -1687,13 +1703,11 @@ async function openSeeAll(title, items, meta={}){
         const detail = await api(`/${heroItem._type||type}/${heroItem.id}`, 'append_to_response=images,videos');
         const backdrop = detail.backdrop_path ? `${IMG}original${detail.backdrop_path}` : '';
         if(backdrop) heroBg.style.backgroundImage = `url(${backdrop})`;
-
         const logo = detail.images?.logos?.find(l=>l.iso_639_1==='en' && l.file_path);
         const logoEl = document.getElementById('seeallHeroLogo');
         const titleEl = document.getElementById('seeallHeroTitle');
         if(logo){ logoEl.src=`${IMG}w300${logo.file_path}`; logoEl.style.display='block'; titleEl.style.display='none'; }
         else { logoEl.style.display='none'; titleEl.style.display='block'; titleEl.textContent=detail.title||detail.name||''; }
-
         const genres=(detail.genres||[]).slice(0,2).map(g=>g.name).join(' · ');
         const year=(detail.release_date||detail.first_air_date||'').split('-')[0];
         const rating=detail.vote_average?detail.vote_average.toFixed(1):'';
@@ -1701,29 +1715,68 @@ async function openSeeAll(title, items, meta={}){
         document.getElementById('seeallHeroYear').textContent=year;
         document.getElementById('seeallHeroGenre').textContent=genres;
         document.getElementById('seeallHeroDesc').textContent=detail.overview||'';
-
         const videos=detail.videos?.results||[];
         const trailer=videos.find(v=>v.site==='YouTube'&&v.type==='Trailer')||videos.find(v=>v.site==='YouTube');
         const trailerBtn=document.getElementById('seeallTrailerBtn');
         if(trailer){ trailerBtn.style.display='flex'; trailerBtn.onclick=()=>openCinema(trailer.key); }
-
         document.getElementById('seeallPlayBtn').onclick=()=>playVidking(heroItem.id,heroItem._type||type,detail.title||detail.name);
       }catch(e){}
     })();
   }
 
-  // Render cards with staggered animation
+  // Render initial cards
   grid.innerHTML = '';
-  allItems.forEach((item, i) => {
+  _appendSeeAllCards(allItems, grid);
+  updateMovieQualityBadges(grid);
+}
+
+function _appendSeeAllCards(items, grid){
+  const g = grid || document.getElementById('seeallGrid');
+  const offset = g.children.length;
+  items.forEach((item, i) => {
     const card = buildCard(item, 'card-sm');
     card.style.width = '100%';
     card.style.height = 'auto';
     card.style.aspectRatio = '2/3';
-    card.style.animationDelay = `${Math.min(i * 40, 600)}ms`;
-    grid.appendChild(card);
+    card.style.animationDelay = `${Math.min(i * 30, 400)}ms`;
+    g.appendChild(card);
   });
-  updateMovieQualityBadges(grid);
 }
+
+// Infinite scroll for see all — listen on window since seeall is a normal page
+window.addEventListener('scroll', async function(){
+  const seeallEl = document.getElementById('seeallPage');
+  if(!seeallEl.classList.contains('active')) return;
+  if(_seeAllDone || _seeAllFetching || !_seeAllMeta.endpoint) return;
+  if(window.innerHeight + window.scrollY < document.body.scrollHeight - 400) return;
+  _seeAllFetching = true;
+
+  const grid = document.getElementById('seeallGrid');
+  const loader = document.createElement('div');
+  loader.className = 'spinner seeall-loader';
+  loader.style.cssText = 'grid-column:1/-1;margin:20px auto';
+  grid.appendChild(loader);
+
+  try{
+    _seeAllPage++;
+    const params = (_seeAllMeta.params ? _seeAllMeta.params + '&' : '') + `page=${_seeAllPage}`;
+    const data = await api(_seeAllMeta.endpoint, params);
+    const results = (data.results||[])
+      .filter(x=>!_seeAllSeen.has(x.id))
+      .map(x=>({...x, _type: x._type || x.media_type || _seeAllType}));
+    results.forEach(x=>_seeAllSeen.add(x.id));
+    loader.remove();
+    if(_seeAllPage >= (data.total_pages||1)) _seeAllDone = true;
+    if(results.length){
+      _appendSeeAllCards(results, grid);
+      updateMovieQualityBadges(grid);
+    }
+  } catch(e){
+    loader.remove();
+    _seeAllPage--; // allow retry
+  }
+  _seeAllFetching = false;
+}, {passive:true});
 
 function closeSeeAll(){
   navigateBack();
