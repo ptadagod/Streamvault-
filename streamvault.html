@@ -36,11 +36,98 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 
 
 /* ── SEARCH OVERLAY ── */
-.search-overlay{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0;transition:opacity .3s}
-.search-overlay.open{pointer-events:all;opacity:1}
-.search-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.search-box{position:absolute;top:20px;right:20px;left:20px;max-width:600px;margin:0 auto;transform:translateX(40px);opacity:0;transition:transform .35s cubic-bezier(.16,1,.3,1),opacity .35s}
-.search-overlay.open .search-box{transform:translateX(0);opacity:1}
+/* ── SEARCH — nav-integrated ── */
+.search-overlay{display:none} /* disabled — search lives in the nav now */
+
+/* nav pill items wrapper */
+.nav-pill-items{display:flex;align-items:center;gap:2px;transition:opacity .2s,transform .2s}
+nav.search-open .nav-pill-items{opacity:0;pointer-events:none;transform:scale(0.9)}
+
+/* desktop: pill expands to fit search */
+@media(min-width:641px){
+  nav .nav-pill{transition:width .3s cubic-bezier(.16,1,.3,1),padding .3s}
+  nav.search-open .nav-pill{width:clamp(320px,40vw,560px)}
+}
+
+/* nav search state */
+nav.search-open .nav-pill-items{opacity:0;pointer-events:none;transform:scale(0.92);transition:opacity .22s,transform .22s}
+nav .nav-pill-items{opacity:1;pointer-events:all;transform:scale(1);transition:opacity .22s .1s,transform .22s .1s}
+
+.nav-search-inline{
+  position:absolute;
+  top:0;bottom:0;right:0;
+  width:0;
+  display:flex;align-items:center;gap:10px;
+  padding:0;
+  overflow:hidden;
+  opacity:0;pointer-events:none;
+  transition:width .35s cubic-bezier(.16,1,.3,1), opacity .2s, padding .35s cubic-bezier(.16,1,.3,1);
+}
+nav.search-open .nav-search-inline{
+  width:100%;
+  left:0;
+  padding:6px 10px;
+  opacity:1;pointer-events:all;
+}
+
+.nav-search-inline svg{width:16px;height:16px;stroke:rgba(255,255,255,0.5);flex-shrink:0}
+.nav-search-inline input{
+  flex:1;background:none;border:none;outline:none;
+  color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:400;
+  caret-color:#fff;
+}
+.nav-search-inline input::placeholder{color:rgba(255,255,255,0.35)}
+.nav-search-inline .search-close-btn{
+  width:28px;height:28px;border-radius:50%;border:none;
+  background:rgba(255,255,255,0.1);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;font-size:13px;
+  transition:background .2s;
+}
+.nav-search-inline .search-close-btn:hover{background:rgba(255,255,255,0.2)}
+
+/* search results drop — desktop: below nav aligned to pill */
+.search-results-panel{
+  position:fixed;
+  top:80px;
+  left:50%;transform:translateX(-50%) translateY(-8px);
+  width:min(600px,90vw);
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(32px) saturate(180%);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:20px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.1);
+  max-height:70vh;overflow-y:auto;
+  z-index:400;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .28s cubic-bezier(.16,1,.3,1);
+  scrollbar-width:none;
+}
+.search-results-panel.show{
+  opacity:1;pointer-events:all;
+  transform:translateX(-50%) translateY(0);
+}
+.search-results-panel::-webkit-scrollbar{display:none}
+@media(min-width:641px){
+  .search-results-panel{transform:translateY(-8px)}
+  .search-results-panel.show{transform:translateY(0)}
+}
+
+@media(max-width:640px){
+  /* mobile search: slides up from bottom */
+  .search-results-panel{
+    top:auto;bottom:100px;
+    left:12px;right:12px;
+    width:auto;
+    transform:translateX(0) translateY(14px);
+    border-radius:16px;
+    max-height:55vh;
+  }
+  .search-results-panel.show{
+    transform:translateX(0) translateY(0);
+  }
+}
 .search-input-wrap{display:flex;align-items:center;gap:12px;background:rgba(20,20,28,0.95);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:14px 20px}
 .search-input-wrap svg{width:18px;height:18px;color:rgba(255,255,255,0.4);flex-shrink:0}
 .search-input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:17px;font-family:'DM Sans',sans-serif}
@@ -355,10 +442,10 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   /* Hide TV toggle on mobile — not needed */
   #tv-toggle{display:none !important}
   .nav-item{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;padding:8px 14px;
-    border-radius:50px;font-size:10px;font-weight:500;
-    color:rgba(255,255,255,0.45);letter-spacing:0.2px;
+    display:flex;flex-direction:row;align-items:center;justify-content:center;
+    gap:0;padding:10px 16px;
+    border-radius:50px;font-size:0;
+    color:rgba(255,255,255,0.45);
     flex-shrink:1;
   }
   .nav-item .nav-icon{
@@ -369,17 +456,17 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .nav-item.active{
     background:#fff;color:#000;font-weight:700;
     box-shadow:0 2px 12px rgba(0,0,0,0.3);
-    padding:8px 16px;
+    padding:10px 18px;
   }
   .nav-item.active .nav-icon{max-width:20px !important;opacity:1 !important;margin-right:0 !important}
   .nav-search-btn{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;padding:8px 14px;height:auto;width:auto;
-    border-radius:50px;color:rgba(255,255,255,0.45);font-size:10px;
+    display:flex;align-items:center;justify-content:center;
+    padding:10px 14px;height:auto;width:auto;
+    border-radius:50px;color:rgba(255,255,255,0.45);
     flex-shrink:1;
   }
   .nav-search-btn svg{width:20px;height:20px}
-  .nav-search-btn::after{content:'Search';font-size:10px;font-weight:500}
+  .nav-search-btn::after{content:none}
 
   /* ── Hero ── */
   .hero{height:100vw;min-height:340px}
@@ -388,8 +475,8 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
     position:absolute;
     bottom:0;left:0;right:0;
     height:auto !important;
-    padding:0 20px 100px;
-    padding-top:clamp(180px, 55vw, 280px);
+    padding:0 20px 80px;
+    padding-top:clamp(120px, 42vw, 200px);
     align-items:flex-end !important;
     justify-content:flex-start !important;
   }
@@ -409,7 +496,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .btn-icon-divider{height:20px}
   .hero-mute-btn{bottom:110px;right:16px;width:36px;height:36px}
   .hero-indicators{
-    bottom:78px;
+    bottom:16px;
     left:0;right:0;
     display:flex;justify-content:center;align-items:center;
     padding:0;
@@ -439,8 +526,8 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .page-header{padding:80px 16px 20px;font-size:24px}
 
   /* ── Detail page ── */
-  .detail-hero{height:auto;min-height:0}
-  .detail-hero-content{position:relative;inset:auto;flex-direction:column;padding:80px 16px 24px;gap:12px;justify-content:flex-start !important;align-items:flex-start !important}
+  .detail-hero{height:75vw;min-height:360px;max-height:520px}
+  .detail-hero-content{position:absolute;inset:auto 0 0 0;flex-direction:column;padding:24px 16px 0px;gap:10px;justify-content:flex-end !important;align-items:flex-start !important;transform:translateY(35%)}
   .detail-bg{position:absolute;inset:0;min-height:320px}
   .detail-left{max-width:100%}
   .detail-logo{max-width:180px;max-height:80px;margin-bottom:10px}
@@ -450,6 +537,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .detail-desc{font-size:13px;margin-bottom:16px;max-width:100%}
   .detail-actions{gap:8px}
   .btn-play-detail{padding:12px 22px;font-size:14px}
+  .detail-info-panel{display:none}
   .btn-outline{padding:11px 16px;font-size:13px}
   .detail-info-panel{display:none}
   .detail-below{padding:0 16px 120px}
@@ -622,38 +710,41 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 <nav>
   <div class="logo">Stream<span>V</span></div>
   <div class="nav-pill" id="navPill">
-    <div class="nav-item active" data-page="home">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
+    <div class="nav-pill-items">
+      <div class="nav-item active" data-page="home">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
+      </div>
+      <div class="nav-item" data-page="movies">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="m10 8 6 4-6 4V8z"/></svg>Movies
+      </div>
+      <div class="nav-item" data-page="shows">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3 12 7 8 3"/></svg>Shows
+      </div>
+      <div class="nav-item" data-page="mylist">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>My List
+      </div>
+      <div class="nav-search-btn" id="searchBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <div class="nav-search-btn" id="tv-toggle" onclick="toggleTV()" title="TV Mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
     </div>
-    <div class="nav-item" data-page="movies">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="m10 8 6 4-6 4V8z"/></svg>Movies
-    </div>
-    <div class="nav-item" data-page="shows">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3 12 7 8 3"/></svg>Shows
-    </div>
-    <div class="nav-item" data-page="mylist">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>My List
-    </div>
-    <div class="nav-search-btn" id="searchBtn">
+    <!-- Inline search — visible when nav is in search-open state -->
+    <div class="nav-search-inline" id="navSearchInline">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    </div>
-    <div class="nav-search-btn" id="tv-toggle" onclick="toggleTV()" title="TV Mode">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <input id="searchInput" placeholder="Search movies, shows…" autocomplete="off">
+      <button class="search-close-btn" id="searchClose">✕</button>
     </div>
   </div>
 </nav>
 
-<!-- SEARCH OVERLAY -->
-<div class="search-overlay" id="searchOverlay">
+<!-- SEARCH RESULTS PANEL -->
+<div class="search-results-panel" id="searchResults"></div>
+
+<!-- OLD SEARCH OVERLAY (kept for compat, hidden) -->
+<div class="search-overlay" id="searchOverlay" style="display:none">
   <div class="search-backdrop" id="searchBackdrop"></div>
-  <div class="search-box">
-    <div class="search-input-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input class="search-input" id="searchInput" placeholder="Search movies, shows, people..." autocomplete="off">
-      <button class="search-close" id="searchClose">✕</button>
-    </div>
-    <div class="search-results" id="searchResults"></div>
-  </div>
 </div>
 
 <!-- MAIN PAGES -->
@@ -1599,24 +1690,51 @@ document.getElementById('detailBack').onclick=()=>{
 
 /* ── SEARCH ── */
 let searchTimeout;
-document.getElementById('searchBtn').onclick=()=>{
-  document.getElementById('searchOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('searchInput').focus(),350);
-};
-document.getElementById('searchClose').onclick=closeSearch;
-document.getElementById('searchBackdrop').onclick=closeSearch;
-function closeSearch(){
-  document.getElementById('searchOverlay').classList.remove('open');
-  document.getElementById('searchInput').value='';
-  document.getElementById('searchResults').classList.remove('show');
-  document.getElementById('searchResults').innerHTML='';
+const nav = document.querySelector('nav');
+
+function openSearch(){
+  nav.classList.add('search-open');
+  setTimeout(()=>document.getElementById('searchInput').focus(), 250);
+  // After pill expansion animation, align panel under it
+  if(window.innerWidth > 640){
+    setTimeout(()=>{
+      const pill = document.getElementById('navPill');
+      const rect = pill.getBoundingClientRect();
+      const panel = document.getElementById('searchResults');
+      panel.style.left = rect.left + 'px';
+      panel.style.width = rect.width + 'px';
+      panel.style.removeProperty('transform');
+    }, 320);
+  }
 }
 
-document.getElementById('searchInput').addEventListener('input',e=>{
+function closeSearch(){
+  nav.classList.remove('search-open');
+  document.getElementById('searchInput').value='';
+  const panel = document.getElementById('searchResults');
+  panel.classList.remove('show');
+  panel.innerHTML='';
+  panel.style.removeProperty('left');
+  panel.style.removeProperty('width');
+}
+
+document.getElementById('searchBtn').onclick = openSearch;
+document.getElementById('searchClose').onclick = closeSearch;
+
+// Close on outside click
+document.addEventListener('click', e=>{
+  if(!nav.classList.contains('search-open')) return;
+  const pill = document.getElementById('navPill');
+  const panel = document.getElementById('searchResults');
+  if(!pill.contains(e.target) && !panel.contains(e.target)) closeSearch();
+});
+
+document.getElementById('searchInput').addEventListener('input', e=>{
   clearTimeout(searchTimeout);
-  const q=e.target.value.trim();
-  if(!q){document.getElementById('searchResults').classList.remove('show');return;}
-  searchTimeout=setTimeout(()=>doSearch(q),350);
+  const q = e.target.value.trim();
+  const panel = document.getElementById('searchResults');
+  if(!q){ panel.classList.remove('show'); panel.innerHTML=''; return; }
+  searchTimeout = setTimeout(()=>doSearch(q), 350);
 });
 
 async function doSearch(q){
