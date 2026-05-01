@@ -191,11 +191,8 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 .card{opacity:0;animation:cardIn .38s cubic-bezier(.16,1,.3,1) forwards}
 
 /* ── SEE ALL PAGE ── */
-.seeall-page{display:none;position:fixed;inset:0;z-index:160;overflow-y:scroll;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y}
-.seeall-page.open{display:block}
-.seeall-page .seeall-body{pointer-events:auto}
-.seeall-page .seeall-grid{pointer-events:auto}
-.seeall-page .card{pointer-events:auto}
+.seeall-page{display:none;position:relative;z-index:1;overflow-y:auto;background:#08080e;min-height:100vh;-webkit-overflow-scrolling:touch}
+.seeall-page.active{display:block}
 .seeall-hero{position:relative;flex-shrink:0}
 .seeall-back-btn{position:absolute;top:clamp(16px,4vw,28px);left:clamp(16px,4vw,28px);z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(8,8,14,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.2);display:none;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
 .seeall-back-btn:hover{background:rgba(255,255,255,0.15)}
@@ -218,23 +215,19 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 }
 
 /* ── DETAIL PAGE ── */
-.detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:scroll;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y}
-.detail-page.open{display:block}
-.detail-page .card{pointer-events:auto}
-.detail-page .detail-actions{pointer-events:auto}
-.detail-page .detail-below{pointer-events:auto}
-.detail-ambient-bg{position:fixed;inset:-80px;z-index:149;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0;transition:opacity 0.4s ease,background-image 1.2s ease;will-change:background-image;pointer-events:none}
+.detail-page{display:none;position:relative;z-index:1;overflow-y:auto;background:#08080e;scroll-behavior:smooth;min-height:100vh}
+.detail-page.active{display:block}
+.detail-ambient-bg{position:fixed;inset:-80px;z-index:0;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0.9;transition:background-image 1.2s ease;will-change:background-image;pointer-events:none}
 .detail-ambient-bg::after{content:'';position:absolute;inset:0;background:rgba(8,8,14,0.25)}
-.detail-page.open ~ .detail-ambient-bg, .detail-ambient-bg.visible{opacity:0.9}
 .detail-hero{position:relative;z-index:1;height:85vh;min-height:560px;overflow:hidden}
 .detail-bg{position:absolute;top:0;bottom:-60px;left:-60px;right:-60px;background-size:cover;background-repeat:no-repeat;background-position:center top;transition:background-image .6s;-webkit-mask-image:linear-gradient(to bottom,black 0%,black 25%,rgba(0,0,0,0.85) 45%,rgba(0,0,0,0.4) 65%,rgba(0,0,0,0.1) 82%,transparent 92%);mask-image:linear-gradient(to bottom,black 0%,black 25%,rgba(0,0,0,0.85) 45%,rgba(0,0,0,0.4) 65%,rgba(0,0,0,0.1) 82%,transparent 92%)}
 .detail-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(8,8,14,0.85) 0%,rgba(8,8,14,0.5) 40%,transparent 70%),linear-gradient(to bottom,rgba(8,8,14,0.4) 0%,transparent 20%)}
 
-.detail-back{pointer-events:auto;position:absolute;top:24px;left:28px;z-index:3;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.detail-back{position:absolute;top:24px;left:28px;z-index:3;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .detail-back:hover{background:rgba(255,255,255,0.15)}
 .detail-back svg{width:18px;height:18px}
 .detail-hero-content{position:absolute;inset:0;z-index:2;display:flex;align-items:flex-end;padding:0 48px 56px;gap:40px}
-.detail-left{flex:1;max-width:580px;pointer-events:auto}
+.detail-left{flex:1;max-width:580px}
 .detail-logo{max-width:280px;max-height:120px;object-fit:contain;margin-bottom:16px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.8))}
 .detail-logo-text{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:2px;margin-bottom:14px;line-height:1;text-shadow:0 4px 30px rgba(0,0,0,0.8)}
 .detail-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
@@ -249,7 +242,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 .btn-outline:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.5)}
 .btn-outline svg{width:17px;height:17px}
 /* Frosted glass info panel */
-.detail-info-panel{pointer-events:auto;flex-shrink:0;width:200px;background:rgba(255,255,255,0.07);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;align-self:flex-end;margin-bottom:4px}
+.detail-info-panel{flex-shrink:0;width:200px;background:rgba(255,255,255,0.07);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;align-self:flex-end;margin-bottom:4px}
 .info-row{display:flex;flex-direction:column;gap:2px}
 .info-label{font-size:9px;color:rgba(255,255,255,0.38);text-transform:uppercase;letter-spacing:0.8px}
 .info-value{font-size:12px;font-weight:500;color:rgba(255,255,255,0.9);line-height:1.4}
@@ -360,6 +353,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
     overflow:hidden;
   }
   /* Hide TV toggle on mobile — not needed */
+  #tv-toggle{display:none !important}
   .nav-item{
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:3px;padding:8px 14px;
@@ -388,13 +382,13 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .nav-search-btn::after{content:'Search';font-size:10px;font-weight:500}
 
   /* ── Hero ── */
-  .hero{height:100vw;min-height:340px;margin-top:0}
+  .hero{height:80vw;min-height:300px}
   .hero-bg{background-position:center top !important;top:0}
   .hero-content{
     position:absolute;
     bottom:0;left:0;right:0;
     height:auto !important;
-    padding:0 20px 110px;
+    padding:60px 20px 100px;
     align-items:flex-end !important;
     justify-content:flex-start !important;
   }
@@ -413,7 +407,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .btn-icon-half svg{width:20px;height:20px}
   .btn-icon-divider{height:20px}
   .hero-mute-btn{bottom:110px;right:16px;width:36px;height:36px}
-  .hero-indicators{bottom:72px;left:50%;right:auto;transform:translateX(-50%)}
+  .hero-indicators{bottom:100px;right:16px}
 
   /* ── Rows ── */
   .rows-section{margin-top:-60px;padding:60px 0 120px}
@@ -421,7 +415,7 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
   .row-header{padding:0 16px;margin-bottom:12px}
   .row-title{font-size:17px}
   .row-track-wrap{padding:0 16px;-webkit-mask-image:none;mask-image:none}
-  .row-track{gap:10px;padding:6px 2px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .row-track{gap:10px;padding:6px 2px 12px}
 
   /* ── Cards ── */
   .card-sm{width:120px;height:180px}
@@ -637,6 +631,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
     <div class="nav-search-btn" id="searchBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     </div>
+    <div class="nav-search-btn" id="tv-toggle" onclick="toggleTV()" title="TV Mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    </div>
   </div>
 </nav>
 
@@ -824,8 +821,8 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 </div>
 
 <!-- DETAIL PAGE -->
-<div class="detail-ambient-bg" id="detailAmbientBg"></div>
 <div class="detail-page" id="detailPage">
+  <div class="detail-ambient-bg" id="detailAmbientBg"></div>
   <div class="detail-hero">
     <div class="detail-bg" id="detailBg"></div>
     <div class="detail-back" id="detailBack">
@@ -988,7 +985,7 @@ async function loadHeroItem(i){
     || videos.find(v=>v.site==='YouTube');
   _heroTrailerKey = trailerVid?.key || null;
 
-  document.getElementById('heroPlayBtn').onclick = ()=>playVidsrc(item.id, type, detail.title||detail.name);
+  document.getElementById('heroPlayBtn').onclick = ()=>playVidking(item.id, type, detail.title||detail.name);
   // Play Trailer button — opens cinema modal
   const trailerBtnEl = document.getElementById('heroTrailerBtn');
   if(trailerBtnEl){
@@ -1032,7 +1029,7 @@ async function loadPageHero(suffix, type){
   const trailerBtn=document.getElementById(`heroTrailerBtn-${suffix}`);
   if(trailerBtn){ trailerBtn.style.display=trailerKey?'flex':'none'; trailerBtn.onclick=()=>openCinema(trailerKey); }
 
-  document.getElementById(`heroPlayBtn-${suffix}`).onclick=()=>playVidsrc(item.id,type,detail.title||detail.name);
+  document.getElementById(`heroPlayBtn-${suffix}`).onclick=()=>playVidking(item.id,type,detail.title||detail.name);
   document.getElementById(`heroAddBtn-${suffix}`).onclick=()=>toggleList(detail);
   document.getElementById(`heroInfoBtn-${suffix}`).onclick=()=>openDetail(item.id,type);
 }
@@ -1394,16 +1391,10 @@ async function selectPlatform(id, providerId, mediaType, el){
   if(mediaType==='movie') updateMovieQualityBadges(resultsEl);
 }
 
-/* ── BODY SCROLL LOCK ── */
-function lockBody(){ document.body.style.overflow='hidden'; }
-function unlockBody(){ document.body.style.overflow=''; }
-function _preventTouch(){}
-
 /* ── DETAIL PAGE ── */
 async function openDetail(id, type){
+  navigateTo('detailPage', true);
   const page = document.getElementById('detailPage');
-  page.classList.add('open');
-  lockBody();
   page.scrollTop=0;
 
   // Reset
@@ -1428,7 +1419,6 @@ async function openDetail(id, type){
   if(backdrop){
     document.getElementById('detailBg').style.backgroundImage=`url(${backdrop})`;
     document.getElementById('detailAmbientBg').style.backgroundImage=`url(${backdrop})`;
-    document.getElementById('detailAmbientBg').classList.add('visible');
     document.getElementById('globalBg').style.backgroundImage=`url(${backdrop})`;
   }
 
@@ -1478,7 +1468,7 @@ async function openDetail(id, type){
     ? `<button class="btn-play-detail" disabled style="opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.35);color:#000">
         <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>Coming Soon
       </button>`
-    : `<button class="btn-play-detail" onclick="playVidsrc(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
+    : `<button class="btn-play-detail" onclick="playVidking(currentDetail.id,currentDetail._type,currentDetail.title||currentDetail.name)">
         <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play
       </button>`;
   document.getElementById('detailActions').innerHTML=`
@@ -1578,7 +1568,7 @@ async function loadSeason(tvId, sn){
   const data=await api(`/tv/${tvId}/season/${sn}`);
   const eps=data.episodes||[];
   list.innerHTML=eps.map((ep,i)=>`
-    <div class="episode-item" onclick="playVidsrc(${tvId},'tv','${(eps[i]?.name||'').replace(/'/g,"\\'")}',${sn},${ep.episode_number||i+1})">
+    <div class="episode-item" onclick="playVidking(${tvId},'tv','${(eps[i]?.name||'').replace(/'/g,"\\'")}',${sn},${ep.episode_number||i+1})">
       <div class="ep-num">${ep.episode_number||i+1}</div>
       <img class="ep-thumb" src="${ep.still_path?IMG+'w300'+ep.still_path:''}" alt="" onerror="this.style.background='#1a1a24'">
       <div class="ep-info">
@@ -1594,13 +1584,7 @@ async function loadSeason(tvId, sn){
 
 
 document.getElementById('detailBack').onclick=()=>{
-  document.getElementById('detailPage').classList.remove('open');
-  unlockBody();
-  // Clear ambient bg so it doesn't dim the home page behind
-  document.getElementById('detailAmbientBg').style.backgroundImage='';
-  document.getElementById('detailAmbientBg').classList.remove('visible');
-  document.getElementById('detailAmbientBg').style.opacity='';
-  setTimeout(()=>{ document.getElementById('detailAmbientBg').style.opacity=''; }, 100);
+  navigateBack();
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
     document.getElementById('globalBg').style.backgroundImage = document.getElementById('heroBg').style.backgroundImage;
@@ -1652,12 +1636,11 @@ async function doSearch(q){
 
 /* ── SEE ALL ── */
 async function openSeeAll(title, items, meta={}){
+  navigateTo('seeallPage', true);
   const page = document.getElementById('seeallPage');
   document.getElementById('seeallTitle').textContent = title;
   const grid = document.getElementById('seeallGrid');
   grid.innerHTML = '<div class="spinner"></div>';
-  page.classList.add('open');
-  lockBody();
   page.scrollTop = 0;
 
   // Reset hero
@@ -1718,7 +1701,7 @@ async function openSeeAll(title, items, meta={}){
         const trailerBtn=document.getElementById('seeallTrailerBtn');
         if(trailer){ trailerBtn.style.display='flex'; trailerBtn.onclick=()=>openCinema(trailer.key); }
 
-        document.getElementById('seeallPlayBtn').onclick=()=>playVidsrc(heroItem.id,heroItem._type||type,detail.title||detail.name);
+        document.getElementById('seeallPlayBtn').onclick=()=>playVidking(heroItem.id,heroItem._type||type,detail.title||detail.name);
       }catch(e){}
     })();
   }
@@ -1737,11 +1720,10 @@ async function openSeeAll(title, items, meta={}){
 }
 
 function closeSeeAll(){
-  document.getElementById('seeallPage').classList.remove('open');
-  unlockBody();
+  navigateBack();
 }
 
-document.getElementById('seeallBack').onclick = closeSeeAll;
+document.getElementById('seeallBack').onclick = navigateBack;
 
 /* ── MY LIST ── */
 function toggleList(item){
@@ -1769,29 +1751,55 @@ function renderMyList(){
   });
 }
 
-/* ── NAV PAGES ── */
+/* ── PAGE NAVIGATION STACK ── */
 const _pageHeroLoaded = {};
+let _pageStack = ['home']; // history stack
+
+function navigateTo(pg, pushToStack=true){
+  // Hide all pages
+  document.querySelectorAll('.page, .detail-page, .seeall-page').forEach(p=>p.classList.remove('active'));
+
+  // Show target
+  const el = document.getElementById(`page-${pg}`) || document.getElementById(`${pg}`);
+  if(el) el.classList.add('active');
+
+  // Update nav highlight only for main pages
+  const mainPages = ['home','movies','shows','mylist'];
+  if(mainPages.includes(pg)){
+    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+    const navBtn = document.querySelector(`.nav-item[data-page="${pg}"]`);
+    if(navBtn) navBtn.classList.add('active');
+  }
+
+  if(pushToStack) _pageStack.push(pg);
+
+  // Scroll target page to top
+  if(el) el.scrollTop = 0;
+  window.scrollTo(0,0);
+
+  // Lazy load page content
+  if(pg==='movies'){
+    if(!_pageHeroLoaded['movies']){ _pageHeroLoaded['movies']=true; loadPageHero('movies','movie'); }
+    if(!document.getElementById('movieRows').children.length) loadMovieRows();
+  }
+  if(pg==='shows'){
+    if(!_pageHeroLoaded['shows']){ _pageHeroLoaded['shows']=true; loadPageHero('shows','tv'); }
+    if(!document.getElementById('showRows').children.length) loadShowRows();
+  }
+  if(pg==='mylist') renderMyList();
+}
+
+function navigateBack(){
+  if(_pageStack.length > 1) _pageStack.pop();
+  const prev = _pageStack[_pageStack.length - 1];
+  navigateTo(prev, false);
+}
+
 document.querySelectorAll('.nav-item').forEach(btn=>{
   btn.onclick=()=>{
-    const pg=btn.dataset.page;
-    // Close any overlay pages
-    document.getElementById('seeallPage').classList.remove('open');
-    document.getElementById('detailPage').classList.remove('open');
-    unlockBody();
-
-    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(`page-${pg}`).classList.add('active');
-    if(pg==='movies'){
-      if(!_pageHeroLoaded['movies']){ _pageHeroLoaded['movies']=true; loadPageHero('movies','movie'); }
-      if(!document.getElementById('movieRows').children.length) loadMovieRows();
-    }
-    if(pg==='shows'){
-      if(!_pageHeroLoaded['shows']){ _pageHeroLoaded['shows']=true; loadPageHero('shows','tv'); }
-      if(!document.getElementById('showRows').children.length) loadShowRows();
-    }
-    if(pg==='mylist') renderMyList();
+    const pg = btn.dataset.page;
+    _pageStack = [pg]; // reset stack on nav click
+    navigateTo(pg, false);
   };
 });
 
@@ -1841,26 +1849,26 @@ loadHomeRows();
 /* ── VIDKING PLAYER ── */
 let currentPlayerState = null;
 
-function playVidsrc(id, type, title, season, episode){
+function playVidking(id, type, title, season, episode){
   currentPlayerState = {id, type, title, season, episode};
   let src;
   if(type==='movie'){
-    src=`https://vidsrc.to/embed/movie/${id}`;
+    src=`https://www.vidking.net/embed/movie/${id}?autoPlay=true`;
   } else {
     const s=season||1, e=episode||1;
-    src=`https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
+    src=`https://www.vidking.net/embed/tv/${id}/${s}/${e}?autoPlay=true&nextEpisode=true&episodeSelector=true`;
   }
   document.getElementById('playerTitle').textContent=title||'';
   document.getElementById('playerServers').innerHTML='';
   document.getElementById('playerIframe').src=src;
   document.getElementById('playerModal').classList.add('open');
-  lockBody();
+  document.body.style.overflow='hidden';
 }
 
 function closePlayer(){
   document.getElementById('playerModal').classList.remove('open');
   document.getElementById('playerIframe').src='';
-  unlockBody();
+  document.body.style.overflow='';
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closePlayer();});
@@ -1992,7 +2000,7 @@ function openCinema(key){
   const modal = document.getElementById('cinemaModal');
   const iframe = document.getElementById('cinemaIframe');
   iframe.src = 'https://www.youtube-nocookie.com/embed/' + key + '?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1&fs=1';
-  lockBody();
+  document.body.style.overflow = 'hidden';
   requestAnimationFrame(()=>{ modal.classList.add('open'); });
 }
 
@@ -2002,9 +2010,6 @@ function closeCinema(){
   modal.classList.remove('open');
   setTimeout(()=>{
     iframe.src = '';
-    if(!document.getElementById('detailPage').classList.contains('open')){
-      unlockBody();
-    }
   }, 450);
 }
 
@@ -2013,36 +2018,6 @@ document.getElementById('cinemaModal').addEventListener('click', e=>{
   if(e.target === document.getElementById('cinemaModal')) closeCinema();
 });
 document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeCinema(); });
-
-// ── MOBILE TOUCH SCROLL FIX ──
-(function(){
-  // 1. Row tracks: horizontal swipe without hijacking vertical page scroll
-  function attachRowTouchFix(track){
-    var startX, startY, startScrollLeft, isH;
-    track.addEventListener('touchstart', function(e){
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      startScrollLeft = track.scrollLeft;
-      isH = null;
-    }, {passive:true});
-    track.addEventListener('touchmove', function(e){
-      var dx = e.touches[0].clientX - startX;
-      var dy = e.touches[0].clientY - startY;
-      if(isH === null) isH = Math.abs(dx) > Math.abs(dy);
-      if(isH){
-        track.scrollLeft = startScrollLeft - dx;
-      }
-    }, {passive:true});
-  }
-
-  function fixAllTracks(){
-    document.querySelectorAll('.row-track').forEach(function(t){
-      if(!t._touchFixed){ t._touchFixed=true; attachRowTouchFix(t); }
-    });
-  }
-  fixAllTracks();
-  new MutationObserver(fixAllTracks).observe(document.body,{childList:true,subtree:true});
-})();
 </script>
 
 <!-- ── TV MODE TOGGLE ── -->
