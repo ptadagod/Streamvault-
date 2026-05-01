@@ -223,8 +223,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 .detail-page .card{pointer-events:auto}
 .detail-page .detail-actions{pointer-events:auto}
 .detail-page .detail-below{pointer-events:auto}
-.detail-ambient-bg{position:fixed;inset:-80px;z-index:149;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0.9;transition:background-image 1.2s ease;will-change:background-image;pointer-events:none}
+.detail-ambient-bg{position:fixed;inset:-80px;z-index:149;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0;transition:opacity 0.4s ease,background-image 1.2s ease;will-change:background-image;pointer-events:none}
 .detail-ambient-bg::after{content:'';position:absolute;inset:0;background:rgba(8,8,14,0.25)}
+.detail-page.open ~ .detail-ambient-bg, .detail-ambient-bg.visible{opacity:0.9}
 .detail-hero{position:relative;z-index:1;height:85vh;min-height:560px;overflow:hidden}
 .detail-bg{position:absolute;top:0;bottom:-60px;left:-60px;right:-60px;background-size:cover;background-repeat:no-repeat;background-position:center top;transition:background-image .6s;-webkit-mask-image:linear-gradient(to bottom,black 0%,black 25%,rgba(0,0,0,0.85) 45%,rgba(0,0,0,0.4) 65%,rgba(0,0,0,0.1) 82%,transparent 92%);mask-image:linear-gradient(to bottom,black 0%,black 25%,rgba(0,0,0,0.85) 45%,rgba(0,0,0,0.4) 65%,rgba(0,0,0,0.1) 82%,transparent 92%)}
 .detail-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(8,8,14,0.85) 0%,rgba(8,8,14,0.5) 40%,transparent 70%),linear-gradient(to bottom,rgba(8,8,14,0.4) 0%,transparent 20%)}
@@ -1427,6 +1428,7 @@ async function openDetail(id, type){
   if(backdrop){
     document.getElementById('detailBg').style.backgroundImage=`url(${backdrop})`;
     document.getElementById('detailAmbientBg').style.backgroundImage=`url(${backdrop})`;
+    document.getElementById('detailAmbientBg').classList.add('visible');
     document.getElementById('globalBg').style.backgroundImage=`url(${backdrop})`;
   }
 
@@ -1596,7 +1598,8 @@ document.getElementById('detailBack').onclick=()=>{
   unlockBody();
   // Clear ambient bg so it doesn't dim the home page behind
   document.getElementById('detailAmbientBg').style.backgroundImage='';
-  document.getElementById('detailAmbientBg').style.opacity='0';
+  document.getElementById('detailAmbientBg').classList.remove('visible');
+  document.getElementById('detailAmbientBg').style.opacity='';
   setTimeout(()=>{ document.getElementById('detailAmbientBg').style.opacity=''; }, 100);
   const heroItem = heroItems[heroIndex];
   if(heroItem && document.getElementById('heroBg').style.backgroundImage){
