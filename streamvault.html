@@ -193,6 +193,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 /* ── SEE ALL PAGE ── */
 .seeall-page{display:none;position:fixed;inset:0;z-index:160;overflow-y:auto;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .seeall-page.open{display:block}
+.seeall-page .seeall-body{pointer-events:auto}
+.seeall-page .seeall-grid{pointer-events:auto}
+.seeall-page .card{pointer-events:auto}
 .seeall-hero{position:relative;flex-shrink:0}
 .seeall-back-btn{position:absolute;top:clamp(16px,4vw,28px);left:clamp(16px,4vw,28px);z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(8,8,14,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.2);display:none;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
 .seeall-back-btn:hover{background:rgba(255,255,255,0.15)}
@@ -217,6 +220,9 @@ nav{position:fixed;top:16px;left:0;right:0;z-index:300;display:flex;align-items:
 /* ── DETAIL PAGE ── */
 .detail-page{display:none;position:fixed;inset:0;z-index:150;overflow-y:auto;overflow-x:hidden;background:#08080e;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .detail-page.open{display:block}
+.detail-page .card{pointer-events:auto}
+.detail-page .detail-actions{pointer-events:auto}
+.detail-page .detail-below{pointer-events:auto}
 .detail-ambient-bg{position:fixed;inset:-80px;z-index:149;background-size:cover;background-position:center top;filter:blur(80px) saturate(140%);opacity:0.9;transition:background-image 1.2s ease;will-change:background-image;pointer-events:none}
 .detail-ambient-bg::after{content:'';position:absolute;inset:0;background:rgba(8,8,14,0.25)}
 .detail-hero{position:relative;z-index:1;height:85vh;min-height:560px;overflow:hidden}
@@ -1387,23 +1393,19 @@ async function selectPlatform(id, providerId, mediaType, el){
   if(mediaType==='movie') updateMovieQualityBadges(resultsEl);
 }
 
-/* ── BODY SCROLL LOCK (iOS-safe) ── */
-let _bodyScrollY = 0;
+/* ── BODY SCROLL LOCK (iOS-safe, no jump) ── */
 function lockBody(){
-  _bodyScrollY = window.scrollY;
+  document.body.addEventListener('touchmove', _preventTouch, {passive:false});
   document.body.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${_bodyScrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
 }
 function unlockBody(){
+  document.body.removeEventListener('touchmove', _preventTouch);
   document.body.style.overflow = '';
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  window.scrollTo(0, _bodyScrollY);
+}
+function _preventTouch(e){
+  // Only block if the touch target is not inside a scrollable overlay
+  const scrollable = e.target.closest('#detailPage, #seeallPage, .row-track, #searchOverlay');
+  if(!scrollable) e.preventDefault();
 }
 
 /* ── DETAIL PAGE ── */
